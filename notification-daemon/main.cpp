@@ -7,14 +7,14 @@
 #include "gtk-lsh/surface.h"
 #include "org.freedesktop.Notifications_stub.h"
 
-Glib::ustring stylesheet =
-    ".notification { background: rgba(240, 240, 240, 0.9); border-radius: 6px; }";
+#define RESPREFIX "/technology/unrelenting/numbernine/notification-daemon/"
 
 std::shared_ptr<Gtk::Window> window;
 Gtk::Box *box;
 
 class notification {
-	Glib::RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_file("notification-daemon/notification.glade");
+	Glib::RefPtr<Gtk::Builder> builder =
+	    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
 	Gtk::Grid *grid = nullptr;
 	bool dead = false;
 
@@ -81,7 +81,7 @@ class bus_impl : public org::freedesktop::Notifications {
 
 int main(int argc, char *argv[]) {
 	auto app =
-	    Gtk::Application::create(argc, argv, "technology.unrelenting.numbernine.notifications");
+	    Gtk::Application::create(argc, argv, "technology.unrelenting.numbernine.notification-daemon");
 	lsh::manager lsh_mgr(app);
 
 	window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
@@ -94,7 +94,7 @@ int main(int argc, char *argv[]) {
 	window->set_app_paintable(true);
 
 	auto css = Gtk::CssProvider::create();
-	css->load_from_data(stylesheet);
+	css->load_from_resource(RESPREFIX "style.css");
 	window->get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css,
 	                                                     GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
