@@ -27,7 +27,7 @@ class manager {
  public:
 	// requires an existing Application just to ensure initialization has happened
 	manager(Glib::RefPtr<Gtk::Application> &);
-	surface layerize(std::shared_ptr<Gtk::Window>, layer);
+	surface layerize(const std::shared_ptr<Gtk::Window> &, layer);
 
 	friend void handle_global(void *, struct wl_registry *, uint32_t, const char *, uint32_t);
 };

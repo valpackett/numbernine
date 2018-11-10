@@ -1,9 +1,10 @@
 #include "surface.h"
 #include <gtkmm.h>
+#include <utility>
 
 namespace lsh {
 
-static void on_configure(void *data, struct zwlr_layer_surface_v1 *, uint32_t serial,
+static void on_configure(void *data, struct zwlr_layer_surface_v1 * /*unused*/, uint32_t serial,
                          uint32_t width, uint32_t height) {
 	auto *surf = reinterpret_cast<surface *>(data);
 	Glib::signal_idle().connect([=] {
@@ -12,7 +13,7 @@ static void on_configure(void *data, struct zwlr_layer_surface_v1 *, uint32_t se
 	});
 }
 
-static void on_closed(void *, struct zwlr_layer_surface_v1 *) {}
+static void on_closed(void * /*unused*/, struct zwlr_layer_surface_v1 * /*unused*/) {}
 
 static const struct zwlr_layer_surface_v1_listener surface_listener = {on_configure, on_closed};
 
@@ -21,7 +22,7 @@ anchor operator|(const anchor a, const anchor b) {
 }
 
 surface::surface(struct zwlr_layer_surface_v1 *s, std::shared_ptr<Gtk::Window> w)
-    : lsurf(s), window(w) {
+    : lsurf(s), window(std::move(w)) {
 	zwlr_layer_surface_v1_add_listener(lsurf, &surface_listener, this);
 }
 
