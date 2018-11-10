@@ -16,6 +16,14 @@ layer_shell_client_header = wl_client_header.process('protocols/wlr-layer-shell-
 xdg_shell_code = wl_code.process('/usr/local/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml')
 xdg_shell_client_header = wl_client_header.process('/usr/local/share/wayland-protocols/stable/xdg-shell/xdg-shell.xml')
 
+prog_gdbusgen = find_program('vendor/gdbus-codegen-glibmm/gdbus-codegen-glibmm.py')
+gdbus_code = generator(prog_gdbusgen,
+	output: ['@BASENAME@_common.cpp', '@BASENAME@_common.h', '@BASENAME@_proxy.cpp',
+		'@BASENAME@_proxy.h', '@BASENAME@_stub.cpp', '@BASENAME@_stub.h'],
+	arguments: ['--generate-cpp-code=@OUTPUT@', '@INPUT@'])
+
+fdp_notifications_code = gdbus_code.process('dbus/org.freedesktop.Notifications.xml')
+
 gtk = dependency('gtk+-wayland-3.0')
 gtkmm = dependency('gtkmm-3.0')
 wayland_client = dependency('wayland-client')
@@ -24,3 +32,4 @@ gnome = import('gnome')
 
 subdir('gtk-lsh')
 subdir('panel')
+subdir('notification-daemon')
