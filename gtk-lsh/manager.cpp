@@ -1,6 +1,6 @@
+#include "manager.h"
 #include <gdk/gdkwayland.h>
 #include <gtkmm.h>
-#include "manager.h"
 #include "surface.h"
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 

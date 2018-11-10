@@ -1,5 +1,5 @@
-#include <gtkmm.h>
 #include "surface.h"
+#include <gtkmm.h>
 
 namespace lsh {
 
