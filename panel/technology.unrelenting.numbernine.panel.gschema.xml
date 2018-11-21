@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+	<schema id="technology.unrelenting.numbernine.panel.panel">
+		<key name="widgets" type="a(ss)">
+			<default>[]</default>
+			<summary>List of widgets in the panel</summary>
+		</key>
+	</schema>
+
+	<schema id="technology.unrelenting.numbernine.panel.widgets.quicklaunch">
+		<key name="icon-name" type="s">
+			<default>'utilities-terminal'</default>
+			<summary>Icon name</summary>
+		</key>
+		<key name="command" type="as">
+			<default>[]</default>
+			<summary>Command (executable path and args)</summary>
+		</key>
+	</schema>
+</schemalist>

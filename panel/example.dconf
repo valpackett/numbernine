@@ -1,0 +1,10 @@
+[technology/unrelenting/numbernine/panel/default]
+widgets=[('.quicklaunch', 'term-launch'), ('.quicklaunch', 'vim-launch')]
+
+[technology/unrelenting/numbernine/panel/default/term-launch]
+icon-name='utilities-terminal'
+command=['/usr/local/bin/gnome-terminal']
+
+[technology/unrelenting/numbernine/panel/default/vim-launch]
+icon-name='text-editor'
+command=['/home/greg/.local/bin/nvim-gtk']
