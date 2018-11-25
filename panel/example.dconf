@@ -1,9 +1,12 @@
 [technology/unrelenting/numbernine/panel/default]
-widgets=[('.quicklaunch', 'term-launch'), ('.quicklaunch', 'vim-launch')]
+widgets=[('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.quicklaunch', 'vim-launch')]
 
 [technology/unrelenting/numbernine/panel/default/term-launch]
 icon-name='utilities-terminal'
 command=['/usr/local/bin/gnome-terminal']
+
+[technology/unrelenting/numbernine/panel/default/sep-1]
+expand=true
 
 [technology/unrelenting/numbernine/panel/default/vim-launch]
 icon-name='text-editor'

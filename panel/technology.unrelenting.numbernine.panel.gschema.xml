@@ -17,4 +17,12 @@
 			<summary>Command (executable path and args)</summary>
 		</key>
 	</schema>
+
+	<schema id="technology.unrelenting.numbernine.panel.widgets.separator">
+		<key name="expand" type="b">
+			<default>true</default>
+			<summary>Whether to stretch the separator to maximum available space</summary>
+		</key>
+	</schema>
+
 </schemalist>
