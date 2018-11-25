@@ -5,43 +5,7 @@
 #include <unordered_map>
 #include "gtk-lsh/manager.h"
 #include "gtk-lsh/surface.h"
-
-#define GSNAMEPREFIX "technology.unrelenting.numbernine.panel."
-#define GSPATHPREFIX "/technology/unrelenting/numbernine/panel/"
-
-class widget {
- public:
-	virtual Gtk::Widget &root() = 0;
-	virtual ~widget() = default;
-};
-
-class quicklaunch : public widget {
- public:
-	quicklaunch(const std::string &settings_key) {
-		settings = Gio::Settings::create(GSNAMEPREFIX "widgets.quicklaunch",
-		                                 GSPATHPREFIX "default/" + settings_key + "/");
-		termbtn.set_image_from_icon_name(settings->get_string("icon-name"));
-		std::cout << settings->get_string("icon-name") << std::endl;
-		termbtn.signal_clicked().connect([] {
-			std::string apppath = "/usr/local/bin/gnome-terminal";
-			std::vector argv({apppath});
-			Glib::spawn_async(Glib::getenv("HOME"), argv);
-		});
-		termbtn.show_all();
-	}
-
-	Gtk::Widget &root() override { return termbtn; }
-
- private:
-	Glib::RefPtr<Gio::Settings> settings;
-	Gtk::Button termbtn;
-};
-
-std::unique_ptr<widget> make_widget(const std::string &widget_name, std::string settings_key) {
-	if (widget_name == ".quicklaunch") {
-		return std::make_unique<quicklaunch>(settings_key);
-	}
-}
+#include "widgets.h"
 
 std::unordered_map<std::string, std::unique_ptr<widget>> widgets;
 
@@ -63,6 +27,14 @@ int main(int argc, char *argv[]) {
 	default_settings->get_value("widgets", widget_conf_list);
 	for (auto widget_conf : widget_conf_list.get()) {
 		widgets.emplace(widget_conf.second, make_widget(widget_conf.first, widget_conf.second));
+		if (widgets[widget_conf.second] == nullptr) {
+			g_log_structured(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, "MESSAGE",
+			                 "Unknown widget type '%s' (for widget '%s') in panel '%s'",
+			                 widget_conf.first.c_str(), widget_conf.second.c_str(), "default",
+			                 "N9_PANEL_NAME", "default", "N9_WIDGET_TYPE", widget_conf.first.c_str(),
+			                 "N9_WIDGET_NAME", widget_conf.second.c_str());
+			continue;
+		}
 		widgetbox.add(widgets[widget_conf.second]->root());
 	}
 
