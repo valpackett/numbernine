@@ -9,6 +9,17 @@ namespace lsh {
 
 static void on_configure(void *, struct zwlr_layer_surface_v1 *, uint32_t, uint32_t, uint32_t);
 
+enum class layer {
+	background = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND,
+	bottom = ZWLR_LAYER_SHELL_V1_LAYER_BOTTOM,
+	top = ZWLR_LAYER_SHELL_V1_LAYER_TOP,
+	overlay = ZWLR_LAYER_SHELL_V1_LAYER_OVERLAY,
+};
+
+static_assert(sizeof(layer) == sizeof(zwlr_layer_shell_v1_layer));
+
+layer operator|(const layer a, const layer b);
+
 enum class anchor {
 	top = ZWLR_LAYER_SURFACE_V1_ANCHOR_TOP,
 	bottom = ZWLR_LAYER_SURFACE_V1_ANCHOR_BOTTOM,
@@ -24,15 +35,17 @@ class surface {
 	struct zwlr_layer_surface_v1 *lsurf = nullptr;
 	std::shared_ptr<Gtk::Window> window;
 
-	surface(struct zwlr_layer_surface_v1 *, std::shared_ptr<Gtk::Window>);
-
  public:
+	surface(manager &mgr, std::shared_ptr<Gtk::Window> w, layer layer);
+
 	void set_anchor(anchor);
 	void set_size(int32_t, int32_t);
 	void set_margin(int32_t top, int32_t right, int32_t bottom, int32_t left);
 
 	friend class manager;
 	friend void on_configure(void *, struct zwlr_layer_surface_v1 *, uint32_t, uint32_t, uint32_t);
+
+	surface(surface &&) = delete;
 };
 
 }  // namespace lsh

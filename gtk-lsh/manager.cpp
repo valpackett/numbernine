@@ -20,10 +20,6 @@ static void handle_global_remove(void * /*unused*/, struct wl_registry * /*unuse
 
 static const struct wl_registry_listener registry_listener = {handle_global, handle_global_remove};
 
-layer operator|(const layer a, const layer b) {
-	return static_cast<layer>(static_cast<int>(a) | static_cast<int>(b));
-}
-
 manager::manager(Glib::RefPtr<Gtk::Application> & /*unused*/) {
 	if (lshell == nullptr) {
 		auto gddisp = Gdk::Display::get_default();
@@ -39,16 +35,6 @@ manager::manager(Glib::RefPtr<Gtk::Application> & /*unused*/) {
 			throw std::runtime_error("Compositor does not offer layer-shell");
 		}
 	}
-}
-
-surface manager::layerize(const std::shared_ptr<Gtk::Window> &window, layer layer) {
-	gtk_widget_realize(reinterpret_cast<GtkWidget *>(window->gobj()));
-	auto *gdwnd = window->get_window()->gobj();
-	gdk_wayland_window_set_use_custom_surface(gdwnd);
-	auto *wlsurf = gdk_wayland_window_get_wl_surface(gdwnd);
-	auto *lsurf = zwlr_layer_shell_v1_get_layer_surface(
-	    lshell, wlsurf, nullptr, static_cast<zwlr_layer_shell_v1_layer>(layer), "test");
-	return surface(lsurf, window);
 }
 
 }  // namespace lsh

@@ -3,6 +3,7 @@ panel_schemas = gnome.compile_schemas(build_by_default: true,
 
 panel = executable('n9-panel',
 	'main.cpp',
+	'panel.cpp',
 	'widgets/quicklaunch.cpp',
 	'widgets/separator.cpp',
 	layer_shell_client_header, panel_schemas,
