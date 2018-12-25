@@ -27,3 +27,6 @@ panel = executable('n9-panel',
 
 install_data('technology.unrelenting.numbernine.panel.gschema.xml',
 	install_dir: 'share/glib-2.0/schemas')
+
+run_target('run-panel', command: [
+	'env', 'GSETTINGS_SCHEMA_DIR=' + meson.current_build_dir(), panel ])

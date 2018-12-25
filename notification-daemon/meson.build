@@ -13,3 +13,5 @@ notification_daemon = executable('n9-notification-daemon',
 	link_with: [lsh],
 	include_directories: [include_directories('../')],
 	install: true)
+
+run_target('run-nd', command: [ notification_daemon ])
