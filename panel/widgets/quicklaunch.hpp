@@ -1,5 +1,5 @@
 #pragma once
-#include "widget.h"
+#include "widget.hpp"
 
 class quicklaunch : public widget {
 	Glib::RefPtr<Gio::Settings> settings;

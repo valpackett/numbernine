@@ -1,5 +1,5 @@
 #pragma once
-#include "widget.h"
+#include "widget.hpp"
 
 class separator : public widget {
 	Glib::RefPtr<Gio::Settings> settings;

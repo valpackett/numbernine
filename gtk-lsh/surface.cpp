@@ -1,4 +1,4 @@
-#include "surface.h"
+#include "surface.hpp"
 #include <gdk/gdkwayland.h>
 #include <gtkmm.h>
 #include <utility>

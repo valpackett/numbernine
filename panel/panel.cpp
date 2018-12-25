@@ -1,5 +1,5 @@
-#include "panel.h"
-#include "widgets.h"
+#include "panel.hpp"
+#include "widgets.hpp"
 
 panel::panel(const std::string& key, lsh::manager& lsh_mgr) : settings_key(key) {
 	settings = Gio::Settings::create(GSNAMEPREFIX "panel", GSPATHPREFIX + key + "/");

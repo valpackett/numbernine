@@ -1,4 +1,4 @@
-#include "separator.h"
+#include "separator.hpp"
 
 separator::separator(const std::string &settings_key) {
 	settings =

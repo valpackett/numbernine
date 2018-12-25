@@ -3,8 +3,8 @@
 #include <iostream>
 #include <memory>
 #include <vector>
-#include "gtk-lsh/manager.h"
-#include "gtk-lsh/surface.h"
+#include "gtk-lsh/manager.hpp"
+#include "gtk-lsh/surface.hpp"
 #include "org.freedesktop.Notifications_stub.h"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/notification-daemon/"

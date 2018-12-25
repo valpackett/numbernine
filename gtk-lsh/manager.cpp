@@ -1,7 +1,7 @@
-#include "manager.h"
+#include "manager.hpp"
 #include <gdk/gdkwayland.h>
 #include <gtkmm.h>
-#include "surface.h"
+#include "surface.hpp"
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 
 namespace lsh {

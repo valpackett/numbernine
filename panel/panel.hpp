@@ -3,9 +3,9 @@
 #include <memory>
 #include <optional>
 #include <unordered_map>
-#include "gtk-lsh/manager.h"
-#include "gtk-lsh/surface.h"
-#include "widgets/widget.h"
+#include "gtk-lsh/manager.hpp"
+#include "gtk-lsh/surface.hpp"
+#include "widgets/widget.hpp"
 
 class panel {
 	const std::string settings_key;

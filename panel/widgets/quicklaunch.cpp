@@ -1,4 +1,4 @@
-#include "quicklaunch.h"
+#include "quicklaunch.hpp"
 
 quicklaunch::quicklaunch(const std::string &settings_key) {
 	settings =

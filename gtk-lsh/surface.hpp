@@ -2,7 +2,7 @@
 #include <gtkmm/window.h>
 #include <cstdint>
 #include <memory>
-#include "manager.h"
+#include "manager.hpp"
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 
 namespace lsh {

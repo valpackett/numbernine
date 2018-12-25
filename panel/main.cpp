@@ -2,12 +2,9 @@
 #include <gtkmm.h>
 #include <iostream>
 #include <memory>
-#include "gtk-lsh/manager.h"
-#include "gtk-lsh/surface.h"
-#include "panel.h"
-#include "widgets.h"
-
-std::unordered_map<std::string, std::unique_ptr<widget>> widgets;
+#include "gtk-lsh/manager.hpp"
+#include "gtk-lsh/surface.hpp"
+#include "panel.hpp"
 
 int main(int argc, char *argv[]) {
 	auto app = Gtk::Application::create(argc, argv, "technology.unrelenting.numbernine.panel");

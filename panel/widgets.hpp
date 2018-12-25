@@ -1,7 +1,7 @@
 #pragma once
 #include <memory>
-#include "widgets/quicklaunch.h"
-#include "widgets/separator.h"
+#include "widgets/quicklaunch.hpp"
+#include "widgets/separator.hpp"
 
 static std::unique_ptr<widget> make_widget(const std::string &widget_name,
                                            std::string settings_key) {
