@@ -2,6 +2,7 @@
 #include <gtkmm/window.h>
 #include <cstdint>
 #include <memory>
+#include <variant>
 #include "manager.hpp"
 #include "wlr-layer-shell-unstable-v1-client-protocol.h"
 
@@ -31,12 +32,16 @@ static_assert(sizeof(anchor) == sizeof(zwlr_layer_surface_v1_anchor));
 
 anchor operator|(const anchor a, const anchor b);
 
+struct any_output_t {};
+const any_output_t any_output;
+
 class surface {
 	struct zwlr_layer_surface_v1 *lsurf = nullptr;
 	std::shared_ptr<Gtk::Window> window;
 
  public:
-	surface(manager &mgr, std::shared_ptr<Gtk::Window> w, layer layer);
+	surface(manager &mgr, std::shared_ptr<Gtk::Window> w,
+	        std::variant<any_output_t, wl_output *, GdkMonitor *> output, layer layer);
 
 	void set_anchor(anchor);
 	void set_size(int32_t, int32_t);

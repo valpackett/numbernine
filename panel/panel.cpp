@@ -6,7 +6,7 @@ panel::panel(const std::string& key, lsh::manager& lsh_mgr) : settings_key(key) 
 	window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
 	window->set_default_size(200, 24);
 	window->set_decorated(false);
-	layer_surface.emplace(lsh_mgr, window, lsh::layer::top);
+	layer_surface.emplace(lsh_mgr, window, lsh::any_output, lsh::layer::top);
 	layer_surface->set_anchor(lsh::anchor::left | lsh::anchor::bottom | lsh::anchor::right);
 	layer_surface->set_size(640, 24);
 	recreate_widgets();

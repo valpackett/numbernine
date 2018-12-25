@@ -87,7 +87,7 @@ int main(int argc, char *argv[]) {
 	window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
 	window->set_default_size(480, 0);
 	window->set_decorated(false);
-	lsh::surface window_lsh(lsh_mgr, window, lsh::layer::top);
+	lsh::surface window_lsh(lsh_mgr, window, lsh::any_output, lsh::layer::top);
 	window_lsh.set_anchor(lsh::anchor::top | lsh::anchor::right);
 	window_lsh.set_size(480, 1);
 	window->show_all();
