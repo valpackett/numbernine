@@ -9,6 +9,7 @@
 namespace lsh {
 
 static void on_configure(void *, struct zwlr_layer_surface_v1 *, uint32_t, uint32_t, uint32_t);
+static void on_closed(void *, struct zwlr_layer_surface_v1 *);
 
 enum class layer {
 	background = ZWLR_LAYER_SHELL_V1_LAYER_BACKGROUND,
@@ -38,17 +39,20 @@ const any_output_t any_output;
 class surface {
 	struct zwlr_layer_surface_v1 *lsurf = nullptr;
 	std::shared_ptr<Gtk::Window> window;
+	std::function<void(std::shared_ptr<Gtk::Window>)> on_closed;
 
  public:
 	surface(manager &mgr, std::shared_ptr<Gtk::Window> w,
 	        std::variant<any_output_t, wl_output *, GdkMonitor *> output, layer layer);
 
+	void set_on_closed(std::function<void(std::shared_ptr<Gtk::Window>)> cb) { on_closed = cb; }
 	void set_anchor(anchor);
 	void set_size(int32_t, int32_t);
 	void set_margin(int32_t top, int32_t right, int32_t bottom, int32_t left);
 
 	friend class manager;
 	friend void on_configure(void *, struct zwlr_layer_surface_v1 *, uint32_t, uint32_t, uint32_t);
+	friend void on_closed(void *, struct zwlr_layer_surface_v1 *);
 
 	surface(surface &&) = delete;
 };

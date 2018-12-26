@@ -14,7 +14,17 @@ static void on_configure(void *data, struct zwlr_layer_surface_v1 * /*unused*/, 
 	});
 }
 
-static void on_closed(void * /*unused*/, struct zwlr_layer_surface_v1 * /*unused*/) {}
+static void on_closed(void *data, struct zwlr_layer_surface_v1 * /*unused*/) {
+	auto *surf = reinterpret_cast<surface *>(data);
+	Glib::signal_idle().connect([=] {
+		if (surf->on_closed) {
+			surf->on_closed(surf->window);
+		} else {
+			surf->window->close();
+		}
+		return false;
+	});
+}
 
 static const struct zwlr_layer_surface_v1_listener surface_listener = {on_configure, on_closed};
 
