@@ -6,6 +6,7 @@ lsh_srcs = files(
 lsh_hdrs = files(
 	'manager.hpp',
 	'surface.hpp',
+	'multimonitor.hpp',
 )
 
 lsh = static_library('gtk-lsh',
