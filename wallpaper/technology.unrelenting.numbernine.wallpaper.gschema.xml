@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+	<schema id="technology.unrelenting.numbernine.wallpaper" path="/technology/unrelenting/numbernine/wallpaper/">
+		<key name="picture-path" type="s">
+			<default>"/dev/null"</default>
+			<summary>Path to use for the background image</summary>
+		</key>
+	</schema>
+</schemalist>
