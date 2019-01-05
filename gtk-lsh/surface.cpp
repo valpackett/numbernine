@@ -64,4 +64,8 @@ void surface::set_margin(int32_t top, int32_t right, int32_t bottom, int32_t lef
 	zwlr_layer_surface_v1_set_margin(lsurf, top, right, bottom, left);
 }
 
+void surface::set_keyboard_interactivity(bool enable) {
+	zwlr_layer_surface_v1_set_keyboard_interactivity(lsurf, static_cast<uint32_t>(enable));
+}
+
 }  // namespace lsh
