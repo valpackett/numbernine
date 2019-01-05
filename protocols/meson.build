@@ -14,9 +14,6 @@ wl_client_header = generator(prog_scanner,
 layer_shell_code = wl_code.process('wlr-layer-shell-unstable-v1.xml')
 layer_shell_client_header = wl_client_header.process('wlr-layer-shell-unstable-v1.xml')
 
-weston_desktop_shell_code = wl_code.process('weston-desktop-shell.xml')
-weston_desktop_shell_client_header = wl_client_header.process('weston-desktop-shell.xml')
-
 xdg_shell_path = join_paths([system_protos_dir, 'stable/xdg-shell/xdg-shell.xml'])
 xdg_shell_code = wl_code.process(xdg_shell_path)
 xdg_shell_client_header = wl_client_header.process(xdg_shell_path)
