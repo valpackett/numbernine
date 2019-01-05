@@ -1,28 +1,7 @@
-#include <poll.h>
-#include <sys/procdesc.h>
-#include <unistd.h>
 #include <wayland-client.h>
 #include <iostream>
+#include "supervisor.hpp"
 #include "weston-desktop-shell-client-protocol.h"
-
-class process {
-	pid_t pid;
-	int pd;
-
- public:
-	process(const std::string cmd) {
-		pid = pdfork(&pd, PD_CLOEXEC);
-		if (pid < 0) {
-			throw std::runtime_error("could not fork");
-		} else if (pid == 0) {
-			if (execlp(cmd.c_str(), cmd.c_str()) == -1) {
-				abort();
-			}
-		}
-	}
-
-	int get_procdesc() { return pd; }
-};
 
 static struct weston_desktop_shell *dsh = nullptr;
 
@@ -60,11 +39,8 @@ int main(int argc, char *argv[]) {
 		wl_display_roundtrip(display);
 	}
 
-	struct pollfd pfds[] = {
-	    {.fd = wallpaper.get_procdesc(), .events = POLLHUP, .revents = 0},
-	    {.fd = panel.get_procdesc(), .events = POLLHUP, .revents = 0},
-	};
-	while (true) {
-		poll(pfds, sizeof(pfds), -1);
-	}
+	supervisor sv;
+	sv.add(wallpaper);
+	sv.add(panel);
+	sv.run();
 }
