@@ -9,12 +9,13 @@ gnome = import('gnome')
 
 subdir('protocols')
 subdir('dbus')
+subdir('supervisor')
 subdir('gtk-lsh')
 subdir('wallpaper')
 subdir('panel')
 subdir('notification-daemon')
 
-all_srcs = [ lsh_srcs, wallpaper_srcs, panel_srcs, nd_srcs ]
+all_srcs = [ lsh_srcs, supervisor_srcs, wallpaper_srcs, panel_srcs, nd_srcs ]
 all_hdrs = [ lsh_hdrs, panel_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
