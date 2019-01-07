@@ -1,5 +1,11 @@
 [technology/unrelenting/numbernine/panel/default]
-widgets=[('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.quicklaunch', 'vim-launch')]
+widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.quicklaunch', 'vim-launch')]
+
+[technology/unrelenting/numbernine/panel/default/launcher]
+icon-name='system-search'
+bus-name='technology.unrelenting.numbernine.launcher'
+bus-path='/technology/unrelenting/numbernine/launcher'
+action='reveal'
 
 [technology/unrelenting/numbernine/panel/default/term-launch]
 icon-name='utilities-terminal'

@@ -5,6 +5,7 @@ panel_srcs = files(
 	'main.cpp',
 	'panel.cpp',
 	'widgets/quicklaunch.cpp',
+	'widgets/remoteaction.cpp',
 	'widgets/separator.cpp',
 )
 
@@ -13,12 +14,14 @@ panel_hdrs = files(
 	'widgets.hpp',
 	'widgets/widget.hpp',
 	'widgets/quicklaunch.hpp',
+	'widgets/remoteaction.hpp',
 	'widgets/separator.hpp',
 )
 
 panel = executable('n9-panel',
-	panel_srcs,
-	layer_shell_client_header, panel_schemas,
+	panel_srcs, panel_schemas,
+	layer_shell_client_header,
+	gtk_actions_code,
 	dependencies: [gtk, gtkmm],
 	link_with: [lsh],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],

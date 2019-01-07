@@ -4,4 +4,5 @@ gdbus_code = generator(prog_gdbusgen,
 		'@BASENAME@_proxy.h', '@BASENAME@_stub.cpp', '@BASENAME@_stub.h'],
 	arguments: ['--generate-cpp-code=@OUTPUT0@', '@INPUT@'])
 
+gtk_actions_code = gdbus_code.process('org.gtk.Actions.xml')
 fdp_notifications_code = gdbus_code.process('org.freedesktop.Notifications.xml')

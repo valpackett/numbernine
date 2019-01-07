@@ -18,6 +18,25 @@
 		</key>
 	</schema>
 
+	<schema id="technology.unrelenting.numbernine.panel.widgets.remoteaction">
+		<key name="icon-name" type="s">
+			<default>'utilities-terminal'</default>
+			<summary>Icon name</summary>
+		</key>
+		<key name="bus-name" type="s">
+			<default>'technology.unrelenting.numbernine.launcher'</default>
+			<summary>D-Bus Name of the application</summary>
+		</key>
+		<key name="bus-path" type="s">
+			<default>'/technology/unrelenting/numbernine/launcher'</default>
+			<summary>D-Bus Path of the application</summary>
+		</key>
+		<key name="action" type="s">
+			<default>'reveal'</default>
+			<summary>Name of the GTK Action</summary>
+		</key>
+	</schema>
+
 	<schema id="technology.unrelenting.numbernine.panel.widgets.separator">
 		<key name="expand" type="b">
 			<default>true</default>
