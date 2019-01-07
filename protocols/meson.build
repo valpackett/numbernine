@@ -11,6 +11,9 @@ wl_client_header = generator(prog_scanner,
 	output: '@BASENAME@-client-protocol.h',
 	arguments: ['client-header', '@INPUT@', '@OUTPUT@'])
 
+capabilities_code = wl_code.process('wldip-capabilities.xml')
+capabilities_client_header = wl_client_header.process('wldip-capabilities.xml')
+
 layer_shell_code = wl_code.process('wlr-layer-shell-unstable-v1.xml')
 layer_shell_client_header = wl_client_header.process('wlr-layer-shell-unstable-v1.xml')
 

@@ -20,6 +20,6 @@ supervisor_hdrs = files(
 )
 
 supervisor = executable('n9-supervisor',
-	supervisor_srcs,
-	#dependencies: [wayland_client],
+	supervisor_srcs, capabilities_code, capabilities_client_header,
+	dependencies: [wayland_client],
 	install: true)

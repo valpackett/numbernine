@@ -1,0 +1,46 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="wldip_capabilities">
+
+  <interface name="wldip_capabilities" version="1">
+    <description summary="">
+    </description>
+
+    <request name="create_capability_set">
+      <arg name="id" type="new_id" interface="wldip_capability_set"/>
+    </request>
+  </interface>
+
+  <interface name="wldip_capability_set" version="1">
+    <description summary="">
+    </description>
+
+    <request name="grant">
+      <description summary="add one of the current client's capabilities to the set">
+      </description>
+      <arg name="cap" type="string" summary="the capability to grant"/>
+    </request>
+
+    <request name="spawn">
+      <description summary="create a client connection file descriptor with the capabilities from the set">
+      </description>
+      <arg name="serial" type="uint" summary="a serial number for tracking the response"/>
+    </request>
+
+    <event name="spawned">
+      <arg name="serial" type="uint" summary="the serial from the spawn request"/>
+      <arg name="connection" type="fd" summary="the spawned file descriptor"/>
+    </event>
+
+    <request name="destroy" type="destructor">
+      <description summary="destroy the capability_set">
+      </description>
+    </request>
+
+    <enum name="error">
+      <entry name="nonexistent_capability" value="0" summary="requested capability does not exist"/>
+      <entry name="denied_capability" value="1" summary="requested capability is not available to the current client"/>
+      <entry name="spawn_failed" value="2" summary="client socket creation failed"/>
+    </enum>
+  </interface>
+
+</protocol>
