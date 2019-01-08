@@ -110,10 +110,17 @@ class launcher {
 		icon *icon = nullptr;
 		builder->get_widget_derived("row-double-icon", icon);
 
-		auto appname = app->get_name();
-		title->set_text(appname);
+		title->set_text(app->get_name());
 		subtitle->set_text(app->get_description());
-		icon->set_app(appname, Glib::RefPtr<Gio::AppInfo>::cast_static(app));
+		icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
+
+		// not faster
+#if 0
+		icon->get_parent()->remove(*icon);
+		auto *aicon = granite_async_image_construct_from_gicon_async(granite_async_image_get_type(), g_app_info_get_icon(G_APP_INFO(app->gobj())), 48, true, true);
+		gtk_widget_show(GTK_WIDGET(aicon));
+		gtk_grid_attach(grid->gobj(), GTK_WIDGET(aicon), 0, 0, 1, 2);
+#endif
 
 		resultbox->insert(*grid, -1);
 		grid->reference();

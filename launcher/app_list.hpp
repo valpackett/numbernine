@@ -4,6 +4,8 @@
 #define FTS_FUZZY_MATCH_IMPLEMENTATION
 #include "vendor/fts_fuzzy_match.hpp"
 
+const size_t MAX_MATCHES = 24;
+
 class app_list {
  public:
 	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> apps;
@@ -31,7 +33,7 @@ class app_list {
 	std::vector<size_t> fuzzy_search(Glib::ustring query) {
 		std::vector<size_t> indices;
 		std::vector<int> scores;
-		size_t i = 0;
+		size_t i = 0, matches = 0;
 		for (auto &app : apps) {
 			int score = 0;
 			if (!fts::fuzzy_match(query.c_str(), app->get_name().c_str(), score)) {
@@ -42,6 +44,9 @@ class app_list {
 			auto dist = std::distance(scores.begin(), lb);
 			scores.insert(lb, score);
 			indices.insert(indices.begin() + dist, i++);
+			if (matches++ > MAX_MATCHES) {
+				break;
+			}
 		}
 		return indices;
 	}

@@ -5,7 +5,9 @@ static std::unordered_map<std::string, Cairo::RefPtr<Cairo::Surface>> icon_surf_
 
 bool icon::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 	auto scale = get_scale_factor();
-	if (last_cache_key != cache_key || last_size != size || last_scale != scale) {
+	if (app_changed || last_size != size || last_scale != scale) {
+		std::string cache_key =
+		    app->get_id() + app->get_name() + std::to_string(size) + std::to_string(scale);
 		if (icon_surf_cache.count(cache_key) != 0) {
 			surf = icon_surf_cache[cache_key];
 		} else {
@@ -33,9 +35,9 @@ bool icon::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 			icon_surf_cache[cache_key] = surf;
 		}
 		set_size_request(size, size);
-		last_cache_key = cache_key;
 		last_size = size;
 		last_scale = scale;
+		app_changed = false;
 	}
 	cr->set_source(surf, 0, 0);
 	cr->paint();
