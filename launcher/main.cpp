@@ -14,22 +14,28 @@
 static void select_row_delta(Gtk::ListBox *listbox, int delta) {
 	Gtk::ListBoxRow *new_row = nullptr;
 	auto *sel_row = listbox->get_selected_row();
-	if (sel_row == nullptr) {
+	if (sel_row == nullptr || !sel_row->is_visible()) {
 		new_row = listbox->get_row_at_index(0);
 	} else {
 		new_row = listbox->get_row_at_index(sel_row->get_index() + delta);
 	}
-	if (new_row != nullptr) {
+	if (new_row != nullptr && new_row->is_visible()) {
 		listbox->select_row(*new_row);
 		auto alloc = new_row->get_allocation();
 		listbox->get_adjustment()->clamp_page(alloc.get_y(), alloc.get_y() + alloc.get_height());
 	}
 }
 
-class launcher {
- public:
+struct app_row {
+	Gtk::Grid *grid = nullptr;
+	Gtk::Label *title = nullptr, *subtitle = nullptr;
+	icon *icon = nullptr;
+};
+
+struct launcher {
 	app_list applist;
 	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> current_apps;
+	std::vector<app_row> app_rows;
 	Gtk::Box *topl = nullptr;
 	Gtk::ListBox *resultbox = nullptr;
 	Gtk::SearchEntry *searchbar = nullptr;
@@ -50,10 +56,12 @@ class launcher {
 			}
 			update_timer = Glib::signal_timeout().connect(
 			    [&] {
-				    clear();
 				    current_apps.clear();
-				    for (auto idx : applist.fuzzy_search(searchbar->get_text())) {
-					    add_row_for_app(applist.apps[idx]);
+				    auto results = applist.fuzzy_search(searchbar->get_text());
+				    ensure_app_row_count(results.size());
+				    size_t i = 0;
+				    for (auto idx : results) {
+					    set_row_to_app(i++, applist.apps[idx]);
 					    current_apps.push_back(applist.apps[idx]);
 				    }
 				    return false;
@@ -71,6 +79,19 @@ class launcher {
 			} else if (evt->keyval == GDK_KEY_Down || evt->keyval == GDK_KEY_KP_Down) {
 				select_row_delta(resultbox, 1);
 				return true;
+			} else if (evt->keyval == GDK_KEY_Escape) {
+				window->hide();
+				return true;
+			}
+		});
+
+		searchbar->signal_activate().connect([&] {
+			auto *row = resultbox->get_selected_row();
+			if (row == nullptr || !row->is_visible()) {
+				row = resultbox->get_row_at_index(0);
+			}
+			if (row != nullptr) {
+				row->activate();
 			}
 		});
 
@@ -81,54 +102,51 @@ class launcher {
 			window->hide();
 		});
 
-		window->signal_key_release_event().connect([&](GdkEventKey *evt) {
-			if (evt->keyval == GDK_KEY_Escape) {
-				window->hide();
-				return true;
-			} else if (evt->keyval == GDK_KEY_Return || evt->keyval == GDK_KEY_KP_Enter) {
-				auto *row = resultbox->get_selected_row();
-				if (row == nullptr) {
-					row = resultbox->get_row_at_index(0);
-				}
-				if (row != nullptr) {
-					row->activate();
-					return true;
-				}
-			}
-			return false;
-		});
-
 		topl->reference();
 		applist.refresh();
 	}
 
 	void clear() {
+		current_apps.clear();
+		app_rows.clear();
 		for (auto &tpl_row : resultbox->get_children()) {
 			resultbox->remove(*tpl_row);
 			delete tpl_row;
 		}
 	}
 
-	void add_row_for_app(const Glib::RefPtr<Gio::DesktopAppInfo> &app) {
-		Glib::RefPtr<Gtk::Builder> builder =
-		    Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
-		Gtk::Grid *grid = nullptr;
-		builder->get_widget("row-double", grid);
-		grid->get_parent()->remove(*grid);
+	// recreating rows is the slowest action
+	void ensure_app_row_count(size_t len) {
+		auto rows = resultbox->get_children().size();
+		if (len < rows) {
+			for (size_t i = len; i < rows; i++) {
+				resultbox->get_row_at_index(i)->hide();
+			}
+		} else if (len > rows) {
+			for (size_t i = rows; i < len; i++) {
+				Glib::RefPtr<Gtk::Builder> builder =
+				    Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
+				app_row row;
+				builder->get_widget("row-double", row.grid);
+				builder->get_widget("row-double-title", row.title);
+				builder->get_widget("row-double-subtitle", row.subtitle);
+				builder->get_widget_derived("row-double-icon", row.icon);
+				row.grid->get_parent()->remove(*row.grid);
+				resultbox->insert(*row.grid, -1);
+				row.grid->reference();
+				app_rows.push_back(row);
+			}
+		}
+		for (size_t i = 0; i < len; i++) {
+			resultbox->get_row_at_index(i)->show();
+		}
+	}
 
-		Gtk::Label *title = nullptr, *subtitle = nullptr;
-		builder->get_widget("row-double-title", title);
-		builder->get_widget("row-double-subtitle", subtitle);
-
-		icon *icon = nullptr;
-		builder->get_widget_derived("row-double-icon", icon);
-
-		title->set_text(app->get_name());
-		subtitle->set_text(app->get_description());
-		icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
-
-		resultbox->insert(*grid, -1);
-		grid->reference();
+	void set_row_to_app(size_t idx, const Glib::RefPtr<Gio::DesktopAppInfo> &app) {
+		auto &row = app_rows[idx];
+		row.title->set_text(app->get_name());
+		row.subtitle->set_text(app->get_description());
+		row.icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
 	}
 };
 
@@ -187,7 +205,7 @@ int main(int argc, char *argv[]) {
 	reveal->signal_activate().connect([&](const Glib::VariantBase &param) {
 		if (!window->is_visible()) {
 			window_lsh = init_lsh(lsh_mgr, window);
-			window->show_all();
+			window->show();
 		}
 		launcher.searchbar->grab_focus();
 	});
