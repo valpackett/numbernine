@@ -3,6 +3,7 @@ project('numbernine', ['c', 'cpp'], version: '0.0.1', license: 'Unlicense',
 
 gtk = dependency('gtk+-wayland-3.0', version: '>=3.22.0')
 gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
+cairomm = dependency('cairomm-1.0')
 wayland_client = dependency('wayland-client')
 
 gnome = import('gnome')

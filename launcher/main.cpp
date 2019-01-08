@@ -7,14 +7,13 @@
 #include "app_list.hpp"
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/surface.hpp"
+#include "icon.hpp"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/launcher/"
 
 class launcher {
  public:
 	app_list applist;
-	Glib::RefPtr<Gtk::IconTheme> icon_theme = Gtk::IconTheme::get_default();
-	std::unordered_map<std::string, Glib::RefPtr<Gdk::Pixbuf>> icon_cache;
 	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> current_apps;
 	Gtk::Box *topl = nullptr;
 	Gtk::ListBox *resultbox = nullptr;
@@ -64,28 +63,13 @@ class launcher {
 		builder->get_widget("row-double-title", title);
 		builder->get_widget("row-double-subtitle", subtitle);
 
-		Gtk::Image *icon = nullptr;
-		builder->get_widget("row-double-icon", icon);
+		icon *icon = nullptr;
+		builder->get_widget_derived("row-double-icon", icon);
 
 		auto appname = app->get_name();
 		title->set_text(appname);
 		subtitle->set_text(app->get_description());
-		if (icon_cache.count(appname) > 0) {
-			icon->set(icon_cache[appname]);
-		} else {
-			auto *icon_gobj = g_app_info_get_icon(Glib::RefPtr<Gio::AppInfo>::cast_static(app)->gobj());
-			if (icon_gobj != nullptr) {
-				auto *icon_info_gobj = gtk_icon_theme_lookup_by_gicon_for_scale(
-				    icon_theme->gobj(), icon_gobj, 48, topl->get_scale_factor(),
-				    GTK_ICON_LOOKUP_FORCE_SIZE);
-				if (icon_info_gobj != nullptr) {
-					Gtk::IconInfo icon_info(icon_info_gobj);
-					auto pixbuf = icon_info.load_icon();
-					icon->set(pixbuf);
-					icon_cache[appname] = pixbuf;
-				}
-			}
-		}
+		icon->set_app(appname, Glib::RefPtr<Gio::AppInfo>::cast_static(app));
 
 		resultbox->insert(*grid, -1);
 		grid->reference();
@@ -144,7 +128,7 @@ int main(int argc, char *argv[]) {
 	window->add(wrapper);
 
 	Glib::RefPtr<Gio::SimpleAction> reveal = Gio::SimpleAction::create("reveal");
-	reveal->signal_activate().connect([&](auto _) {
+	reveal->signal_activate().connect([&](const Glib::VariantBase &param) {
 		if (!window->is_visible()) {
 			window_lsh = init_lsh(lsh_mgr, window);
 			window->show_all();

@@ -5,16 +5,18 @@ launcher_res = gnome.compile_resources(
 
 launcher_srcs = files(
 	'main.cpp',
+	'icon.cpp',
 )
 
 launcher_hdrs = files(
 	'app_list.hpp',
+	'icon.hpp',
 )
 
 launcher = executable('n9-launcher',
 	launcher_srcs, launcher_res,
 	layer_shell_client_header,
-	dependencies: [gtk, gtkmm],
+	dependencies: [gtk, gtkmm, cairomm],
 	link_with: [lsh],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
