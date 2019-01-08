@@ -1,8 +1,7 @@
 #include "icon.hpp"
 #include <iostream>
 
-static std::unordered_map<std::string, Cairo::RefPtr<Cairo::Surface>>
-    icon_surf_cache;
+static std::unordered_map<std::string, Cairo::RefPtr<Cairo::Surface>> icon_surf_cache;
 
 bool icon::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 	auto scale = get_scale_factor();

@@ -11,6 +11,21 @@
 
 #define RESPREFIX "/technology/unrelenting/numbernine/launcher/"
 
+static void select_row_delta(Gtk::ListBox *listbox, int delta) {
+	Gtk::ListBoxRow *new_row = nullptr;
+	auto *sel_row = listbox->get_selected_row();
+	if (sel_row == nullptr) {
+		new_row = listbox->get_row_at_index(0);
+	} else {
+		new_row = listbox->get_row_at_index(sel_row->get_index() + delta);
+	}
+	if (new_row != nullptr) {
+		listbox->select_row(*new_row);
+		auto alloc = new_row->get_allocation();
+		listbox->get_adjustment()->clamp_page(alloc.get_y(), alloc.get_y() + alloc.get_height());
+	}
+}
+
 class launcher {
  public:
 	app_list applist;
@@ -27,6 +42,7 @@ class launcher {
 		builder->get_widget("resultbox", resultbox);
 		builder->get_widget("searchbar", searchbar);
 		clear();
+
 		searchbar->signal_changed().connect([&] {
 			clear();
 			current_apps.clear();
@@ -35,12 +51,40 @@ class launcher {
 				current_apps.push_back(applist.apps[idx]);
 			}
 		});
+		searchbar->signal_key_press_event().connect([&](GdkEventKey *evt) {
+			if (evt->keyval == GDK_KEY_Tab || evt->keyval == GDK_KEY_KP_Tab ||
+			    evt->keyval == GDK_KEY_ISO_Left_Tab) {
+				return true;
+			} else if (evt->keyval == GDK_KEY_Up || evt->keyval == GDK_KEY_KP_Up) {
+				select_row_delta(resultbox, -1);
+				return true;
+			} else if (evt->keyval == GDK_KEY_Down || evt->keyval == GDK_KEY_KP_Down) {
+				select_row_delta(resultbox, 1);
+				return true;
+			}
+		});
+
 		resultbox->signal_row_activated().connect([&](auto &row) {
 			std::cerr << "launching " << current_apps[row->get_index()]->get_name() << std::endl;
 			std::vector<Glib::RefPtr<Gio::File>> files;
 			current_apps[row->get_index()]->launch(files);
 			window->hide();
 		});
+
+		window->signal_key_release_event().connect([&](GdkEventKey *evt) {
+			if (evt->keyval == GDK_KEY_Escape) {
+				window->hide();
+				return true;
+			} else if (evt->keyval == GDK_KEY_Return || evt->keyval == GDK_KEY_KP_Enter) {
+				auto *row = resultbox->get_selected_row();
+				if (row != nullptr) {
+					row->activate();
+					return true;
+				}
+			}
+			return false;
+		});
+
 		topl->reference();
 		applist.refresh();
 	}
@@ -136,6 +180,7 @@ int main(int argc, char *argv[]) {
 		launcher.searchbar->grab_focus();
 	});
 	app->add_action(reveal);
+
 	app->hold();
 	return app->run();
 }
