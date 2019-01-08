@@ -1,5 +1,5 @@
 [technology/unrelenting/numbernine/panel/default]
-widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.quicklaunch', 'vim-launch')]
+widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.clock', 'clock')]
 
 [technology/unrelenting/numbernine/panel/default/launcher]
 icon-name='system-search'
@@ -14,6 +14,5 @@ command=['/usr/local/bin/gnome-terminal']
 [technology/unrelenting/numbernine/panel/default/sep-1]
 expand=true
 
-[technology/unrelenting/numbernine/panel/default/vim-launch]
-icon-name='text-editor'
-command=['/home/greg/.local/bin/nvim-gtk']
+[technology/unrelenting/numbernine/panel/default/clock]
+format='%a %b %d, %R'

@@ -7,6 +7,7 @@ panel_srcs = files(
 	'widgets/quicklaunch.cpp',
 	'widgets/remoteaction.cpp',
 	'widgets/separator.cpp',
+	'widgets/clock.cpp',
 )
 
 panel_hdrs = files(
@@ -16,6 +17,7 @@ panel_hdrs = files(
 	'widgets/quicklaunch.hpp',
 	'widgets/remoteaction.hpp',
 	'widgets/separator.hpp',
+	'widgets/clock.hpp',
 )
 
 panel = executable('n9-panel',

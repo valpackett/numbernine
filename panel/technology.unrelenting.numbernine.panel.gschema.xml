@@ -44,4 +44,11 @@
 		</key>
 	</schema>
 
+	<schema id="technology.unrelenting.numbernine.panel.widgets.clock">
+		<key name="format" type="s">
+			<default>'%a %b %d, %R'</default>
+			<summary>Format string for the date and time</summary>
+		</key>
+	</schema>
+
 </schemalist>
