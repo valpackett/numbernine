@@ -34,6 +34,7 @@ class launcher {
 	Gtk::ListBox *resultbox = nullptr;
 	Gtk::SearchEntry *searchbar = nullptr;
 	std::shared_ptr<Gtk::Window> window;
+	std::optional<sigc::connection> update_timer;
 
 	launcher(std::shared_ptr<Gtk::Window> w) : window(std::move(std::move(w))) {
 		Glib::RefPtr<Gtk::Builder> builder =
@@ -44,13 +45,22 @@ class launcher {
 		clear();
 
 		searchbar->signal_changed().connect([&] {
-			clear();
-			current_apps.clear();
-			for (auto idx : applist.fuzzy_search(searchbar->get_text())) {
-				add_row_for_app(applist.apps[idx]);
-				current_apps.push_back(applist.apps[idx]);
+			if (update_timer.has_value()) {
+				update_timer->disconnect();
 			}
+			update_timer = Glib::signal_timeout().connect(
+			    [&] {
+				    clear();
+				    current_apps.clear();
+				    for (auto idx : applist.fuzzy_search(searchbar->get_text())) {
+					    add_row_for_app(applist.apps[idx]);
+					    current_apps.push_back(applist.apps[idx]);
+				    }
+				    return false;
+			    },
+			    80);
 		});
+
 		searchbar->signal_key_press_event().connect([&](GdkEventKey *evt) {
 			if (evt->keyval == GDK_KEY_Tab || evt->keyval == GDK_KEY_KP_Tab ||
 			    evt->keyval == GDK_KEY_ISO_Left_Tab) {
@@ -77,6 +87,9 @@ class launcher {
 				return true;
 			} else if (evt->keyval == GDK_KEY_Return || evt->keyval == GDK_KEY_KP_Enter) {
 				auto *row = resultbox->get_selected_row();
+				if (row == nullptr) {
+					row = resultbox->get_row_at_index(0);
+				}
 				if (row != nullptr) {
 					row->activate();
 					return true;
@@ -113,14 +126,6 @@ class launcher {
 		title->set_text(app->get_name());
 		subtitle->set_text(app->get_description());
 		icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
-
-		// not faster
-#if 0
-		icon->get_parent()->remove(*icon);
-		auto *aicon = granite_async_image_construct_from_gicon_async(granite_async_image_get_type(), g_app_info_get_icon(G_APP_INFO(app->gobj())), 48, true, true);
-		gtk_widget_show(GTK_WIDGET(aicon));
-		gtk_grid_attach(grid->gobj(), GTK_WIDGET(aicon), 0, 0, 1, 2);
-#endif
 
 		resultbox->insert(*grid, -1);
 		grid->reference();

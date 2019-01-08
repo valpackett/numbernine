@@ -16,6 +16,9 @@ class app_list {
 		size_t i = 0;
 		for (auto it = all.begin(); it != all.end(); it++) {
 			auto app = Glib::RefPtr<Gio::DesktopAppInfo>::cast_static(*it);
+			if (!app->should_show()) {
+				continue;
+			}
 			apps.push_back(app);
 			auto cat_list = app->get_categories();
 			auto start = cat_list.begin();
