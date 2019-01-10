@@ -14,41 +14,63 @@ Gtk::Box *box;
 
 class notification {
 	sigc::signal<void, guint32, guint32> *closed_signal = nullptr;
-	Gtk::Grid *grid = nullptr;
+	sigc::signal<void, guint32, Glib::ustring> *invoked_signal = nullptr;
+	Gtk::EventBox *topl = nullptr;
 	bool dead = false;
 	guint32 id;
 
  public:
 	notification(guint32 id_, int position, int urgency, const Glib::ustring &title,
 	             const Glib::ustring &body, const Glib::ustring &icon_name,
-	             sigc::signal<void, guint32, guint32> *sig)
-	    : id(id_), closed_signal(sig) {
+	             const std::vector<Glib::ustring> &actions,
+	             sigc::signal<void, guint32, guint32> *closed_,
+	             sigc::signal<void, guint32, Glib::ustring> *invoked_)
+	    : id(id_), closed_signal(closed_), invoked_signal(invoked_) {
 		Glib::RefPtr<Gtk::Builder> builder =
 		    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
 
-		builder->get_widget<Gtk::Grid>("toplevel", grid);
-		grid->reference();
-		box->add(*grid);
-		box->reorder_child(*grid, position);
+		builder->get_widget("toplevel", topl);
+		topl->reference();
+		box->add(*topl);
+		box->reorder_child(*topl, position);
 
 		Gtk::Label *l_title = nullptr;
-		builder->get_widget<Gtk::Label>("title", l_title);
+		builder->get_widget("title", l_title);
 		l_title->set_text(title);
 
 		Gtk::Label *l_body = nullptr;
-		builder->get_widget<Gtk::Label>("body", l_body);
+		builder->get_widget("body", l_body);
 		l_body->set_markup(body);
 
 		Gtk::Image *l_icon = nullptr;
-		builder->get_widget<Gtk::Image>("icon", l_icon);
+		builder->get_widget("icon", l_icon);
 		l_icon->set_from_icon_name(icon_name, Gtk::ICON_SIZE_DIALOG);
 
 		Gtk::Button *close = nullptr;
-		builder->get_widget<Gtk::Button>("close", close);
+		builder->get_widget("close", close);
 		close->signal_clicked().connect([this] { die(2); });
 
+		Gtk::ButtonBox *btns = nullptr;
+		builder->get_widget("btns", btns);
+		for (auto it = actions.begin(); it != actions.end() && it + 1 != actions.end(); it += 2) {
+			auto *action_btn = new Gtk::Button;
+			action_btn->set_label(*(it + 1));
+			auto action = *it;
+			action_btn->signal_clicked().connect([=] { invoked_signal->emit(id, action); });
+			btns->add(*action_btn);
+		}
+
+		Gtk::Grid *grid = nullptr;
+		builder->get_widget("grid", grid);
 		grid->get_style_context()->add_class("n9-nd-urgency-" + std::to_string(urgency));
-		grid->show_all();
+
+		topl->set_events(Gdk::BUTTON_PRESS_MASK);
+		topl->signal_button_press_event().connect([this](GdkEventButton *evt) {
+			invoked_signal->emit(id, "default");
+			die(4);
+			return true;
+		});
+		topl->show_all();
 	}
 
 	guint32 get_id() { return id; }
@@ -58,7 +80,7 @@ class notification {
 		if (dead) {
 			return -1;
 		}
-		return box->child_property_position(*grid);
+		return box->child_property_position(*topl);
 	}
 
 	void die(guint32 reason) {
@@ -66,8 +88,8 @@ class notification {
 			return;
 		}
 		dead = true;
-		box->remove(*grid);
-		delete grid;
+		box->remove(*topl);
+		delete topl;
 		// let the window recompute the height to fit the box
 		window->set_size_request(480, 0);
 		window->resize(480, 1);
@@ -132,8 +154,9 @@ class bus_impl : public org::freedesktop::Notifications {
 			cleanup_dead();
 			int pos = position_of_id(replaces_id);
 			remove_by_id(replaces_id, 4);
-			notifications.push_back(std::make_unique<notification>(id, pos, urgency, summary, body,
-			                                                       app_icon, &NotificationClosed_signal));
+			notifications.push_back(
+			    std::make_unique<notification>(id, pos, urgency, summary, body, app_icon, actions,
+			                                   &NotificationClosed_signal, &ActionInvoked_signal));
 			if (timeout != 0 && urgency != 2) {
 				Glib::signal_timeout().connect_once([=] { remove_by_id(id, 1); },
 				                                    timeout == -1 ? 2000 : timeout);
@@ -149,7 +172,9 @@ class bus_impl : public org::freedesktop::Notifications {
 		msg.ret();
 	}
 
-	void GetCapabilities(NotificationsMessageHelper msg) override { msg.ret({"body"}); }
+	void GetCapabilities(NotificationsMessageHelper msg) override {
+		msg.ret({"actions", "body", "body-markup", "body-hyperlinks"});
+	}
 
 	void GetServerInformation(NotificationsMessageHelper msg) override {
 		msg.ret("NumberNine", "unrelenting.technology", "0.0", "1.2");
