@@ -1,6 +1,10 @@
-.notification {
+.n9-nd-notification {
 	background: alpha(@theme_bg_color, 0.94);
 	border-radius: 6px;
+}
+
+.n9-nd-urgency-2 {
+	border: 1px solid alpha(@error_color, 0.94);
 }
 
 button {

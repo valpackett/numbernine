@@ -13,14 +13,16 @@ std::shared_ptr<Gtk::Window> window;
 Gtk::Box *box;
 
 class notification {
+	sigc::signal<void, guint32, guint32> *closed_signal = nullptr;
 	Gtk::Grid *grid = nullptr;
 	bool dead = false;
 	guint32 id;
 
  public:
-	notification(guint32 id_, int position, const Glib::ustring &title, const Glib::ustring &body,
-	             const Glib::ustring &icon_name)
-	    : id(id_) {
+	notification(guint32 id_, int position, int urgency, const Glib::ustring &title,
+	             const Glib::ustring &body, const Glib::ustring &icon_name,
+	             sigc::signal<void, guint32, guint32> *sig)
+	    : id(id_), closed_signal(sig) {
 		Glib::RefPtr<Gtk::Builder> builder =
 		    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
 
@@ -35,7 +37,7 @@ class notification {
 
 		Gtk::Label *l_body = nullptr;
 		builder->get_widget<Gtk::Label>("body", l_body);
-		l_body->set_text(body);
+		l_body->set_markup(body);
 
 		Gtk::Image *l_icon = nullptr;
 		builder->get_widget<Gtk::Image>("icon", l_icon);
@@ -43,8 +45,9 @@ class notification {
 
 		Gtk::Button *close = nullptr;
 		builder->get_widget<Gtk::Button>("close", close);
-		close->signal_clicked().connect([this] { die(); });
+		close->signal_clicked().connect([this] { die(2); });
 
+		grid->get_style_context()->add_class("n9-nd-urgency-" + std::to_string(urgency));
 		grid->show_all();
 	}
 
@@ -58,7 +61,7 @@ class notification {
 		return box->child_property_position(*grid);
 	}
 
-	void die() {
+	void die(guint32 reason) {
 		if (dead) {
 			return;
 		}
@@ -68,11 +71,12 @@ class notification {
 		// let the window recompute the height to fit the box
 		window->set_size_request(480, 0);
 		window->resize(480, 1);
+		closed_signal->emit(id, reason);
 	}
 
 	~notification() {
 		if (!dead) {
-			die();
+			die(4);
 		}
 	}
 
@@ -92,9 +96,10 @@ void cleanup_dead() {
 	}
 }
 
-void remove_by_id(guint32 id) {
+void remove_by_id(guint32 id, guint32 reason) {
 	for (auto it = notifications.begin(); it != notifications.end();) {
 		if ((*it)->get_id() == id) {
+			(*it)->die(reason);
 			it = notifications.erase(it);
 		} else {
 			it++;
@@ -119,13 +124,19 @@ class bus_impl : public org::freedesktop::Notifications {
 	            const std::map<Glib::ustring, Glib::VariantBase> &hints, gint32 timeout,
 	            NotificationsMessageHelper msg) override {
 		guint32 id = next_id;
+		int urgency =
+		    hints.count("urgency") != 0
+		        ? Glib::Variant<guint8>::cast_dynamic<Glib::Variant<guint8>>(hints.at("urgency")).get()
+		        : 0;
 		Glib::signal_idle().connect([=] {
 			cleanup_dead();
 			int pos = position_of_id(replaces_id);
-			remove_by_id(replaces_id);
-			notifications.push_back(std::make_unique<notification>(id, pos, summary, body, app_icon));
-			if (timeout > 0) {
-				Glib::signal_timeout().connect_once([=] { remove_by_id(id); }, timeout);
+			remove_by_id(replaces_id, 4);
+			notifications.push_back(std::make_unique<notification>(id, pos, urgency, summary, body,
+			                                                       app_icon, &NotificationClosed_signal));
+			if (timeout != 0 && urgency != 2) {
+				Glib::signal_timeout().connect_once([=] { remove_by_id(id, 1); },
+				                                    timeout == -1 ? 2000 : timeout);
 			}
 			return false;
 		});
@@ -134,7 +145,7 @@ class bus_impl : public org::freedesktop::Notifications {
 	}
 
 	void CloseNotification(guint32 id, NotificationsMessageHelper msg) override {
-		remove_by_id(id);
+		remove_by_id(id, 3);
 		msg.ret();
 	}
 

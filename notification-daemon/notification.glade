@@ -98,7 +98,7 @@ You have -0 new messages</property>
       </packing>
     </child>
     <style>
-      <class name="notification"/>
+      <class name="n9-nd-notification"/>
     </style>
   </object>
 </interface>
