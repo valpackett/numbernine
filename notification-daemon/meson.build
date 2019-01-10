@@ -12,6 +12,7 @@ notification_daemon = executable('n9-notification-daemon',
 	dependencies: [gtk, gtkmm],
 	link_with: [lsh],
 	include_directories: [include_directories('../')],
-	install: true)
+	install: true,
+	install_dir: get_option('libexecdir'))
 
 run_target('run-nd', command: [ notification_daemon ])

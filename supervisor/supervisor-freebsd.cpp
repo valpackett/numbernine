@@ -8,18 +8,23 @@
 #include <vector>
 #include "supervisor.hpp"
 
+namespace fs = std::filesystem;
+
 /* FreeBSD has process descriptors we can poll on. We don't need no SIGCHLD! */
 
 struct process::process_data {
 	pid_t pid{};
 	int pd{};
-	std::string cmd;
+	std::string path;
+	std::vector<const char *> argv;
 	std::function<int()> make_fd;
 };
 
-process::process(const std::string cmd, const std::function<int()> make_fd)
+process::process(const fs::path path, const std::vector<const char *> argv,
+                 const std::function<int()> make_fd)
     : data(std::make_unique<process::process_data>()) {
-	data->cmd = cmd;
+	data->path = path;
+	data->argv = argv;
 	data->make_fd = make_fd;
 }
 
@@ -32,7 +37,7 @@ void process::spawn() {
 	}
 	if (data->pid == 0) {
 		setenv("WAYLAND_SOCKET", std::to_string(wlfd).c_str(), 1);
-		if (execlp(data->cmd.c_str(), data->cmd.c_str()) == -1) {
+		if (execv(data->path.c_str(), const_cast<char *const *>(&data->argv[0])) == -1) {
 			abort();
 		}
 	} else {
@@ -49,12 +54,13 @@ struct supervisor::supervisor_data {
 
 supervisor::supervisor() : data(std::make_unique<supervisor::supervisor_data>()) {}
 
-void supervisor::add(const std::string cmd, const std::function<int()> prepare) {
-	data->procs.push_back(std::make_unique<process>(cmd, prepare));
+void supervisor::add(const fs::path path, const std::vector<const char *> argv,
+                     const std::function<int()> prepare) {
+	data->procs.push_back(std::make_unique<process>(path, argv, prepare));
 }
 
 void supervisor::run() {
-	for (auto& proc : data->procs) {
+	for (auto &proc : data->procs) {
 		proc->spawn();
 		data->pfds.push_back({.fd = proc->data->pd, .events = POLLHUP, .revents = 0});
 	}
@@ -66,7 +72,7 @@ void supervisor::run() {
 			for (auto it = data->pfds.begin(); it != data->pfds.end();) {
 				if ((it->revents & POLLHUP) != 0) {
 					auto proc = std::find_if(data->procs.begin(), data->procs.end(),
-					                         [&](auto& p) { return p->data->pd == it->fd; });
+					                         [&](auto &p) { return p->data->pd == it->fd; });
 					if (proc == data->procs.end()) {
 						std::cerr << "process with pd " << it->fd
 						          << " died, but we don't know who that is o_0 removing" << std::endl;
@@ -74,9 +80,9 @@ void supervisor::run() {
 						continue;
 					}
 					int status = 0;
-					auto& pr = *proc;
+					auto &pr = *proc;
 					waitpid(pr->data->pid, &status, 0);
-					std::cerr << "process '" << pr->data->cmd << "' with pd " << it->fd
+					std::cerr << "process '" << pr->data->path << "' with pd " << it->fd
 					          << " died with status " << status << ", respawning in a second" << std::endl;
 					sleep(1);
 					pr->spawn();

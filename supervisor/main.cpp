@@ -1,9 +1,13 @@
 #include <wayland-client.h>
+#include <filesystem>
 #include <iostream>
 #include <unordered_map>
 #include <vector>
+#include "n9config.h"
 #include "supervisor.hpp"
 #include "wldip-capabilities-client-protocol.h"
+
+namespace fs = std::filesystem;
 
 static struct wl_display *display = nullptr;
 static struct wldip_capabilities *caps = nullptr;
@@ -48,6 +52,21 @@ int connect_with_caps(std::vector<std::string> grants) {
 	return fd;
 }
 
+fs::path find_binary(fs::path name) {
+	fs::path libexec(N9_LIBEXEC_DIR);
+	if (getenv("N9_LIBEXEC_DIR") != nullptr) {
+		fs::path from_env(getenv("N9_LIBEXEC_DIR"));
+		if (fs::is_directory(from_env)) {
+			libexec = from_env;
+		}
+	}
+	if (fs::is_regular_file(libexec / name)) {
+		return libexec / name;
+	}
+	std::cerr << "could not find " << name << std::endl;
+	return "";
+}
+
 int main(int argc, char *argv[]) {
 	display = wl_display_connect(nullptr);
 	if (display == nullptr) {
@@ -61,9 +80,13 @@ int main(int argc, char *argv[]) {
 	wl_display_roundtrip(display);
 
 	supervisor sv;
-	sv.add("n9-wallpaper", []() { return connect_with_caps({"layer-shell"}); });
-	sv.add("n9-panel", []() { return connect_with_caps({"layer-shell"}); });
-	sv.add("n9-launcher", []() { return connect_with_caps({"layer-shell"}); });
-	sv.add("n9-notification-daemon", []() { return connect_with_caps({"layer-shell"}); });
+	sv.add(find_binary("n9-wallpaper"), {"n9-wallpaper", nullptr},
+	       []() { return connect_with_caps({"layer-shell"}); });
+	sv.add(find_binary("n9-panel"), {"n9-panel", nullptr},
+	       []() { return connect_with_caps({"layer-shell"}); });
+	sv.add(find_binary("n9-launcher"), {"n9-launcher", nullptr},
+	       []() { return connect_with_caps({"layer-shell"}); });
+	sv.add(find_binary("n9-notification-daemon"), {"n9-notification-daemon", nullptr},
+	       []() { return connect_with_caps({"layer-shell"}); });
 	sv.run();
 }

@@ -20,7 +20,8 @@ launcher = executable('n9-launcher',
 	link_with: [lsh],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
-	install: true)
+	install: true,
+	install_dir: get_option('libexecdir'))
 
 run_target('run-launcher', command: [
 	'env', launcher ])

@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 #include <functional>
 #include <memory>
 
@@ -11,7 +12,8 @@ class process {
 	std::unique_ptr<process_data> data;
 
  public:
-	process(const std::string cmd, const std::function<int()> make_fd);
+	process(const std::filesystem::path path, const std::vector<const char *> argv,
+	        const std::function<int()> make_fd);
 	void spawn();
 	friend class supervisor;
 	~process();
@@ -23,7 +25,8 @@ class supervisor {
 
  public:
 	supervisor();
-	void add(const std::string cmd, const std::function<int()> make_fd);
+	void add(const std::filesystem::path path, const std::vector<const char *> argv,
+	         const std::function<int()> make_fd);
 	void run();
 	~supervisor();
 };

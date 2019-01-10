@@ -1,12 +1,25 @@
 project('numbernine', ['c', 'cpp'], version: '0.0.1', license: 'Unlicense',
 	default_options: ['cpp_std=c++17', 'warning_level=2'])
 
+cxx = meson.get_compiler('cpp')
+
+if cxx.get_id() == 'clang'
+	cxxfs = cxx.find_library('c++fs', required: false)
+elif cxx.get_id() == 'gcc'
+	cxxfs = cxx.find_library('stdc++fs', required: false)
+endif
+
 gtk = dependency('gtk+-wayland-3.0', version: '>=3.22.0')
 gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
 cairomm = dependency('cairomm-1.0')
 wayland_client = dependency('wayland-client')
 
 gnome = import('gnome')
+
+conf_data = configuration_data()
+conf_data.set_quoted('N9_LIBEXEC_DIR', get_option('prefix') / get_option('libexecdir'))
+configure_file(output: 'n9config.h', configuration: conf_data)
+conf_dir = include_directories('.')
 
 subdir('protocols')
 subdir('dbus')
