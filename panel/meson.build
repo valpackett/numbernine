@@ -1,6 +1,11 @@
 panel_schemas = gnome.compile_schemas(build_by_default: true,
 	depend_files: files('technology.unrelenting.numbernine.panel.gschema.xml'))
 
+panel_res = gnome.compile_resources(
+	'panel_res', 'r.gresource.xml',
+	source_dir: '.',
+	c_name: 'as')
+
 panel_srcs = files(
 	'main.cpp',
 	'panel.cpp',
@@ -21,7 +26,7 @@ panel_hdrs = files(
 )
 
 panel = executable('n9-panel',
-	panel_srcs, panel_schemas,
+	panel_srcs, panel_schemas, panel_res,
 	layer_shell_client_header,
 	gtk_actions_code,
 	dependencies: [gtk, gtkmm],

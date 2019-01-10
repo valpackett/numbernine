@@ -18,6 +18,11 @@ klock::klock(const std::string &settings_key) {
 
 	fmt = settings->get_string("format");
 	tick();
+
+	auto css = lbl.get_style_context();
+	css->add_class("n9-panel-widget");
+	css->add_class("n9-panel-clock");
+
 	lbl.show_all();
 }
 

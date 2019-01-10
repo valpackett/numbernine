@@ -10,8 +10,17 @@ panel::panel(const std::string& key, lsh::manager& lsh_mgr, GdkMonitor* monitor)
 	layer_surface.emplace(lsh_mgr, window, monitor, lsh::layer::top);
 	layer_surface->set_anchor(lsh::anchor::left | lsh::anchor::bottom | lsh::anchor::right);
 	layer_surface->set_size(640, 24);
+
 	recreate_widgets();
 	window->add(widgetbox);
+
+	auto css_prov = Gtk::CssProvider::create();
+	css_prov->load_from_resource(RESPREFIX "style.css");
+	auto css = window->get_style_context();
+	css->add_provider_for_screen(Gdk::Screen::get_default(), css_prov,
+	                             GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+	css->add_class("n9-panel");
+
 	window->show_all();
 }
 

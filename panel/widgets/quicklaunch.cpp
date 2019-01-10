@@ -15,5 +15,9 @@ quicklaunch::quicklaunch(const std::string &settings_key) {
 		Glib::spawn_async(Glib::getenv("HOME"), argv);
 	});
 
+	auto css = termbtn.get_style_context();
+	css->add_class("n9-panel-widget");
+	css->add_class("n9-panel-quicklaunch");
+
 	termbtn.show_all();
 }

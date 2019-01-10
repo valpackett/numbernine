@@ -9,5 +9,9 @@ separator::separator(const std::string &settings_key) {
 
 	settings->bind("expand", sep.property_expand());
 
+	auto css = sep.get_style_context();
+	css->add_class("n9-panel-widget");
+	css->add_class("n9-panel-separator");
+
 	sep.show_all();
 }
