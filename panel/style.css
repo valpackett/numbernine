@@ -2,7 +2,7 @@
 	background: alpha(@theme_bg_color, 0.94);
 }
 
-.n9-panel-widget:not(button):first {
+.n9-panel-widget:not(button):first-child {
 	margin-left: 8px;
 }
 
