@@ -10,6 +10,7 @@ panel::panel(const std::string& key, lsh::manager& lsh_mgr, GdkMonitor* monitor)
 	layer_surface.emplace(lsh_mgr, window, monitor, lsh::layer::top);
 	layer_surface->set_anchor(lsh::anchor::left | lsh::anchor::bottom | lsh::anchor::right);
 	layer_surface->set_size(640, 24);
+	layer_surface->set_exclusive_zone(24);
 
 	recreate_widgets();
 	window->add(widgetbox);

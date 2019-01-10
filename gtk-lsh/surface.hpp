@@ -48,6 +48,7 @@ class surface {
 	void set_on_closed(std::function<void(std::shared_ptr<Gtk::Window>)> cb) { on_closed = cb; }
 	void set_anchor(anchor);
 	void set_size(int32_t, int32_t);
+	void set_exclusive_zone(int32_t);
 	void set_margin(int32_t top, int32_t right, int32_t bottom, int32_t left);
 	void set_keyboard_interactivity(bool);
 
