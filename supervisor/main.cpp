@@ -64,5 +64,6 @@ int main(int argc, char *argv[]) {
 	sv.add("n9-wallpaper", []() { return connect_with_caps({"layer-shell"}); });
 	sv.add("n9-panel", []() { return connect_with_caps({"layer-shell"}); });
 	sv.add("n9-launcher", []() { return connect_with_caps({"layer-shell"}); });
+	sv.add("n9-notification-daemon", []() { return connect_with_caps({"layer-shell"}); });
 	sv.run();
 }
