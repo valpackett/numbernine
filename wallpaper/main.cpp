@@ -2,13 +2,14 @@
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/multimonitor.hpp"
 #include "gtk-lsh/surface.hpp"
+#include "wpimage.hpp"
 
 class wallpaper {
 	Glib::RefPtr<Gio::Settings> settings;
 
  public:
 	std::shared_ptr<Gtk::Window> window;
-	Gtk::Image image;
+	wpimage image;
 	std::optional<lsh::surface> layer_surface;
 
 	wallpaper(lsh::manager& lsh_mgr, GdkMonitor* monitor) {
@@ -21,7 +22,7 @@ class wallpaper {
 		layer_surface->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
 		                          lsh::anchor::right);
 		layer_surface->set_size(640, 480);
-		settings->bind("picture-path", &image, "file");
+		settings->bind("picture-path", &image, "path");
 		window->add(image);
 		window->show_all();
 	}

@@ -31,7 +31,7 @@ subdir('launcher')
 subdir('notification-daemon')
 
 all_srcs = [ lsh_srcs, supervisor_srcs_all, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs ]
-all_hdrs = [ lsh_hdrs, supervisor_hdrs, launcher_hdrs, panel_hdrs ]
+all_hdrs = [ lsh_hdrs, supervisor_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
 if prog_clang_format.found()

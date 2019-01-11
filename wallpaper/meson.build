@@ -3,12 +3,17 @@ wallpaper_schemas = gnome.compile_schemas(build_by_default: true,
 
 wallpaper_srcs = files(
 	'main.cpp',
+	'wpimage.cpp',
+)
+
+wallpaper_hdrs = files(
+	'wpimage.hpp',
 )
 
 wallpaper = executable('n9-wallpaper',
 	wallpaper_srcs,
 	layer_shell_client_header, wallpaper_schemas,
-	dependencies: [gtk, gtkmm],
+	dependencies: [gtk, gtkmm, cairomm],
 	link_with: [lsh],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
