@@ -5,12 +5,12 @@ panel::panel(const std::string& key, lsh::manager& lsh_mgr, GdkMonitor* monitor)
     : settings_key(key) {
 	settings = Gio::Settings::create(GSNAMEPREFIX "panel", GSPATHPREFIX + key + "/");
 	window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
-	window->set_default_size(200, 24);
+	window->set_default_size(200, 34);
 	window->set_decorated(false);
 	layer_surface.emplace(lsh_mgr, window, monitor, lsh::layer::top);
 	layer_surface->set_anchor(lsh::anchor::left | lsh::anchor::bottom | lsh::anchor::right);
-	layer_surface->set_size(640, 24);
-	layer_surface->set_exclusive_zone(24);
+	layer_surface->set_size(640, 34);
+	layer_surface->set_exclusive_zone(34);
 
 	recreate_widgets();
 	window->add(widgetbox);

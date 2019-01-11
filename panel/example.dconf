@@ -1,11 +1,15 @@
 [technology/unrelenting/numbernine/panel/default]
-widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.clock', 'clock')]
+widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'gala-launch'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.clock', 'clock')]
 
 [technology/unrelenting/numbernine/panel/default/launcher]
 icon-name='system-search'
 bus-name='technology.unrelenting.numbernine.launcher'
 bus-path='/technology/unrelenting/numbernine/launcher'
 action='reveal'
+
+[technology/unrelenting/numbernine/panel/default/gala-launch]
+icon-name='technology.unrelenting.galacritty'
+command=['/home/greg/src/github.com/myfreeweb/galacritty/target/debug/galacritty']
 
 [technology/unrelenting/numbernine/panel/default/term-launch]
 icon-name='utilities-terminal'
