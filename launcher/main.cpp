@@ -203,10 +203,9 @@ int main(int argc, char *argv[]) {
 
 	Glib::RefPtr<Gio::SimpleAction> reveal = Gio::SimpleAction::create("reveal");
 	reveal->signal_activate().connect([&](const Glib::VariantBase &param) {
-		if (!window->is_visible()) {
-			window_lsh = init_lsh(lsh_mgr, window);
-			window->show();
-		}
+		window->hide();
+		window_lsh = init_lsh(lsh_mgr, window);
+		window->show();
 		launcher.searchbar->grab_focus();
 	});
 	app->add_action(reveal);
