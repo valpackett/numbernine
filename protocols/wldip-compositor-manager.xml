@@ -46,10 +46,76 @@
       <arg name="scale" type="fixed" summary="desired scale"/>
     </request>
 
+    <request name="device_set_tap_click">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of tap-to-click (bool)"/>
+    </request>
+
+    <request name="device_set_tap_drag">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of tap-drag (bool)"/>
+    </request>
+
+    <request name="device_set_drag_lock">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of drag-lock (bool)"/>
+    </request>
+
+    <request name="device_set_send_events_mode">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired send events mode (schema: SendEventsMode)"/>
+    </request>
+
+    <request name="device_set_accel_speed">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="fixed" summary="desired acceleration speed"/>
+    </request>
+
+    <request name="device_set_accel_profile">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired acceleration profile (schema: AccelerationProfile)"/>
+    </request>
+
     <request name="device_set_natural_scrolling">
       <arg name="seat_idx" type="uint" summary="index of the seat"/>
       <arg name="device_idx" type="uint" summary="index of the input device"/>
       <arg name="enable" type="uint" summary="desired state of natural scrolling (bool)"/>
+    </request>
+
+    <request name="device_set_left_handed_mode">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of left-handed mode (bool)"/>
+    </request>
+
+    <request name="device_set_click_method">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired click method (schema: ClickMethod)"/>
+    </request>
+
+    <request name="device_set_scroll_method">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired scroll method (schema: ScrollMethod)"/>
+    </request>
+
+    <request name="device_set_middle_emulation">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of middle click emulation mode (bool)"/>
+    </request>
+
+    <request name="device_set_dwt">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of disable-while-typing (bool)"/>
     </request>
 
   </interface>

@@ -30,4 +30,14 @@ static inline bool is_keyboard(const InputDevice *const dev) {
 	                 DeviceCapability_Keyboard) != dev->capabilites()->end();
 };
 
+static inline bool supports_button_areas(const InputDevice *const dev) {
+	return std::find(dev->available_click_methods()->begin(), dev->available_click_methods()->end(),
+	                 ClickMethod_ButtonAreas) != dev->available_click_methods()->end();
+};
+
+static inline bool supports_clickfinger(const InputDevice *const dev) {
+	return std::find(dev->available_click_methods()->begin(), dev->available_click_methods()->end(),
+	                 ClickMethod_ClickFinger) != dev->available_click_methods()->end();
+};
+
 };  // namespace inputdev

@@ -13,10 +13,15 @@
 #define RESPREFIX "/technology/unrelenting/numbernine/settings/"
 
 template <typename T>
-T *get_widget(Glib::RefPtr<Gtk::Builder> &builder, Glib::ustring key) {
+static inline T *get_widget(Glib::RefPtr<Gtk::Builder> &builder, Glib::ustring key) {
 	T *wdg = nullptr;
 	builder->get_widget(key, wdg);
 	return wdg;
+}
+
+template <typename T>
+static inline Glib::RefPtr<T> get_object(Glib::RefPtr<Gtk::Builder> &builder, Glib::ustring key) {
+	return Glib::RefPtr<T>::cast_static(builder->get_object(key));
 }
 
 struct input_device_row {
@@ -44,8 +49,20 @@ struct settings_app {
 		builder->get_widget("stack-main", stack_main);
 		builder->get_widget("list-current-devices", curr_devices);
 
+		settings->bind("mice-accel-speed",
+									 get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
+		settings->bind("touchpads-accel-speed",
+									 get_object<Gtk::Adjustment>(builder, "adj-touchpad-speed")->property_value());
 		settings->bind("touchpads-natural-scrolling",
 		               get_widget<Gtk::Switch>(builder, "toggle-natural-scrolling")->property_active());
+		settings->bind("touchpads-tap-click",
+									 get_widget<Gtk::Switch>(builder, "toggle-tap-click")->property_active());
+		settings->bind("touchpads-click-method",
+									 get_widget<Gtk::ComboBoxText>(builder, "choose-click-method")->property_active_id());
+		settings->bind("touchpads-dwt",
+									 get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
+		settings->bind("touchpads-dwmouse",
+									 get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
 
 		auto css = Gtk::CssProvider::create();
 		css->load_from_resource(RESPREFIX "style.css");
@@ -94,6 +111,21 @@ struct settings_app {
 				std::string desc = fmt::format(_("Vendor ID: {:#06x}, product ID: {:#06x}.\n"),
 				                               device->vendor_id(), device->product_id());
 				if (inputdev::is_pointer(device)) {
+					if (device->disable_while_typing_available()) {
+						desc += _("Supports disable-while-typing.\n");
+					} else {
+						desc += _("Does not support disable-while-typing.\n");
+					}
+					if (device->left_handed_mode()) {
+						desc += _("Supports left-handed mode.\n");
+					} else {
+						desc += _("Does not support left-handed mode.\n");
+					}
+					if (device->middle_emulation_available()) {
+						desc += _("Supports middle click emulation.\n");
+					} else {
+						desc += _("Does not support middle click emulation.\n");
+					}
 					if (inputdev::is_touchpad(device)) {
 						row.icon->set_from_icon_name("input-touchpad-symbolic", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 						desc += fmt::format(_("{:.1f} × {:.1f} mm.\n"), device->mm_width(), device->mm_width());
@@ -105,6 +137,16 @@ struct settings_app {
 							desc += _("Supports natural scrolling.\n");
 						} else {
 							desc += _("Does not support natural scrolling.\n");
+						}
+						if (inputdev::supports_button_areas(device)) {
+							desc += _("Supports button area based clicks.\n");
+						} else {
+							desc += _("Does not support button area based clicks.\n");
+						}
+						if (inputdev::supports_clickfinger(device)) {
+							desc += _("Supports finger count based clicks.\n");
+						} else {
+							desc += _("Does not support finger count based clicks.\n");
 						}
 					} else {
 						row.icon->set_from_icon_name("input-mouse-symbolic", Gtk::ICON_SIZE_LARGE_TOOLBAR);
