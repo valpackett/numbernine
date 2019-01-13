@@ -14,6 +14,9 @@ wl_client_header = generator(prog_scanner,
 capabilities_code = wl_code.process('wldip-capabilities.xml')
 capabilities_client_header = wl_client_header.process('wldip-capabilities.xml')
 
+compositor_management_code = wl_code.process('wldip-compositor-manager.xml')
+compositor_management_client_header = wl_client_header.process('wldip-compositor-manager.xml')
+
 layer_shell_code = wl_code.process('wlr-layer-shell-unstable-v1.xml')
 layer_shell_client_header = wl_client_header.process('wlr-layer-shell-unstable-v1.xml')
 

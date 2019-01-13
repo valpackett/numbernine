@@ -1,2 +1,4 @@
 build/
+subprojects/packagecache
+subprojects/*-*
 *.core

@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<protocol name="wldip_compositor_manager">
+
+  <interface name="wldip_compositor_manager" version="1">
+    <description summary="privileged protocol for managing Weston compositor internals">
+      This protocol allows external privileged applications to get dumps of the important bits
+      of the compositor state (as file descriptors to flatbuffer serializations), both
+      on demand and as notifications for events,
+      and to tell the compositor to change some bits of the state.
+    </description>
+
+    <enum name="topic" bitfield="true">
+      <entry name="surfaces" value="1" summary="notify on surface events"/>
+      <entry name="outputs" value="2" summary="notify on output and head events"/>
+      <entry name="inputdevs" value="4" summary="notify on input device and seat events"/>
+    </enum>
+
+    <request name="subscribe">
+      <description summary="subscribe to updates">
+        Requests the compositor to send update events when there's any event that
+        corresponds to one of the topics selected via the topics bitfield.
+
+        There is no way to unsubscribe currently, as the intended users of the protocol
+        are simple daemons that synchronize the state a settings store like dconf,
+        panels that always need to know current surfaces, etc.
+      </description>
+      <arg name="topics" type="uint" enum="topic"/>
+    </request>
+
+    <request name="get">
+      <description summary="request one update">
+        Requests one update event from the compositor.
+      </description>
+    </request>
+
+    <event name="update">
+      <arg name="state" type="fd" summary="descriptor to a wlst format file"/>
+    </event>
+
+    <request name="desktop_surface_activate">
+      <arg name="surface_uid" type="uint" summary="uid of surface"/>
+    </request>
+
+    <request name="output_set_scale">
+      <arg name="output_id" type="uint" summary="id of the output"/>
+      <arg name="scale" type="fixed" summary="desired scale"/>
+    </request>
+
+    <request name="device_set_natural_scrolling">
+      <arg name="seat_idx" type="uint" summary="index of the seat"/>
+      <arg name="device_idx" type="uint" summary="index of the input device"/>
+      <arg name="enable" type="uint" summary="desired state of natural scrolling (bool)"/>
+    </request>
+
+  </interface>
+
+</protocol>

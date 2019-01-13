@@ -1,0 +1,9 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+	<schema id="technology.unrelenting.numbernine.settings" path="/technology/unrelenting/numbernine/settings/">
+		<key name="touchpads-natural-scrolling" type="b">
+			<default>true</default>
+			<summary>Use natural scrolling on touchpads</summary>
+		</key>
+	</schema>
+</schemalist>

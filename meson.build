@@ -13,24 +13,31 @@ gtk = dependency('gtk+-wayland-3.0', version: '>=3.22.0')
 gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
 cairomm = dependency('cairomm-1.0')
 wayland_client = dependency('wayland-client')
+flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
+fmtlib = subproject('fmt').get_variable('fmt_dep')
 
 gnome = import('gnome')
+i18n = import('i18n')
 
 conf_data = configuration_data()
 conf_data.set_quoted('N9_LIBEXEC_DIR', get_option('prefix') / get_option('libexecdir'))
+conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 configure_file(output: 'n9config.h', configuration: conf_data)
 conf_dir = include_directories('.')
 
 subdir('protocols')
+subdir('schemas')
 subdir('dbus')
+
 subdir('supervisor')
 subdir('gtk-lsh')
 subdir('wallpaper')
 subdir('panel')
 subdir('launcher')
 subdir('notification-daemon')
+subdir('settings')
 
-all_srcs = [ lsh_srcs, supervisor_srcs_all, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs ]
+all_srcs = [ lsh_srcs, supervisor_srcs_all, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, settings_app_srcs ]
 all_hdrs = [ lsh_hdrs, supervisor_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
