@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Management_generated.h"
 #include "fmt/format.h"
+#include "util.hpp"
 #include "wldip-compositor-manager-client-protocol.h"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/settings/"
@@ -92,12 +93,8 @@ struct settings_app {
 				row.name->set_text(device->name()->str());
 				std::string desc = fmt::format(_("Vendor ID: {:#06x}, product ID: {:#06x}.\n"),
 				                               device->vendor_id(), device->product_id());
-				if (std::find(device->capabilites()->begin(), device->capabilites()->end(),
-				              DeviceCapability_Pointer) != device->capabilites()->end()) {
-					auto has_gestures =
-					    std::find(device->capabilites()->begin(), device->capabilites()->end(),
-					              DeviceCapability_Gesture) != device->capabilites()->end();
-					if (has_gestures || device->tap_finger_count() > 0) {
+				if (inputdev::is_pointer(device)) {
+					if (inputdev::is_touchpad(device)) {
 						row.icon->set_from_icon_name("input-touchpad-symbolic", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 						desc += fmt::format(_("{:.1f} × {:.1f} mm.\n"), device->mm_width(), device->mm_width());
 						desc += fmt::format(
@@ -112,14 +109,12 @@ struct settings_app {
 					} else {
 						row.icon->set_from_icon_name("input-mouse-symbolic", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 					}
-				} else if (std::find(device->capabilites()->begin(), device->capabilites()->end(),
-				                     DeviceCapability_Touch) != device->capabilites()->end()) {
+				} else if (inputdev::is_touchscreen(device)) {
 					row.icon->set_from_icon_name("video-display-symbolic", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 					desc += fmt::format(g_dngettext(nullptr, "Supports single-finger touch.\n",
 					                                "Supports {}-finger touch.\n", device->touch_count()),
 					                    device->touch_count());
-				} else if (std::find(device->capabilites()->begin(), device->capabilites()->end(),
-				                     DeviceCapability_Keyboard) != device->capabilites()->end()) {
+				} else if (inputdev::is_keyboard(device)) {
 					row.icon->set_from_icon_name("input-keyboard-symbolic", Gtk::ICON_SIZE_LARGE_TOOLBAR);
 				}
 				row.desc->set_text(desc);
@@ -150,6 +145,8 @@ static void on_update(void *data, struct wldip_compositor_manager *shooter, int 
 	auto *app = reinterpret_cast<settings_app *>(data);
 	Glib::signal_idle().connect([=] {
 		app->on_new_compositor_state(state);
+		munmap(fbuf, recv_stat.st_size);
+		close(recv_fd);
 		return false;
 	});
 }

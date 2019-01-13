@@ -80,6 +80,8 @@ int main(int argc, char *argv[]) {
 	wl_display_roundtrip(display);
 
 	supervisor sv;
+	sv.add(find_binary("n9-settings-daemon"), {"n9-settings-daemon", nullptr},
+	       []() { return connect_with_caps({}); });
 	sv.add(find_binary("n9-wallpaper"), {"n9-wallpaper", nullptr},
 	       []() { return connect_with_caps({"layer-shell"}); });
 	sv.add(find_binary("n9-panel"), {"n9-panel", nullptr},
