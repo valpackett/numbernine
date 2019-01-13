@@ -828,6 +828,7 @@
     <widgets>
       <widget name="list-touchpad-settings"/>
       <widget name="list-current-devices"/>
+      <widget name="list-mouse-settings"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="size-sidebar">

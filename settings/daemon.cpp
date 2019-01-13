@@ -56,44 +56,46 @@ struct settings_daemon {
 		for (const auto seat : *state->data()->seats()) {
 			uint32_t dev_idx = 0;
 			for (const auto device : *seat->input_devices()) {
-
 				if (inputdev::is_touchpad(device)) {
 					double should_be_speed = settings->get_double("touchpads-accel-speed");
-					if (fabs(device->acceleration_speed() - should_be_speed) > 0.0001) {
+					if (fabs(device->acceleration_speed() - should_be_speed) > 0.01) {
 						wldip_compositor_manager_device_set_accel_speed(cmgr, seat_idx, dev_idx,
-								wl_fixed_from_double(should_be_speed));
+						                                                wl_fixed_from_double(should_be_speed));
 					}
 					bool should_be_natural = settings->get_boolean("touchpads-natural-scrolling");
 					if (device->natural_scrolling() != should_be_natural) {
 						wldip_compositor_manager_device_set_natural_scrolling(cmgr, seat_idx, dev_idx,
-								should_be_natural);
+						                                                      should_be_natural);
 					}
 					bool should_be_tap = settings->get_boolean("touchpads-tap-click");
 					if (device->tap_click() != should_be_tap) {
-						wldip_compositor_manager_device_set_tap_click(cmgr, seat_idx, dev_idx,
-								should_be_tap);
+						wldip_compositor_manager_device_set_tap_click(cmgr, seat_idx, dev_idx, should_be_tap);
 					}
-					auto should_be_click_method = settings->get_string("touchpads-click-method") == "clickfinger" ? ClickMethod_ClickFinger : ClickMethod_ButtonAreas;
+					auto should_be_click_method =
+					    settings->get_string("touchpads-click-method") == "clickfinger"
+					        ? ClickMethod_ClickFinger
+					        : ClickMethod_ButtonAreas;
 					if (device->click_method() != should_be_click_method) {
 						wldip_compositor_manager_device_set_click_method(cmgr, seat_idx, dev_idx,
-								should_be_click_method);
+						                                                 should_be_click_method);
 					}
 					bool should_be_dwt = settings->get_boolean("touchpads-dwt");
 					if (device->disable_while_typing() != should_be_dwt) {
-						wldip_compositor_manager_device_set_dwt(cmgr, seat_idx, dev_idx,
-								should_be_dwt);
+						wldip_compositor_manager_device_set_dwt(cmgr, seat_idx, dev_idx, should_be_dwt);
 					}
-					auto should_be_dwmouse = settings->get_boolean("touchpads-dwmouse") ? SendEventsMode_DisabledOnExternalMouse : SendEventsMode_Enabled;
+					auto should_be_dwmouse = settings->get_boolean("touchpads-dwmouse")
+					                             ? SendEventsMode_DisabledOnExternalMouse
+					                             : SendEventsMode_Enabled;
 					if (device->send_events_mode() != should_be_dwmouse) {
-						wldip_compositor_manager_device_set_send_events_mode(cmgr, seat_idx, dev_idx,
-								static_cast<uint32_t>(should_be_dwmouse));
+						wldip_compositor_manager_device_set_send_events_mode(
+						    cmgr, seat_idx, dev_idx, static_cast<uint32_t>(should_be_dwmouse));
 					}
 
 				} else if (inputdev::is_pointer(device)) {
 					double should_be_speed = settings->get_double("mice-accel-speed");
-					if (fabs(device->acceleration_speed() - should_be_speed) > 0.0001) {
+					if (fabs(device->acceleration_speed() - should_be_speed) > 0.01) {
 						wldip_compositor_manager_device_set_accel_speed(cmgr, seat_idx, dev_idx,
-								wl_fixed_from_double(should_be_speed));
+						                                                wl_fixed_from_double(should_be_speed));
 					}
 				}
 

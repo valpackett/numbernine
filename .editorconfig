@@ -9,3 +9,6 @@ indent_size = 2
 
 [protocols/*.xml]
 indent_style = space
+
+[*.glade]
+indent_style = space

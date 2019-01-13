@@ -50,19 +50,20 @@ struct settings_app {
 		builder->get_widget("list-current-devices", curr_devices);
 
 		settings->bind("mice-accel-speed",
-									 get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
+		               get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
 		settings->bind("touchpads-accel-speed",
-									 get_object<Gtk::Adjustment>(builder, "adj-touchpad-speed")->property_value());
+		               get_object<Gtk::Adjustment>(builder, "adj-touchpad-speed")->property_value());
 		settings->bind("touchpads-natural-scrolling",
 		               get_widget<Gtk::Switch>(builder, "toggle-natural-scrolling")->property_active());
 		settings->bind("touchpads-tap-click",
-									 get_widget<Gtk::Switch>(builder, "toggle-tap-click")->property_active());
-		settings->bind("touchpads-click-method",
-									 get_widget<Gtk::ComboBoxText>(builder, "choose-click-method")->property_active_id());
+		               get_widget<Gtk::Switch>(builder, "toggle-tap-click")->property_active());
+		settings->bind(
+		    "touchpads-click-method",
+		    get_widget<Gtk::ComboBoxText>(builder, "choose-click-method")->property_active_id());
 		settings->bind("touchpads-dwt",
-									 get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
+		               get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
 		settings->bind("touchpads-dwmouse",
-									 get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
+		               get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
 
 		auto css = Gtk::CssProvider::create();
 		css->load_from_resource(RESPREFIX "style.css");
