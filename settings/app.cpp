@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Management_generated.h"
 #include "fmt/format.h"
+#include "gtk-util/list_box_reuser.hpp"
 #include "util.hpp"
 #include "wldip-compositor-manager-client-protocol.h"
 
@@ -28,6 +29,17 @@ struct input_device_row {
 	Gtk::Grid *grid = nullptr;
 	Gtk::Label *name = nullptr, *desc = nullptr;
 	Gtk::Image *icon = nullptr;
+
+	input_device_row(Glib::RefPtr<Gtk::Builder> &builder) {
+		builder->get_widget("row-input-device", grid);
+		builder->get_widget("input-device-name", name);
+		builder->get_widget("input-device-icon", icon);
+		builder->get_widget("input-device-description", desc);
+	}
+
+	void on_added() { grid->get_parent()->get_style_context()->add_class("n9-settings-row"); }
+
+	Gtk::Grid *toplevel() { return grid; }
 };
 
 struct settings_app {
@@ -38,6 +50,7 @@ struct settings_app {
 	Gtk::Stack *stack_main = nullptr;
 	Gtk::ListBox *curr_devices = nullptr;
 	std::vector<input_device_row> curr_devices_rows;
+	std::optional<list_box_reuser<input_device_row>> inputdevs;
 
 	settings_app() {
 		settings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
@@ -48,6 +61,8 @@ struct settings_app {
 		builder->get_widget("headerbar-main", headerbar_main);
 		builder->get_widget("stack-main", stack_main);
 		builder->get_widget("list-current-devices", curr_devices);
+
+		inputdevs = list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
 
 		settings->bind("mice-accel-speed",
 		               get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
@@ -85,29 +100,10 @@ struct settings_app {
 		using namespace wldip::compositor_management;
 		for (const auto seat : *state->seats()) {
 			auto input_dev_len = seat->input_devices()->size();
-			auto input_dev_rows = curr_devices->get_children().size();
-			if (input_dev_len < input_dev_rows) {
-				for (size_t i = input_dev_len; i < input_dev_rows; i++) {
-					curr_devices->remove(*curr_devices->get_row_at_index(i));
-					curr_devices_rows.erase(curr_devices_rows.begin() + i);
-				}
-			} else if (input_dev_len > input_dev_rows) {
-				for (size_t i = input_dev_rows; i < input_dev_len; i++) {
-					auto builder = Gtk::Builder::create_from_resource(RESPREFIX "settings.glade");
-					input_device_row row;
-					builder->get_widget("row-input-device", row.grid);
-					builder->get_widget("input-device-name", row.name);
-					builder->get_widget("input-device-icon", row.icon);
-					builder->get_widget("input-device-description", row.desc);
-					curr_devices->insert(*row.grid, -1);
-					row.grid->reference();
-					row.grid->get_parent()->get_style_context()->add_class("n9-settings-row");
-					curr_devices_rows.push_back(row);
-				}
-			}
+			inputdevs->ensure_row_count(input_dev_len);
 			size_t i = 0;
 			for (const auto device : *seat->input_devices()) {
-				auto &row = curr_devices_rows[i++];
+				auto &row = (*inputdevs)[i++];
 				row.name->set_text(device->name()->str());
 				std::string desc = fmt::format(_("Vendor ID: {:#06x}, product ID: {:#06x}.\n"),
 				                               device->vendor_id(), device->product_id());

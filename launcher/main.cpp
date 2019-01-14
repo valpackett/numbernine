@@ -7,6 +7,7 @@
 #include "app_list.hpp"
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/surface.hpp"
+#include "gtk-util/list_box_reuser.hpp"
 #include "icon.hpp"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/launcher/"
@@ -30,12 +31,23 @@ struct app_row {
 	Gtk::Grid *grid = nullptr;
 	Gtk::Label *title = nullptr, *subtitle = nullptr;
 	icon *icon = nullptr;
+
+	app_row(Glib::RefPtr<Gtk::Builder> &builder) {
+		builder->get_widget("row-double", grid);
+		builder->get_widget("row-double-title", title);
+		builder->get_widget("row-double-subtitle", subtitle);
+		builder->get_widget_derived("row-double-icon", icon);
+	}
+
+	void on_added() {}
+
+	Gtk::Grid *toplevel() { return grid; }
 };
 
 struct launcher {
 	app_list applist;
 	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> current_apps;
-	std::vector<app_row> app_rows;
+	std::optional<list_box_reuser<app_row>> app_rows;
 	Gtk::Box *topl = nullptr;
 	Gtk::ListBox *resultbox = nullptr;
 	Gtk::SearchEntry *searchbar = nullptr;
@@ -48,6 +60,7 @@ struct launcher {
 		builder->get_widget("toplevel", topl);
 		builder->get_widget("resultbox", resultbox);
 		builder->get_widget("searchbar", searchbar);
+		app_rows = list_box_reuser<app_row>(RESPREFIX "launcher.glade", resultbox, true);
 		clear();
 
 		searchbar->signal_changed().connect([&] {
@@ -58,7 +71,7 @@ struct launcher {
 			    [&] {
 				    current_apps.clear();
 				    auto results = applist.fuzzy_search(searchbar->get_text());
-				    ensure_app_row_count(results.size());
+				    app_rows->ensure_row_count(results.size());
 				    size_t i = 0;
 				    for (auto idx : results) {
 					    set_row_to_app(i++, applist.apps[idx]);
@@ -108,42 +121,11 @@ struct launcher {
 
 	void clear() {
 		current_apps.clear();
-		app_rows.clear();
-		for (auto &tpl_row : resultbox->get_children()) {
-			resultbox->remove(*tpl_row);
-			delete tpl_row;
-		}
-	}
-
-	// recreating rows is the slowest action
-	void ensure_app_row_count(size_t len) {
-		auto rows = resultbox->get_children().size();
-		if (len < rows) {
-			for (size_t i = len; i < rows; i++) {
-				resultbox->get_row_at_index(i)->hide();
-			}
-		} else if (len > rows) {
-			for (size_t i = rows; i < len; i++) {
-				Glib::RefPtr<Gtk::Builder> builder =
-				    Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
-				app_row row;
-				builder->get_widget("row-double", row.grid);
-				builder->get_widget("row-double-title", row.title);
-				builder->get_widget("row-double-subtitle", row.subtitle);
-				builder->get_widget_derived("row-double-icon", row.icon);
-				row.grid->get_parent()->remove(*row.grid);
-				resultbox->insert(*row.grid, -1);
-				row.grid->reference();
-				app_rows.push_back(row);
-			}
-		}
-		for (size_t i = 0; i < len; i++) {
-			resultbox->get_row_at_index(i)->show();
-		}
+		app_rows->clear();
 	}
 
 	void set_row_to_app(size_t idx, const Glib::RefPtr<Gio::DesktopAppInfo> &app) {
-		auto &row = app_rows[idx];
+		auto &row = (*app_rows)[idx];
 		row.title->set_text(app->get_name());
 		row.subtitle->set_text(app->get_description());
 		row.icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
