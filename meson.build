@@ -14,7 +14,7 @@ gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
 cairomm = dependency('cairomm-1.0')
 wayland_client = dependency('wayland-client')
 flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
-fmtlib = subproject('fmt').get_variable('fmt_dep')
+fmtlib = dependency('fmt')
 
 gnome = import('gnome')
 i18n = import('i18n')
