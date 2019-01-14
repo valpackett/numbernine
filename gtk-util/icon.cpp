@@ -3,7 +3,7 @@
 
 static std::unordered_map<std::string, Cairo::RefPtr<Cairo::Surface>> icon_surf_cache;
 
-bool icon::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
+bool gutil::icon::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 	auto scale = get_scale_factor();
 	if (app_changed || last_size != size || last_scale != scale) {
 		std::string cache_key =

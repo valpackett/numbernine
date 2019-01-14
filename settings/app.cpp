@@ -50,7 +50,7 @@ struct settings_app {
 	Gtk::Stack *stack_main = nullptr;
 	Gtk::ListBox *curr_devices = nullptr;
 	std::vector<input_device_row> curr_devices_rows;
-	std::optional<list_box_reuser<input_device_row>> inputdevs;
+	std::optional<gutil::list_box_reuser<input_device_row>> inputdevs;
 
 	settings_app() {
 		settings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
@@ -62,7 +62,8 @@ struct settings_app {
 		builder->get_widget("stack-main", stack_main);
 		builder->get_widget("list-current-devices", curr_devices);
 
-		inputdevs = list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
+		inputdevs =
+		    gutil::list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
 
 		settings->bind("mice-accel-speed",
 		               get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());

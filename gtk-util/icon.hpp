@@ -2,6 +2,8 @@
 #include <gtkmm.h>
 #include <unordered_map>
 
+namespace gutil {
+
 class icon : public Gtk::DrawingArea {
 	Glib::RefPtr<Gtk::IconTheme> icon_theme = Gtk::IconTheme::get_default();
 	Glib::RefPtr<Gio::AppInfo> app;
@@ -23,3 +25,5 @@ class icon : public Gtk::DrawingArea {
  protected:
 	bool on_draw(const Cairo::RefPtr<Cairo::Context>& cr) override;
 };
+
+}  // namespace gutil

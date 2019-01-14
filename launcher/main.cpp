@@ -7,8 +7,8 @@
 #include "app_list.hpp"
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/surface.hpp"
-#include "gtk-util/list_box_reuser.hpp"
 #include "gtk-util/icon.hpp"
+#include "gtk-util/list_box_reuser.hpp"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/launcher/"
 
@@ -30,7 +30,7 @@ static void select_row_delta(Gtk::ListBox *listbox, int delta) {
 struct app_row {
 	Gtk::Grid *grid = nullptr;
 	Gtk::Label *title = nullptr, *subtitle = nullptr;
-	icon *icon = nullptr;
+	gutil::icon *icon = nullptr;
 
 	app_row(Glib::RefPtr<Gtk::Builder> &builder) {
 		builder->get_widget("row-double", grid);
@@ -47,7 +47,7 @@ struct app_row {
 struct launcher {
 	app_list applist;
 	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> current_apps;
-	std::optional<list_box_reuser<app_row>> app_rows;
+	std::optional<gutil::list_box_reuser<app_row>> app_rows;
 	Gtk::Box *topl = nullptr;
 	Gtk::ListBox *resultbox = nullptr;
 	Gtk::SearchEntry *searchbar = nullptr;
@@ -60,7 +60,7 @@ struct launcher {
 		builder->get_widget("toplevel", topl);
 		builder->get_widget("resultbox", resultbox);
 		builder->get_widget("searchbar", searchbar);
-		app_rows = list_box_reuser<app_row>(RESPREFIX "launcher.glade", resultbox, true);
+		app_rows = gutil::list_box_reuser<app_row>(RESPREFIX "launcher.glade", resultbox, true);
 		clear();
 
 		searchbar->signal_changed().connect([&] {

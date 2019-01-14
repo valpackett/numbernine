@@ -2,6 +2,8 @@
 #include <gtkmm.h>
 #include <vector>
 
+namespace gutil {
+
 template <typename R>
 class list_box_reuser {
 	Gtk::ListBox *listbox = nullptr;
@@ -50,3 +52,5 @@ class list_box_reuser {
 	R &operator[](size_t i) { return holders[i]; }
 	const R &operator[](size_t i) const { return holders[i]; }
 };
+
+}  // namespace gutil
