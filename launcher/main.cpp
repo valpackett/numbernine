@@ -8,7 +8,7 @@
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/surface.hpp"
 #include "gtk-util/list_box_reuser.hpp"
-#include "icon.hpp"
+#include "gtk-util/icon.hpp"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/launcher/"
 

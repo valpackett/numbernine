@@ -1,7 +1,9 @@
 gutil_srcs = files(
+	'icon.cpp',
 )
 
 gutil_hdrs = files(
+	'icon.hpp',
 	'list_box_reuser.hpp',
 )
 
