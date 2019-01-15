@@ -5,11 +5,15 @@
 
 namespace lsh {
 
-static void on_configure(void *data, struct zwlr_layer_surface_v1 * /*unused*/, uint32_t serial,
+static void on_configure(void *data, struct zwlr_layer_surface_v1 *ls, uint32_t serial,
                          uint32_t width, uint32_t height) {
 	auto *surf = reinterpret_cast<surface *>(data);
 	Glib::signal_idle().connect([=] {
-		surf->window->resize(width, height);
+		surf->window->show_all();
+		if (width > 0 && height > 0) {
+			surf->window->resize(width, height);
+		}
+		zwlr_layer_surface_v1_ack_configure(ls, serial);
 		return false;
 	});
 }
@@ -52,6 +56,7 @@ surface::surface(manager &mgr, std::shared_ptr<Gtk::Window> w,
 	lsurf = zwlr_layer_shell_v1_get_layer_surface(
 	    mgr.lshell, wlsurf, outputptr, static_cast<zwlr_layer_shell_v1_layer>(layer), "test");
 	zwlr_layer_surface_v1_add_listener(lsurf, &surface_listener, this);
+	wl_surface_commit(wlsurf);
 }
 
 void surface::set_anchor(anchor anchor) {

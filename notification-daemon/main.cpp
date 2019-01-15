@@ -192,7 +192,6 @@ int main(int argc, char *argv[]) {
 	lsh::surface window_lsh(lsh_mgr, window, lsh::any_output, lsh::layer::top);
 	window_lsh.set_anchor(lsh::anchor::top | lsh::anchor::right);
 	window_lsh.set_size(480, 1);
-	window->show_all();
 	window->set_app_paintable(true);
 
 	auto css = Gtk::CssProvider::create();
@@ -211,5 +210,6 @@ int main(int argc, char *argv[]) {
 	bus_impl bi;
 	bi.connect(Gio::DBus::BUS_TYPE_SESSION, "org.freedesktop.Notifications");
 
-	return app->run(*window);
+	app->hold();
+	return app->run();
 }
