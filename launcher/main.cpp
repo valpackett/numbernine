@@ -137,9 +137,7 @@ std::unique_ptr<lsh::surface> init_lsh(lsh::manager &lsh_mgr, std::shared_ptr<Gt
 	    std::make_unique<lsh::surface>(lsh_mgr, window, lsh::any_output, lsh::layer::top);
 	window_lsh->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
 	                       lsh::anchor::right);
-	auto monitor = window->get_display()->get_monitor_at_window(window->get_window());
-	auto workarea = monitor->property_workarea().get_value();
-	window_lsh->set_size(workarea.get_width(), workarea.get_height());
+	window_lsh->set_size(0, 0);
 	window_lsh->set_keyboard_interactivity(true);
 	return window_lsh;
 }

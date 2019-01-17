@@ -15,15 +15,12 @@ class wallpaper {
 	wallpaper(lsh::manager& lsh_mgr, GdkMonitor* monitor) {
 		settings = Gio::Settings::create("technology.unrelenting.numbernine.wallpaper",
 		                                 "/technology/unrelenting/numbernine/wallpaper/");
-		GdkRectangle workarea;
-		gdk_monitor_get_workarea(monitor, &workarea);
 		window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
-		window->set_default_size(workarea.width, workarea.height);
 		window->set_decorated(false);
 		layer_surface.emplace(lsh_mgr, window, monitor, lsh::layer::background);
 		layer_surface->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
 		                          lsh::anchor::right);
-		layer_surface->set_size(workarea.width, workarea.height);
+		layer_surface->set_size(0, 0);
 		settings->bind("picture-path", &image, "path");
 		window->add(image);
 	}
