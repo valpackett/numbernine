@@ -21,6 +21,7 @@ settings_app = executable('n9-settings',
 	settings_app_srcs, settings_common_hdrs, settings_schemas, settings_app_res,
 	compositor_management_fb, compositor_management_code, compositor_management_client_header,
 	dependencies: [fmtlib, wayland_client, gtk, gtkmm, flatbuffers],
+	link_with: [gutil],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
 	install: true)

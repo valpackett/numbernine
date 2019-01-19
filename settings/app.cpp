@@ -7,6 +7,7 @@
 #include <iostream>
 #include "Management_generated.h"
 #include "fmt/format.h"
+#include "gtk-util/button_toggler.hpp"
 #include "gtk-util/list_box_reuser.hpp"
 #include "util.hpp"
 #include "wldip-compositor-manager-client-protocol.h"
@@ -51,6 +52,7 @@ struct settings_app {
 	Gtk::ListBox *curr_devices = nullptr;
 	std::vector<input_device_row> curr_devices_rows;
 	std::optional<gutil::list_box_reuser<input_device_row>> inputdevs;
+	gutil::button_toggler *output_toggler = nullptr;
 
 	settings_app() {
 		settings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
@@ -61,14 +63,21 @@ struct settings_app {
 		builder->get_widget("headerbar-main", headerbar_main);
 		builder->get_widget("stack-main", stack_main);
 		builder->get_widget("list-current-devices", curr_devices);
+		builder->get_widget_derived("selector-output", output_toggler);
 
 		inputdevs =
 		    gutil::list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
 
 		settings->bind("mice-accel-speed",
 		               get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
+		settings->bind(
+		    "mice-scroll-speed",
+		    get_object<Gtk::Adjustment>(builder, "adj-mouse-scroll-speed")->property_value());
 		settings->bind("touchpads-accel-speed",
 		               get_object<Gtk::Adjustment>(builder, "adj-touchpad-speed")->property_value());
+		settings->bind(
+		    "touchpads-scroll-speed",
+		    get_object<Gtk::Adjustment>(builder, "adj-touchpad-scroll-speed")->property_value());
 		settings->bind("touchpads-natural-scrolling",
 		               get_widget<Gtk::Switch>(builder, "toggle-natural-scrolling")->property_active());
 		settings->bind("touchpads-tap-click",
@@ -76,6 +85,9 @@ struct settings_app {
 		settings->bind(
 		    "touchpads-click-method",
 		    get_widget<Gtk::ComboBoxText>(builder, "choose-click-method")->property_active_id());
+		settings->bind(
+		    "touchpads-scroll-method",
+		    get_widget<Gtk::ComboBoxText>(builder, "choose-scroll-method")->property_active_id());
 		settings->bind("touchpads-dwt",
 		               get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
 		settings->bind("touchpads-dwmouse",
@@ -160,6 +172,14 @@ struct settings_app {
 				row.desc->set_text(desc);
 			}
 		}
+
+		output_toggler->clear();
+		for (const auto output : *state->outputs()) {
+			Glib::RefPtr<Gtk::ToggleButton> btn(new Gtk::ToggleButton);
+			btn->set_label(output->name()->str());
+			output_toggler->append(btn);
+			btn->show();
+		}
 	}
 };
 
@@ -201,6 +221,7 @@ int main(int argc, char *argv[]) {
 	if (!GDK_IS_WAYLAND_DISPLAY(gddisp->gobj())) {
 		throw std::runtime_error(_("Not even running on a wayland display??"));
 	}
+#if 0
 	auto *display = gdk_wayland_display_get_wl_display(gddisp->gobj());
 	auto *registry = wl_display_get_registry(display);
 	wl_registry_add_listener(registry, &registry_listener, &sapp);
@@ -210,6 +231,7 @@ int main(int argc, char *argv[]) {
 	wldip_compositor_manager_get(sapp.cmgr);
 	wldip_compositor_manager_subscribe(
 	    sapp.cmgr, WLDIP_COMPOSITOR_MANAGER_TOPIC_OUTPUTS | WLDIP_COMPOSITOR_MANAGER_TOPIC_INPUTDEVS);
+#endif
 
 	app->run(*sapp.window);
 }

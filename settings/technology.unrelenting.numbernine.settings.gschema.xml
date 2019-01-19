@@ -7,9 +7,19 @@
 			<summary>Acceleration speed (-1.0 to 1.0, where 0 is device default) for mice</summary>
 		</key>
 
+		<key name="mice-scroll-speed" type="d">
+			<default>1.0</default>
+			<summary>Scrolling speed (0.1 to 2.0, where 1 is device default) for mice</summary>
+		</key>
+
 		<key name="touchpads-accel-speed" type="d">
 			<default>0.0</default>
 			<summary>Acceleration speed (-1.0 to 1.0, where 0 is device default) for touchpads</summary>
+		</key>
+
+		<key name="touchpads-scroll-speed" type="d">
+			<default>1.0</default>
+			<summary>Scrolling speed (0.1 to 2.0, where 1 is device default) for touchpads</summary>
 		</key>
 
 		<key name="touchpads-natural-scrolling" type="b">
@@ -23,8 +33,13 @@
 		</key>
 
 		<key name="touchpads-click-method" type="s">
-			<default>'button-areas'</default>
+			<default>'buttonareas'</default>
 			<summary>Touchpad click method</summary>
+		</key>
+
+		<key name="touchpads-scroll-method" type="s">
+			<default>'twofinger'</default>
+			<summary>Touchpad scroll method</summary>
 		</key>
 
 		<key name="touchpads-dwt" type="b">

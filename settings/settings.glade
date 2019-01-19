@@ -3,11 +3,31 @@
 <interface>
   <requires lib="gtk+" version="3.20"/>
   <!-- interface-css-provider-path style.css -->
+  <object class="GtkAdjustment" id="adj-display-scale">
+    <property name="lower">1</property>
+    <property name="upper">3</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.25</property>
+    <property name="page_increment">0.25</property>
+  </object>
+  <object class="GtkAdjustment" id="adj-mouse-scroll-speed">
+    <property name="upper">2</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.25</property>
+    <property name="page_increment">0.25</property>
+  </object>
   <object class="GtkAdjustment" id="adj-mouse-speed">
     <property name="lower">-1</property>
     <property name="upper">1</property>
     <property name="step_increment">0.10000000000000001</property>
     <property name="page_increment">0.11</property>
+  </object>
+  <object class="GtkAdjustment" id="adj-touchpad-scroll-speed">
+    <property name="lower">0.10000000000000001</property>
+    <property name="upper">2</property>
+    <property name="value">1</property>
+    <property name="step_increment">0.25</property>
+    <property name="page_increment">0.25</property>
   </object>
   <object class="GtkAdjustment" id="adj-touchpad-speed">
     <property name="lower">-1</property>
@@ -144,22 +164,7 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">How fast the cursor accelerates</property>
-                                            <property name="ellipsize">end</property>
-                                            <style>
-                                              <class name="n9-settings-description"/>
-                                            </style>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -170,6 +175,61 @@
                                             <property name="adjustment">adj-mouse-speed</property>
                                             <property name="show_fill_level">True</property>
                                             <property name="fill_level">1</property>
+                                            <property name="round_digits">2</property>
+                                            <property name="digits">2</property>
+                                            <property name="value_pos">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="n9-settings-row"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="width_request">500</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="activatable">False</property>
+                                    <property name="selectable">False</property>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="row_spacing">2</property>
+                                        <property name="column_spacing">10</property>
+                                        <property name="row_homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="label" translatable="yes">Scrolling speed</property>
+                                            <style>
+                                              <class name="n9-settings-title"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScale">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="adjustment">adj-mouse-scroll-speed</property>
+                                            <property name="show_fill_level">True</property>
+                                            <property name="fill_level">2</property>
                                             <property name="round_digits">2</property>
                                             <property name="digits">2</property>
                                             <property name="value_pos">right</property>
@@ -245,22 +305,7 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">How fast the cursor accelerates</property>
-                                            <property name="ellipsize">end</property>
-                                            <style>
-                                              <class name="n9-settings-description"/>
-                                            </style>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -307,6 +352,61 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">start</property>
+                                            <property name="label" translatable="yes">Scrolling speed</property>
+                                            <style>
+                                              <class name="n9-settings-title"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScale">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="adjustment">adj-touchpad-scroll-speed</property>
+                                            <property name="show_fill_level">True</property>
+                                            <property name="fill_level">2</property>
+                                            <property name="round_digits">2</property>
+                                            <property name="digits">2</property>
+                                            <property name="value_pos">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="n9-settings-row"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="width_request">500</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="activatable">False</property>
+                                    <property name="selectable">False</property>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="row_spacing">2</property>
+                                        <property name="column_spacing">10</property>
+                                        <property name="row_homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
                                             <property name="label" translatable="yes">Natural scrolling</property>
                                             <style>
                                               <class name="n9-settings-title"/>
@@ -315,6 +415,7 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -330,22 +431,6 @@
                                             <property name="left_attach">1</property>
                                             <property name="top_attach">0</property>
                                             <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Fingers move the content, not a scroll bar</property>
-                                            <property name="ellipsize">end</property>
-                                            <style>
-                                              <class name="n9-settings-description"/>
-                                            </style>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -382,6 +467,7 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -396,22 +482,6 @@
                                             <property name="left_attach">1</property>
                                             <property name="top_attach">0</property>
                                             <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Do not require a full physical press to click, just a light tap</property>
-                                            <property name="ellipsize">end</property>
-                                            <style>
-                                              <class name="n9-settings-description"/>
-                                            </style>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -455,7 +525,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Preferred click method (some touchpads could ignore this)</property>
+                                            <property name="label" translatable="yes">Note: some touchpads could ignore this</property>
                                             <property name="ellipsize">end</property>
                                             <style>
                                               <class name="n9-settings-description"/>
@@ -474,8 +544,79 @@
                                             <property name="hexpand">True</property>
                                             <property name="active_id">1</property>
                                             <items>
-                                              <item id="button-areas" translatable="yes">Button Areas</item>
+                                              <item id="buttonareas" translatable="yes">Button Areas</item>
                                               <item id="clickfinger" translatable="yes">Finger Count</item>
+                                            </items>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">2</property>
+                                          </packing>
+                                        </child>
+                                      </object>
+                                    </child>
+                                    <style>
+                                      <class name="n9-settings-row"/>
+                                    </style>
+                                  </object>
+                                </child>
+                                <child>
+                                  <object class="GtkListBoxRow">
+                                    <property name="width_request">500</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="activatable">False</property>
+                                    <property name="selectable">False</property>
+                                    <child>
+                                      <object class="GtkGrid">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">False</property>
+                                        <property name="row_spacing">2</property>
+                                        <property name="column_spacing">10</property>
+                                        <property name="row_homogeneous">True</property>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="label" translatable="yes">Scroll method</property>
+                                            <style>
+                                              <class name="n9-settings-title"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">0</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkLabel">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="halign">start</property>
+                                            <property name="label" translatable="yes">Note: some touchpads could ignore this</property>
+                                            <property name="ellipsize">end</property>
+                                            <style>
+                                              <class name="n9-settings-description"/>
+                                            </style>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">0</property>
+                                            <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkComboBoxText" id="choose-scroll-method">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="valign">center</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="active_id">1</property>
+                                            <items>
+                                              <item id="twofinger" translatable="yes">Two-finger</item>
+                                              <item id="edge" translatable="yes">Edge</item>
+                                              <item id="button" translatable="yes">Button</item>
                                             </items>
                                           </object>
                                           <packing>
@@ -518,6 +659,7 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -532,22 +674,6 @@
                                             <property name="left_attach">1</property>
                                             <property name="top_attach">0</property>
                                             <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Ignore touchpad input within a few moments of keyboard typing</property>
-                                            <property name="ellipsize">end</property>
-                                            <style>
-                                              <class name="n9-settings-description"/>
-                                            </style>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -584,6 +710,7 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">0</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                         <child>
@@ -598,22 +725,6 @@
                                             <property name="left_attach">1</property>
                                             <property name="top_attach">0</property>
                                             <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
-                                          <object class="GtkLabel">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">False</property>
-                                            <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Ignore touchpad input when an external mouse is connected</property>
-                                            <property name="ellipsize">end</property>
-                                            <style>
-                                              <class name="n9-settings-description"/>
-                                            </style>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">0</property>
-                                            <property name="top_attach">1</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -716,7 +827,7 @@
                                 <property name="can_focus">False</property>
                                 <property name="selection_mode">none</property>
                                 <child>
-                                  <object class="GtkListBoxRow">
+                                  <object class="GtkListBoxRow" id="list-output-settings">
                                     <property name="width_request">500</property>
                                     <property name="visible">True</property>
                                     <property name="can_focus">True</property>
@@ -734,7 +845,7 @@
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Natural scrolling</property>
+                                            <property name="label" translatable="yes">Scale</property>
                                             <style>
                                               <class name="n9-settings-title"/>
                                             </style>
@@ -745,25 +856,11 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkSwitch" id="toggle-natural-scrolling1">
-                                            <property name="visible">True</property>
-                                            <property name="can_focus">True</property>
-                                            <property name="halign">end</property>
-                                            <property name="valign">center</property>
-                                            <property name="hexpand">True</property>
-                                          </object>
-                                          <packing>
-                                            <property name="left_attach">1</property>
-                                            <property name="top_attach">0</property>
-                                            <property name="height">2</property>
-                                          </packing>
-                                        </child>
-                                        <child>
                                           <object class="GtkLabel">
                                             <property name="visible">True</property>
                                             <property name="can_focus">False</property>
                                             <property name="halign">start</property>
-                                            <property name="label" translatable="yes">Fingers move the content, not a scroll bar</property>
+                                            <property name="label" translatable="yes">Increase the size of everything on the display</property>
                                             <property name="ellipsize">end</property>
                                             <style>
                                               <class name="n9-settings-description"/>
@@ -772,6 +869,24 @@
                                           <packing>
                                             <property name="left_attach">0</property>
                                             <property name="top_attach">1</property>
+                                          </packing>
+                                        </child>
+                                        <child>
+                                          <object class="GtkScale">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">True</property>
+                                            <property name="hexpand">True</property>
+                                            <property name="adjustment">adj-display-scale</property>
+                                            <property name="show_fill_level">True</property>
+                                            <property name="fill_level">3</property>
+                                            <property name="round_digits">2</property>
+                                            <property name="digits">2</property>
+                                            <property name="value_pos">right</property>
+                                          </object>
+                                          <packing>
+                                            <property name="left_attach">1</property>
+                                            <property name="top_attach">0</property>
+                                            <property name="height">2</property>
                                           </packing>
                                         </child>
                                       </object>
@@ -784,12 +899,39 @@
                               </object>
                             </child>
                             <child type="label">
-                              <object class="GtkLabel">
+                              <object class="GtkBox" id="selector-output">
                                 <property name="visible">True</property>
                                 <property name="can_focus">False</property>
-                                <property name="label" translatable="yes">Touchpad</property>
+                                <property name="homogeneous">True</property>
+                                <child>
+                                  <object class="GtkToggleButton">
+                                    <property name="label" translatable="yes">Internal Monitor</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">0</property>
+                                  </packing>
+                                </child>
+                                <child>
+                                  <object class="GtkToggleButton">
+                                    <property name="label" translatable="yes">Some Other Monitor</property>
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">True</property>
+                                    <property name="receives_default">True</property>
+                                  </object>
+                                  <packing>
+                                    <property name="expand">False</property>
+                                    <property name="fill">True</property>
+                                    <property name="position">1</property>
+                                  </packing>
+                                </child>
                                 <style>
-                                  <class name="n9-settings-group-title"/>
+                                  <class name="linked"/>
+                                  <class name="n9-settings-group-toggler"/>
                                 </style>
                               </object>
                             </child>
@@ -823,6 +965,12 @@
         </child>
       </object>
     </child>
+  </object>
+  <object class="GtkSizeGroup" id="size-display-lists">
+    <widgets>
+      <widget name="list-output-settings"/>
+      <widget name="selector-output"/>
+    </widgets>
   </object>
   <object class="GtkSizeGroup" id="size-input-lists">
     <widgets>
