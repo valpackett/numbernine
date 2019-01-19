@@ -15,6 +15,8 @@ cairomm = dependency('cairomm-1.0')
 wayland_client = dependency('wayland-client')
 flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
 fmtlib = dependency('fmt')
+wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
+wayfire = dependency('wayfire')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -37,8 +39,9 @@ subdir('panel')
 subdir('launcher')
 subdir('notification-daemon')
 subdir('settings')
+subdir('wf-plugins')
 
-all_srcs = [ lsh_srcs, gutil_srcs, supervisor_srcs_all, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, settings_app_srcs, settings_daemon_srcs ]
+all_srcs = [ lsh_srcs, gutil_srcs, supervisor_srcs_all, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, settings_app_srcs, settings_daemon_srcs, wfp_srcs ]
 all_hdrs = [ lsh_hdrs, gutil_hdrs, supervisor_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_common_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
