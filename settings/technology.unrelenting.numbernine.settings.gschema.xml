@@ -33,12 +33,12 @@
 		</key>
 
 		<key name="touchpads-click-method" type="s">
-			<default>'buttonareas'</default>
+			<default>'button-areas'</default>
 			<summary>Touchpad click method</summary>
 		</key>
 
 		<key name="touchpads-scroll-method" type="s">
-			<default>'twofinger'</default>
+			<default>'two-finger'</default>
 			<summary>Touchpad scroll method</summary>
 		</key>
 

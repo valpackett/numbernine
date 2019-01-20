@@ -544,7 +544,7 @@
                                             <property name="hexpand">True</property>
                                             <property name="active_id">1</property>
                                             <items>
-                                              <item id="buttonareas" translatable="yes">Button Areas</item>
+                                              <item id="button-areas" translatable="yes">Button Areas</item>
                                               <item id="clickfinger" translatable="yes">Finger Count</item>
                                             </items>
                                           </object>
@@ -614,9 +614,9 @@
                                             <property name="hexpand">True</property>
                                             <property name="active_id">1</property>
                                             <items>
-                                              <item id="twofinger" translatable="yes">Two-finger</item>
+                                              <item id="two-finger" translatable="yes">Two-finger</item>
                                               <item id="edge" translatable="yes">Edge</item>
-                                              <item id="button" translatable="yes">Button</item>
+                                              <item id="on-button-down" translatable="yes">Button</item>
                                             </items>
                                           </object>
                                           <packing>

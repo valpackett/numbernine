@@ -13,22 +13,24 @@
 #include <view.hpp>
 #include <workspace-manager.hpp>
 
-int parse_click_method(std::string s) {
-	if (s == "clickfinger") return LIBINPUT_CONFIG_CLICK_METHOD_CLICKFINGER;
-	return LIBINPUT_CONFIG_CLICK_METHOD_BUTTON_AREAS;
-}
-
-int parse_scroll_method(std::string s) {
-	if (s == "edge") return LIBINPUT_CONFIG_SCROLL_EDGE;
-	if (s == "button") return LIBINPUT_CONFIG_SCROLL_ON_BUTTON_DOWN;
-	return LIBINPUT_CONFIG_SCROLL_2FG;
-}
-
 struct the_settings {
 	double mouse_cursor_speed, mouse_scroll_speed, touchpad_cursor_speed, touchpad_scroll_speed;
 	bool natural_scroll, tap_to_click;
-	int click_method, scroll_method;
+	std::string click_method, scroll_method;
 	bool disable_while_typing, disable_touchpad_while_mouse;
+
+	void fill(const Glib::RefPtr<Gio::Settings> &gsettings) {
+		mouse_cursor_speed = gsettings->get_double("mice-accel-speed");
+		mouse_scroll_speed = gsettings->get_double("mice-scroll-speed");
+		touchpad_cursor_speed = gsettings->get_double("touchpads-accel-speed");
+		touchpad_scroll_speed = gsettings->get_double("touchpads-scroll-speed");
+		natural_scroll = gsettings->get_boolean("touchpads-natural-scrolling");
+		tap_to_click = gsettings->get_boolean("touchpads-tap-click");
+		click_method = gsettings->get_string("touchpads-click-method");
+		scroll_method = gsettings->get_string("touchpads-scroll-method");
+		disable_while_typing = gsettings->get_boolean("touchpads-dwt");
+		disable_touchpad_while_mouse = gsettings->get_boolean("touchpads-dwmouse");
+	}
 
 	void apply(wayfire_config *config) {
 		auto input = config->get_section("input");
@@ -52,18 +54,13 @@ void gsettings_loop(int fd) {
 	Gio::init();
 	auto gsettings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
 	                                       "/technology/unrelenting/numbernine/settings/");
+	settings.fill(gsettings);
+	write(fd, "!", 1);
+	char buff;
+	read(fd, &buff, 1);
 	gsettings->signal_changed().connect([=](auto _) {
 		log_debug("gsettings updated, notifying main thread");
-		settings.mouse_cursor_speed = gsettings->get_double("mice-accel-speed");
-		settings.mouse_scroll_speed = gsettings->get_double("mice-scroll-speed");
-		settings.touchpad_cursor_speed = gsettings->get_double("touchpads-accel-speed");
-		settings.touchpad_scroll_speed = gsettings->get_double("touchpads-scroll-speed");
-		settings.natural_scroll = gsettings->get_boolean("touchpads-natural-scrolling");
-		settings.tap_to_click = gsettings->get_boolean("touchpads-tap-click");
-		settings.click_method = parse_click_method(gsettings->get_string("touchpads-click-method"));
-		settings.scroll_method = parse_scroll_method(gsettings->get_string("touchpads-scroll-method"));
-		settings.disable_while_typing = gsettings->get_boolean("touchpads-dwt");
-		settings.disable_touchpad_while_mouse = gsettings->get_boolean("touchpads-dwmouse");
+		settings.fill(gsettings);
 		write(fd, "!", 1);
 		char buff;
 		read(fd, &buff, 1);
@@ -84,6 +81,7 @@ struct wayfire_gsettings : public wayfire_plugin_t {
 		loopthread = std::thread(gsettings_loop, fd[1]);
 		Glib::thread_init();
 		wl_event_loop_add_fd(core->ev_loop, fd[0], WL_EVENT_READABLE, handle_update, this);
+		handle_update(fd[0], 0, this);
 	}
 
 	void fini() {
