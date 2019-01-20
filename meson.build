@@ -33,7 +33,7 @@ subdir('dbus')
 
 subdir('gtk-lsh')
 subdir('gtk-util')
-subdir('supervisor')
+#subdir('supervisor')
 subdir('wallpaper')
 subdir('panel')
 subdir('launcher')
@@ -41,8 +41,9 @@ subdir('notification-daemon')
 subdir('settings')
 subdir('wf-plugins')
 
-all_srcs = [ lsh_srcs, gutil_srcs, supervisor_srcs_all, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, settings_app_srcs, settings_daemon_srcs, wfp_srcs ]
-all_hdrs = [ lsh_hdrs, gutil_hdrs, supervisor_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_common_hdrs ]
+# supervisor_srcs_all, supervisor_hdrs, 
+all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, settings_app_srcs, settings_daemon_srcs, wfp_srcs ]
+all_hdrs = [ lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_common_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
 if prog_clang_format.found()
