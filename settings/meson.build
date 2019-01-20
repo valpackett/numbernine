@@ -26,21 +26,5 @@ settings_app = executable('n9-settings',
 	include_directories: [include_directories('../')],
 	install: true)
 
-settings_daemon_srcs = files(
-	'daemon.cpp',
-)
-
 run_target('run-settings', command: [
 	'env', 'GSETTINGS_SCHEMA_DIR=' + meson.current_build_dir(), settings_app ])
-
-settings_daemon = executable('n9-settings-daemon',
-	settings_daemon_srcs, settings_common_hdrs, settings_schemas,
-	compositor_management_fb, compositor_management_code, compositor_management_client_header,
-	dependencies: [fmtlib, wayland_client, gtk, gtkmm, flatbuffers],
-	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
-	include_directories: [include_directories('../')],
-	install: true,
-	install_dir: get_option('libexecdir'))
-
-run_target('run-settings-daemon', command: [
-	'env', 'GSETTINGS_SCHEMA_DIR=' + meson.current_build_dir(), settings_daemon ])
