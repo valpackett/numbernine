@@ -40,8 +40,8 @@ struct the_settings {
 		input->get_option("touchpad_scroll_speed", "1.0")->set_value(touchpad_scroll_speed);
 		input->get_option("natural_scroll", "1")->set_value(natural_scroll);
 		input->get_option("tap_to_click", "1")->set_value(tap_to_click);
-		input->get_option("click_method", "1")->set_value(click_method);
-		input->get_option("scroll_method", "1")->set_value(scroll_method);
+		input->get_option("click_method", "default")->set_value(click_method);
+		input->get_option("scroll_method", "default")->set_value(scroll_method);
 		input->get_option("disable_while_typing", "0")->set_value(disable_while_typing);
 		input->get_option("disable_touchpad_while_mouse", "0")->set_value(disable_touchpad_while_mouse);
 	}

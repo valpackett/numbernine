@@ -542,8 +542,9 @@
                                             <property name="can_focus">False</property>
                                             <property name="valign">center</property>
                                             <property name="hexpand">True</property>
-                                            <property name="active_id">1</property>
+                                            <property name="active_id">default</property>
                                             <items>
+                                              <item id="default" translatable="yes">Default</item>
                                               <item id="button-areas" translatable="yes">Button Areas</item>
                                               <item id="clickfinger" translatable="yes">Finger Count</item>
                                             </items>
@@ -612,8 +613,9 @@
                                             <property name="can_focus">False</property>
                                             <property name="valign">center</property>
                                             <property name="hexpand">True</property>
-                                            <property name="active_id">1</property>
+                                            <property name="active_id">default</property>
                                             <items>
+                                              <item id="default" translatable="yes">Default</item>
                                               <item id="two-finger" translatable="yes">Two-finger</item>
                                               <item id="edge" translatable="yes">Edge</item>
                                               <item id="on-button-down" translatable="yes">Button</item>
