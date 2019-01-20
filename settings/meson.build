@@ -4,21 +4,21 @@ settings_schemas = gnome.compile_schemas(build_by_default: true,
 install_data('technology.unrelenting.numbernine.settings.gschema.xml',
 	install_dir: 'share/glib-2.0/schemas')
 
-settings_common_hdrs = files(
+settings_hdrs = files(
 	'util.hpp',
 )
 
-settings_app_res = gnome.compile_resources(
-	'settings_app_res', 'r.gresource.xml',
+settings_res = gnome.compile_resources(
+	'settings_res', 'r.gresource.xml',
 	source_dir: '.',
 	c_name: 'as')
 
-settings_app_srcs = files(
-	'app.cpp',
+settings_srcs = files(
+	'main.cpp',
 )
 
 settings_app = executable('n9-settings',
-	settings_app_srcs, settings_common_hdrs, settings_schemas, settings_app_res,
+	settings_srcs, settings_hdrs, settings_schemas, settings_res,
 	compositor_management_fb, compositor_management_code, compositor_management_client_header,
 	dependencies: [fmtlib, wayland_client, gtk, gtkmm, flatbuffers],
 	link_with: [gutil],
