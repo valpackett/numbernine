@@ -5,12 +5,9 @@
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <iostream>
-#include "Management_generated.h"
 #include "fmt/format.h"
 #include "gtk-util/button_toggler.hpp"
 #include "gtk-util/list_box_reuser.hpp"
-#include "util.hpp"
-#include "wldip-compositor-manager-client-protocol.h"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/settings/"
 
@@ -109,6 +106,7 @@ struct settings_app {
 		window->reference();
 	}
 
+#if 0
 	void on_new_compositor_state(const wldip::compositor_management::CompositorState *state) {
 		using namespace wldip::compositor_management;
 		for (const auto seat : *state->seats()) {
@@ -181,56 +179,18 @@ struct settings_app {
 			btn->show();
 		}
 	}
+#endif
 };
-
-static void handle_global(void *data, struct wl_registry *registry, uint32_t name,
-                          const char *interface, uint32_t /*unused*/) {
-	auto *app = reinterpret_cast<settings_app *>(data);
-	if (strcmp(interface, "wldip_compositor_manager") == 0) {
-		app->cmgr = reinterpret_cast<struct wldip_compositor_manager *>(
-		    wl_registry_bind(registry, name, &wldip_compositor_manager_interface, 1));
-	}
-}
-
-static void handle_global_remove(void * /*unused*/, struct wl_registry * /*unused*/,
-                                 uint32_t /*unused*/) {}
-
-static const struct wl_registry_listener registry_listener = {handle_global, handle_global_remove};
-
-static void on_update(void *data, struct wldip_compositor_manager *shooter, int recv_fd) {
-	struct stat recv_stat {};
-	fstat(recv_fd, &recv_stat);
-	void *fbuf = mmap(nullptr, recv_stat.st_size, PROT_READ | PROT_WRITE, MAP_PRIVATE, recv_fd, 0);
-	const auto state = wldip::compositor_management::GetCompositorState(fbuf);
-	auto *app = reinterpret_cast<settings_app *>(data);
-	Glib::signal_idle().connect([=] {
-		app->on_new_compositor_state(state);
-		munmap(fbuf, recv_stat.st_size);
-		close(recv_fd);
-		return false;
-	});
-}
-
-static const struct wldip_compositor_manager_listener mgmt_listener = {on_update};
 
 int main(int argc, char *argv[]) {
 	auto app = Gtk::Application::create(argc, argv, "technology.unrelenting.numbernine.settings");
 	settings_app sapp;
 
+#if 0
 	auto gddisp = Gdk::Display::get_default();
 	if (!GDK_IS_WAYLAND_DISPLAY(gddisp->gobj())) {
 		throw std::runtime_error(_("Not even running on a wayland display??"));
 	}
-#if 0
-	auto *display = gdk_wayland_display_get_wl_display(gddisp->gobj());
-	auto *registry = wl_display_get_registry(display);
-	wl_registry_add_listener(registry, &registry_listener, &sapp);
-	wl_display_dispatch(display);
-	wl_display_roundtrip(display);
-	wldip_compositor_manager_add_listener(sapp.cmgr, &mgmt_listener, &sapp);
-	wldip_compositor_manager_get(sapp.cmgr);
-	wldip_compositor_manager_subscribe(
-	    sapp.cmgr, WLDIP_COMPOSITOR_MANAGER_TOPIC_OUTPUTS | WLDIP_COMPOSITOR_MANAGER_TOPIC_INPUTDEVS);
 #endif
 
 	app->run(*sapp.window);
