@@ -5,7 +5,7 @@ install_data('technology.unrelenting.numbernine.settings.gschema.xml',
 	install_dir: 'share/glib-2.0/schemas')
 
 settings_hdrs = files(
-	# 'util.hpp',
+	'xkb.hpp',
 )
 
 settings_res = gnome.compile_resources(
@@ -14,12 +14,13 @@ settings_res = gnome.compile_resources(
 	c_name: 'as')
 
 settings_srcs = files(
+	'xkb.cpp',
 	'main.cpp',
 )
 
 settings_app = executable('n9-settings',
 	settings_srcs, settings_hdrs, settings_schemas, settings_res,
-	dependencies: [fmtlib, wayland_client, gtk, gtkmm],
+	dependencies: [fmtlib, pugixml, wayland_client, gtk, gtkmm],
 	link_with: [gutil],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],

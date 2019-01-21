@@ -15,6 +15,7 @@ cairomm = dependency('cairomm-1.0')
 wayland_client = dependency('wayland-client')
 #flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
 fmtlib = dependency('fmt')
+pugixml = dependency('pugixml')
 wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
 wayfire = dependency('wayfire')
 
@@ -22,6 +23,7 @@ gnome = import('gnome')
 i18n = import('i18n')
 
 conf_data = configuration_data()
+conf_data.set_quoted('XKB_DIR', '/usr/local/share/X11/xkb') # TODO configurable
 conf_data.set_quoted('N9_LIBEXEC_DIR', get_option('prefix') / get_option('libexecdir'))
 conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
 configure_file(output: 'n9config.h', configuration: conf_data)
