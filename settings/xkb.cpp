@@ -1,7 +1,7 @@
 #include "xkb.hpp"
 #include <fmt/format.h>
-#include <pugixml.hpp>
 #include <iostream>
+#include <pugixml.hpp>
 #include "n9config.h"
 
 xkbdb::xkbdb() {

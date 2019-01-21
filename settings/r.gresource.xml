@@ -2,6 +2,7 @@
 <gresources>
 	<gresource prefix="/technology/unrelenting/numbernine/settings">
 		<file preprocess="xml-stripblanks">settings.glade</file>
+		<file preprocess="xml-stripblanks">dialogs.glade</file>
 		<file>style.css</file>
 	</gresource>
 </gresources>

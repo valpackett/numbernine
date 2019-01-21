@@ -58,11 +58,9 @@ struct the_settings {
 		auto input = config->get_section("input");
 		std::vector<std::string> layouts, variants;
 		auto xkl = xkb_layouts.get();
-		std::transform(xkl.cbegin(), xkl.cend(),
-		               std::back_inserter(layouts),
+		std::transform(xkl.cbegin(), xkl.cend(), std::back_inserter(layouts),
 		               [](const std::pair<std::string, std::string> x) { return x.first; });
-		std::transform(xkl.cbegin(), xkl.cend(),
-		               std::back_inserter(variants),
+		std::transform(xkl.cbegin(), xkl.cend(), std::back_inserter(variants),
 		               [](const std::pair<std::string, std::string> x) { return x.second; });
 		input->get_option("xkb_layout", "us")->set_value(join(layouts, ','));
 		input->get_option("xkb_variant", "")->set_value(join(variants, ','));

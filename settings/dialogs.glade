@@ -1,0 +1,111 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- Glade 3.22 doesn't support the dialog headerbar stuff -->
+<interface>
+  <requires lib="gtk+" version="3.20"/>
+  <!-- interface-css-provider-path style.css -->
+  <object class="GtkTreeStore" id="tree-store-xkb-layouts">
+    <columns>
+      <column type="gchararray"/>
+      <column type="gchararray"/>
+      <column type="gchararray"/>
+      <column type="gchararray"/>
+    </columns>
+  </object>
+  <object class="GtkDialog" id="dialog-add-keyboard-layout">
+    <property name="use-header-bar">1</property>
+    <property name="can_focus">False</property>
+    <property name="window_position">center-on-parent</property>
+    <property name="type_hint">dialog</property>
+    <property name="title">New Keyboard Layout</property>
+    <property name="default_width">420</property>
+    <property name="default_height">500</property>
+    <child type="action">
+      <object class="GtkButton" id="cancel-add-keyboard-layout">
+        <property name="visible">True</property>
+        <property name="label">Cancel</property>
+      </object>
+    </child>
+    <child type="action">
+      <object class="GtkButton" id="ok-add-keyboard-layout">
+        <property name="visible">True</property>
+        <property name="label">Add</property>
+        <property name="can-default">True</property>
+      </object>
+    </child>
+    <action-widgets>
+      <action-widget response="ok" default="true">ok-add-keyboard-layout</action-widget>
+      <action-widget response="cancel">cancel-add-keyboard-layout</action-widget>
+    </action-widgets>
+    <child internal-child="vbox">
+      <object class="GtkBox">
+        <property name="can_focus">False</property>
+        <property name="orientation">vertical</property>
+        <property name="spacing">2</property>
+        <child>
+          <object class="GtkScrolledWindow">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="shadow_type">in</property>
+            <child>
+              <object class="GtkTreeView" id="tree-add-keyboard-layout">
+                <property name="visible">True</property>
+                <property name="can_focus">True</property>
+                <property name="has_focus">True</property>
+                <property name="model">tree-store-xkb-layouts</property>
+                <property name="headers_visible">False</property>
+                <property name="headers_clickable">False</property>
+                <child internal-child="selection">
+                  <object class="GtkTreeSelection"/>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">Layout</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">0</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+                <child>
+                  <object class="GtkTreeViewColumn">
+                    <property name="title" translatable="yes">Name</property>
+                    <child>
+                      <object class="GtkCellRendererText"/>
+                      <attributes>
+                        <attribute name="text">1</attribute>
+                      </attributes>
+                    </child>
+                  </object>
+                </child>
+              </object>
+              <packing>
+                <property name="expand">True</property>
+                <property name="fill">True</property>
+                <property name="position">1</property>
+              </packing>
+            </child>
+          </object>
+          <packing>
+            <property name="expand">True</property>
+            <property name="fill">True</property>
+            <property name="position">1</property>
+          </packing>
+        </child>
+        <child>
+          <object class="GtkLabel">
+            <property name="visible">True</property>
+            <property name="can_focus">False</property>
+            <property name="halign">center</property>
+            <property name="margin_left">2</property>
+            <property name="margin_top">4</property>
+            <property name="margin_right">2</property>
+            <property name="margin_bottom">4</property>
+            <property name="label" translatable="yes">Note: select the top-level entry for the "default" layout for that language</property>
+          </object>
+        </child>
+      </object>
+    </child>
+  </object>
+</interface>

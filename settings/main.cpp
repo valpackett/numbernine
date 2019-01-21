@@ -8,6 +8,7 @@
 #include "fmt/format.h"
 #include "gtk-util/button_toggler.hpp"
 #include "gtk-util/list_box_reuser.hpp"
+#include "xkb.hpp"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/settings/"
 
@@ -41,11 +42,16 @@ struct input_device_row {
 };
 
 struct settings_app {
-	struct wldip_compositor_manager *cmgr = nullptr;
+	xkbdb xkbdb;
+	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
 	Glib::RefPtr<Gio::Settings> settings;
 	Gtk::ApplicationWindow *window = nullptr;
+	Gtk::Dialog *dialog_add_keyboard_layout = nullptr;
+	Gtk::TreeView *tree_add_keyboard_layout = nullptr;
+	Glib::RefPtr<Gtk::TreeStore> tree_store_xkb_layouts;
 	Gtk::HeaderBar *headerbar_main = nullptr;
 	Gtk::Stack *stack_main = nullptr;
+	Gtk::ListBox *kb_layouts = nullptr;
 	Gtk::ListBox *curr_devices = nullptr;
 	std::vector<input_device_row> curr_devices_rows;
 	std::optional<gutil::list_box_reuser<input_device_row>> inputdevs;
@@ -59,8 +65,14 @@ struct settings_app {
 		builder->get_widget("toplevel", window);
 		builder->get_widget("headerbar-main", headerbar_main);
 		builder->get_widget("stack-main", stack_main);
+		builder->get_widget("list-keyboard-layouts", kb_layouts);
 		builder->get_widget("list-current-devices", curr_devices);
 		builder->get_widget_derived("selector-output", output_toggler);
+
+		auto dbuilder = Gtk::Builder::create_from_resource(RESPREFIX "dialogs.glade");
+		dbuilder->get_widget("dialog-add-keyboard-layout", dialog_add_keyboard_layout);
+		dbuilder->get_widget("tree-add-keyboard-layout", tree_add_keyboard_layout);
+		tree_store_xkb_layouts = get_object<Gtk::TreeStore>(dbuilder, "tree-store-xkb-layouts");
 
 		inputdevs =
 		    gutil::list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
@@ -90,6 +102,9 @@ struct settings_app {
 		settings->bind("touchpads-dwmouse",
 		               get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
 
+		settings->signal_changed().connect([&](auto _) { on_new_settings(); });
+		on_new_settings();
+
 		auto css = Gtk::CssProvider::create();
 		css->load_from_resource(RESPREFIX "style.css");
 		window->get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css,
@@ -103,7 +118,74 @@ struct settings_app {
 		update_title();
 		stack_main->property_visible_child().signal_changed().connect(update_title);
 
+		for (const auto &l : xkbdb.layouts) {
+			Gtk::TreeModel::iterator it = tree_store_xkb_layouts->append();
+			it->set_value(0, l.first);
+			it->set_value(1, l.second.desc);
+			it->set_value(2, l.first);
+			for (const auto &v : l.second.variants) {
+				Gtk::TreeModel::iterator iit = tree_store_xkb_layouts->append(it->children());
+				iit->set_value(0, fmt::format("{}({})", l.first, v.first));
+				iit->set_value(1, v.second);
+				iit->set_value(2, l.first);
+				iit->set_value(3, v.first);
+			}
+		}
+
+		window->add_action("add-keyboard-layout", [&]() {
+			dialog_add_keyboard_layout->set_transient_for(*window);
+			if (dialog_add_keyboard_layout->run() == Gtk::RESPONSE_OK) {
+				std::string layout, variant;
+				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(2, layout);
+				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(3, variant);
+				std::vector<std::tuple<Glib::ustring, Glib::ustring>> v;
+				for (const auto &p : xkb_layouts.get()) {
+					v.push_back(std::make_tuple(p.first, p.second));
+				}
+				v.push_back(std::make_tuple(layout, variant));
+				settings->set_value(
+				    "xkb-layouts",
+				    Glib::Variant<std::vector<std::tuple<Glib::ustring, Glib::ustring>>>::create(v));
+			}
+			dialog_add_keyboard_layout->hide();
+		});
+
+		window->add_action("remove-keyboard-layout", [&]() {
+			auto idx = kb_layouts->get_selected_row()->get_index();
+			int i = 0;
+			std::vector<std::tuple<Glib::ustring, Glib::ustring>> v;
+			for (const auto &p : xkb_layouts.get()) {
+				if (i != idx) {
+					v.push_back(std::make_tuple(p.first, p.second));
+				}
+				i++;
+			}
+			settings->set_value(
+			    "xkb-layouts",
+			    Glib::Variant<std::vector<std::tuple<Glib::ustring, Glib::ustring>>>::create(v));
+			// TODO notification bar with undo
+		});
+
 		window->reference();
+	}
+
+	void on_new_settings() {
+		for (auto &c : kb_layouts->get_children()) {
+			kb_layouts->remove(*c);
+		}
+		settings->get_value("xkb-layouts", xkb_layouts);
+		for (auto &layout : xkb_layouts.get()) {
+			auto *lbl = new Gtk::Label;
+			auto layname = xkbdb.layouts[layout.first].desc;
+			auto varname = xkbdb.layouts[layout.first].variants[layout.second];
+			lbl->set_label(varname.length() == 0 ? layname : fmt::format("{} - {}", layname, varname));
+			lbl->set_alignment(Gtk::ALIGN_START);
+			lbl->show();
+			kb_layouts->append(*lbl);
+			kb_layouts->get_row_at_index(kb_layouts->get_children().size() - 1)
+			    ->get_style_context()
+			    ->add_class("n9-settings-row");
+		}
 	}
 
 #if 0
