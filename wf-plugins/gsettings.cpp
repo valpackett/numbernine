@@ -4,22 +4,44 @@
 #include <glibmm.h>
 #include <libinput.h>
 #include <unistd.h>
+#include <algorithm>
 #include <core.hpp>
 #include <nonstd/make_unique.hpp>
 #include <output.hpp>
 #include <plugin.hpp>
+#include <sstream>
 #include <thread>
 #include <view-transform.hpp>
 #include <view.hpp>
 #include <workspace-manager.hpp>
 
+static inline std::string join(const std::vector<std::string> &v, const char delim) {
+	std::ostringstream result;
+	for (const auto &i : v) {
+		if (&i != &v[0]) {
+			result << delim;
+		}
+		result << i;
+	}
+	return result.str();
+}
+
 struct the_settings {
+	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
+	std::vector<std::string> xkb_options;
+	std::string xkb_rule;
+	uint32_t kb_repeat_rate, kb_repeat_delay;
 	double mouse_cursor_speed, mouse_scroll_speed, touchpad_cursor_speed, touchpad_scroll_speed;
 	bool natural_scroll, tap_to_click;
 	std::string click_method, scroll_method;
 	bool disable_while_typing, disable_touchpad_while_mouse;
 
 	void fill(const Glib::RefPtr<Gio::Settings> &gsettings) {
+		gsettings->get_value("xkb-layouts", xkb_layouts);
+		xkb_options = gsettings->get_string_array("xkb-options");
+		xkb_rule = gsettings->get_string("xkb-rule");
+		kb_repeat_rate = gsettings->get_uint("kb-repeat-rate");
+		kb_repeat_delay = gsettings->get_uint("kb-repeat-delay");
 		mouse_cursor_speed = gsettings->get_double("mice-accel-speed");
 		mouse_scroll_speed = gsettings->get_double("mice-scroll-speed");
 		touchpad_cursor_speed = gsettings->get_double("touchpads-accel-speed");
@@ -34,6 +56,21 @@ struct the_settings {
 
 	void apply(wayfire_config *config) {
 		auto input = config->get_section("input");
+		std::vector<std::string> layouts, variants;
+		auto xkl = xkb_layouts.get();
+		std::transform(xkl.cbegin(), xkl.cend(),
+		               std::back_inserter(layouts),
+		               [](const std::pair<std::string, std::string> x) { return x.first; });
+		std::transform(xkl.cbegin(), xkl.cend(),
+		               std::back_inserter(variants),
+		               [](const std::pair<std::string, std::string> x) { return x.second; });
+		input->get_option("xkb_layout", "us")->set_value(join(layouts, ','));
+		input->get_option("xkb_variant", "")->set_value(join(variants, ','));
+		input->get_option("xkb_options", "compose:ralt,grp:alt_space_toggle")
+		    ->set_value(join(xkb_options, ','));
+		input->get_option("xkb_rule", "evdev")->set_value(xkb_rule);
+		input->get_option("kb_repeat_rate", "40")->set_value(static_cast<int>(kb_repeat_rate));
+		input->get_option("kb_repeat_delay", "400")->set_value(static_cast<int>(kb_repeat_delay));
 		input->get_option("mouse_cursor_speed", "0.0")->set_value(mouse_cursor_speed);
 		input->get_option("mouse_scroll_speed", "1.0")->set_value(mouse_scroll_speed);
 		input->get_option("touchpad_cursor_speed", "0.0")->set_value(touchpad_cursor_speed);

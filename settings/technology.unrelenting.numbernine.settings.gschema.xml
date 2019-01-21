@@ -2,6 +2,31 @@
 <schemalist>
 	<schema id="technology.unrelenting.numbernine.settings" path="/technology/unrelenting/numbernine/settings/">
 
+		<key name="xkb-layouts" type="a(ss)">
+			<default>[('us', '')]</default>
+			<summary>Keyboard layouts with variants</summary>
+		</key>
+
+		<key name="xkb-options" type="as">
+			<default>['compose:ralt', 'grp:alt_space_toggle']</default>
+			<summary>Keyboard layouts with variants</summary>
+		</key>
+
+		<key name="xkb-rule" type="s">
+			<default>'evdev'</default>
+			<summary>Keyboard layout rule</summary>
+		</key>
+
+		<key name="kb-repeat-rate" type="u">
+			<default>40</default>
+			<summary>Keyboard repeat rate in ms</summary>
+		</key>
+
+		<key name="kb-repeat-delay" type="u">
+			<default>400</default>
+			<summary>Keyboard repeat delay in ms</summary>
+		</key>
+
 		<key name="mice-accel-speed" type="d">
 			<default>0.0</default>
 			<summary>Acceleration speed (-1.0 to 1.0, where 0 is device default) for mice</summary>
