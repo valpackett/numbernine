@@ -101,6 +101,10 @@ struct settings_app {
 		               get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
 		settings->bind("touchpads-dwmouse",
 		               get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
+		settings->bind("kb-repeat-rate",
+		               get_object<Gtk::Adjustment>(builder, "adj-repeat-rate")->property_value());
+		settings->bind("kb-repeat-delay",
+		               get_object<Gtk::Adjustment>(builder, "adj-repeat-delay")->property_value());
 
 		settings->signal_changed().connect([&](auto _) { on_new_settings(); });
 		on_new_settings();
