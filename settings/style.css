@@ -1,3 +1,4 @@
+.n9-settings-sidebar list { background: @theme_unfocused_base_color; }
 .n9-settings-pane-box { padding: 10px; }
 
 .n9-settings-group-title, .n9-settings-group-toggler { margin: 10px 0; }
@@ -7,3 +8,5 @@
 .n9-settings-row:not(:first-child) { border-top-width: 0; }
 
 .n9-settings-description { font-size: 0.9em; color: shade(@theme_fg_color, 1.2); }
+.n9-settings-description:backdrop { color: @insensitive_fg_color; }
+*:selected .n9-settings-description { color: @theme_selected_fg_color; }

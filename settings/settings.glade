@@ -48,6 +48,7 @@
     <property name="page_increment">0.11</property>
   </object>
   <object class="GtkApplicationWindow" id="toplevel">
+    <property name="height_request">550</property>
     <property name="can_focus">False</property>
     <property name="default_width">800</property>
     <property name="default_height">550</property>
@@ -63,7 +64,14 @@
             <property name="can_focus">False</property>
             <property name="title" translatable="yes">Settings</property>
             <child>
-              <placeholder/>
+              <object class="GtkSeparator">
+                <property name="visible">True</property>
+                <property name="can_focus">False</property>
+                <property name="halign">end</property>
+              </object>
+              <packing>
+                <property name="pack_type">end</property>
+              </packing>
             </child>
           </object>
           <packing>
@@ -85,7 +93,7 @@
           <packing>
             <property name="expand">True</property>
             <property name="fill">True</property>
-            <property name="position">1</property>
+            <property name="position">2</property>
           </packing>
         </child>
       </object>
@@ -96,25 +104,19 @@
         <property name="can_focus">False</property>
         <child>
           <object class="GtkStackSidebar" id="switcher-main">
+            <property name="width_request">230</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
+            <property name="margin_right">6</property>
             <property name="stack">stack-main</property>
+            <style>
+              <class name="n9-settings-sidebar"/>
+            </style>
           </object>
           <packing>
             <property name="expand">False</property>
             <property name="fill">True</property>
             <property name="position">0</property>
-          </packing>
-        </child>
-        <child>
-          <object class="GtkSeparator">
-            <property name="visible">True</property>
-            <property name="can_focus">False</property>
-          </object>
-          <packing>
-            <property name="expand">False</property>
-            <property name="fill">True</property>
-            <property name="position">1</property>
           </packing>
         </child>
         <child>
@@ -180,9 +182,11 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkScale">
+                                          <object class="GtkScale" id="scale-mouse-speed">
+                                            <property name="width_request">300</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="halign">end</property>
                                             <property name="hexpand">True</property>
                                             <property name="adjustment">adj-mouse-speed</property>
                                             <property name="show_fill_level">True</property>
@@ -235,9 +239,11 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkScale">
+                                          <object class="GtkScale" id="scale-mouse-scroll-speed">
+                                            <property name="width_request">300</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="halign">end</property>
                                             <property name="hexpand">True</property>
                                             <property name="adjustment">adj-mouse-scroll-speed</property>
                                             <property name="show_fill_level">True</property>
@@ -321,9 +327,11 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkScale">
+                                          <object class="GtkScale" id="scale-touchpad-speed">
+                                            <property name="width_request">300</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="halign">end</property>
                                             <property name="hexpand">True</property>
                                             <property name="adjustment">adj-touchpad-speed</property>
                                             <property name="show_fill_level">True</property>
@@ -376,9 +384,11 @@
                                           </packing>
                                         </child>
                                         <child>
-                                          <object class="GtkScale">
+                                          <object class="GtkScale" id="scale-touchpad-scroll-speed">
+                                            <property name="width_request">300</property>
                                             <property name="visible">True</property>
                                             <property name="can_focus">True</property>
+                                            <property name="halign">end</property>
                                             <property name="hexpand">True</property>
                                             <property name="adjustment">adj-touchpad-scroll-speed</property>
                                             <property name="show_fill_level">True</property>
@@ -1270,6 +1280,14 @@
       <widget name="list-touchpad-settings"/>
       <widget name="list-current-devices"/>
       <widget name="list-mouse-settings"/>
+    </widgets>
+  </object>
+  <object class="GtkSizeGroup" id="size-input-scales">
+    <widgets>
+      <widget name="scale-touchpad-speed"/>
+      <widget name="scale-touchpad-scroll-speed"/>
+      <widget name="scale-mouse-scroll-speed"/>
+      <widget name="scale-mouse-speed"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="size-keyboard-lists">
