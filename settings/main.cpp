@@ -41,6 +41,21 @@ struct input_device_row {
 	Gtk::Grid *toplevel() { return grid; }
 };
 
+struct kb_layout_row {
+	Gtk::Grid *grid = nullptr;
+	Gtk::Label *name = nullptr, *desc = nullptr;
+
+	kb_layout_row(Glib::RefPtr<Gtk::Builder> &builder) {
+		builder->get_widget("row-kb-layout", grid);
+		builder->get_widget("kb-layout-name", name);
+		builder->get_widget("kb-layout-description", desc);
+	}
+
+	void on_added() { grid->get_parent()->get_style_context()->add_class("n9-settings-row"); }
+
+	Gtk::Grid *toplevel() { return grid; }
+};
+
 struct settings_app {
 	xkbdb xkbdb;
 	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
@@ -53,8 +68,8 @@ struct settings_app {
 	Gtk::Stack *stack_main = nullptr;
 	Gtk::ListBox *kb_layouts = nullptr;
 	Gtk::ListBox *curr_devices = nullptr;
-	std::vector<input_device_row> curr_devices_rows;
 	std::optional<gutil::list_box_reuser<input_device_row>> inputdevs;
+	std::optional<gutil::list_box_reuser<kb_layout_row>> kblayouts;
 	gutil::button_toggler *output_toggler = nullptr;
 
 	settings_app() {
@@ -76,6 +91,9 @@ struct settings_app {
 
 		inputdevs =
 		    gutil::list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
+
+		kblayouts =
+		    gutil::list_box_reuser<kb_layout_row>(RESPREFIX "settings.glade", kb_layouts, false);
 
 		settings->bind("mice-accel-speed",
 		               get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
@@ -174,21 +192,14 @@ struct settings_app {
 	}
 
 	void on_new_settings() {
-		for (auto &c : kb_layouts->get_children()) {
-			kb_layouts->remove(*c);
-		}
 		settings->get_value("xkb-layouts", xkb_layouts);
+		kblayouts->ensure_row_count(xkb_layouts.get().size());
+		size_t i = 0;
 		for (auto &layout : xkb_layouts.get()) {
-			auto *lbl = new Gtk::Label;
-			auto layname = xkbdb.layouts[layout.first].desc;
-			auto varname = xkbdb.layouts[layout.first].variants[layout.second];
-			lbl->set_label(varname.length() == 0 ? layname : fmt::format("{} - {}", layname, varname));
-			lbl->set_alignment(Gtk::ALIGN_START);
-			lbl->show();
-			kb_layouts->append(*lbl);
-			kb_layouts->get_row_at_index(kb_layouts->get_children().size() - 1)
-			    ->get_style_context()
-			    ->add_class("n9-settings-row");
+			auto &row = (*kblayouts)[i++];
+			row.name->set_label(xkbdb.layouts[layout.first].desc);
+			auto desc = xkbdb.layouts[layout.first].variants[layout.second];
+			row.desc->set_label(desc.size() == 0 ? "Default Layout" : desc);
 		}
 	}
 
