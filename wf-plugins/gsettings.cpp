@@ -64,7 +64,7 @@ struct the_settings {
 		               [](const std::pair<std::string, std::string> x) { return x.second; });
 		input->get_option("xkb_layout", "us")->set_value(join(layouts, ','));
 		input->get_option("xkb_variant", "")->set_value(join(variants, ','));
-		input->get_option("xkb_options", "compose:ralt,grp:alt_space_toggle")
+		input->get_option("xkb_option", "compose:ralt,grp:alt_space_toggle")
 		    ->set_value(join(xkb_options, ','));
 		input->get_option("xkb_rule", "evdev")->set_value(xkb_rule);
 		input->get_option("kb_repeat_rate", "40")->set_value(static_cast<int>(kb_repeat_rate));
