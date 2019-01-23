@@ -59,13 +59,14 @@ struct kb_layout_row {
 struct settings_app {
 	xkbdb xkbdb;
 	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
-	Glib::RefPtr<Gio::Settings> settings;
+	Glib::RefPtr<Gio::Settings> settings, wpsettings;
 	Gtk::ApplicationWindow *window = nullptr;
 	Gtk::Dialog *dialog_add_keyboard_layout = nullptr;
 	Gtk::TreeView *tree_add_keyboard_layout = nullptr;
 	Glib::RefPtr<Gtk::TreeStore> tree_store_xkb_layouts;
 	Gtk::HeaderBar *headerbar_main = nullptr;
 	Gtk::Stack *stack_main = nullptr;
+	Gtk::FileChooserButton *chooser_wp = nullptr;
 	Gtk::ListBox *kb_layouts = nullptr;
 	Gtk::ListBox *curr_devices = nullptr;
 	std::optional<gutil::list_box_reuser<input_device_row>> inputdevs;
@@ -75,11 +76,14 @@ struct settings_app {
 	settings_app() {
 		settings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
 		                                 "/technology/unrelenting/numbernine/settings/");
+		wpsettings = Gio::Settings::create("technology.unrelenting.numbernine.wallpaper",
+																		 "/technology/unrelenting/numbernine/wallpaper/");
 
 		auto builder = Gtk::Builder::create_from_resource(RESPREFIX "settings.glade");
 		builder->get_widget("toplevel", window);
 		builder->get_widget("headerbar-main", headerbar_main);
 		builder->get_widget("stack-main", stack_main);
+		builder->get_widget("file-wallpaper", chooser_wp);
 		builder->get_widget("list-keyboard-layouts", kb_layouts);
 		builder->get_widget("list-current-devices", curr_devices);
 		builder->get_widget_derived("selector-output", output_toggler);
@@ -124,6 +128,7 @@ struct settings_app {
 		settings->bind("kb-repeat-delay",
 		               get_object<Gtk::Adjustment>(builder, "adj-repeat-delay")->property_value());
 
+		wpsettings->signal_changed().connect([&](auto _) { on_new_settings(); });
 		settings->signal_changed().connect([&](auto _) { on_new_settings(); });
 		on_new_settings();
 
@@ -153,6 +158,10 @@ struct settings_app {
 				iit->set_value(3, v.first);
 			}
 		}
+
+		chooser_wp->signal_file_set().connect([&]() {
+				wpsettings->set_string("picture-path", chooser_wp->get_filename());
+				});
 
 		window->add_action("add-keyboard-layout", [&]() {
 			dialog_add_keyboard_layout->set_transient_for(*window);
@@ -192,6 +201,8 @@ struct settings_app {
 	}
 
 	void on_new_settings() {
+		chooser_wp->select_filename(wpsettings->get_string("picture-path"));
+
 		settings->get_value("xkb-layouts", xkb_layouts);
 		kblayouts->ensure_row_count(xkb_layouts.get().size());
 		size_t i = 0;

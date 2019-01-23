@@ -19,7 +19,7 @@ settings_srcs = files(
 )
 
 settings_app = executable('n9-settings',
-	settings_srcs, settings_hdrs, settings_schemas, settings_res,
+	settings_srcs, settings_hdrs, settings_schemas, wallpaper_schemas, settings_res,
 	dependencies: [fmtlib, pugixml, wayland_client, gtk, gtkmm],
 	link_with: [gutil],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
