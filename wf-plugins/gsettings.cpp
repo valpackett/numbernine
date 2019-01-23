@@ -84,7 +84,7 @@ struct the_settings {
 
 static the_settings settings;
 
-void gsettings_loop(int fd) {
+static void gsettings_loop(int fd) {
 	auto glib = Glib::MainLoop::create();
 	Gio::init();
 	auto gsettings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
@@ -105,12 +105,12 @@ void gsettings_loop(int fd) {
 
 static int handle_update(int fd, uint32_t mask, void *data);
 
-struct wayfire_gsettings : public wayfire_plugin_t {
+struct gsettings_ctx : public wf_custom_data_t {
 	std::thread loopthread;
 	int fd[2] = {0, 0};
 	wayfire_config *config = nullptr;
 
-	void init(wayfire_config *config) override {
+	gsettings_ctx(wayfire_config *config) {
 		this->config = config;
 		pipe(fd);
 		loopthread = std::thread(gsettings_loop, fd[1]);
@@ -118,17 +118,10 @@ struct wayfire_gsettings : public wayfire_plugin_t {
 		wl_event_loop_add_fd(core->ev_loop, fd[0], WL_EVENT_READABLE, handle_update, this);
 		handle_update(fd[0], 0, this);
 	}
-
-	void fini() {
-		close(fd[0]);
-		close(fd[1]);
-	}
-
-	bool is_unloadable() override { return false; }
 };
 
 static int handle_update(int fd, uint32_t mask, void *data) {
-	wayfire_gsettings *ctx = reinterpret_cast<wayfire_gsettings *>(data);
+	gsettings_ctx *ctx = reinterpret_cast<gsettings_ctx *>(data);
 	char buff;
 	read(fd, &buff, 1);
 	log_info("gsettings update received, applying");
@@ -137,6 +130,17 @@ static int handle_update(int fd, uint32_t mask, void *data) {
 	core->emit_signal("reload-config", nullptr);
 	return 1;
 }
+
+// Plugins are per-output, this wrapper is for output independence
+struct wayfire_gsettings : public wayfire_plugin_t {
+	void init(wayfire_config *config) override {
+		if (!core->has_data<gsettings_ctx>()) {
+			core->store_data(std::make_unique<gsettings_ctx>(config));
+		}
+	}
+
+	bool is_unloadable() override { return false; }
+};
 
 extern "C" {
 wayfire_plugin_t *newInstance() { return new wayfire_gsettings(); }
