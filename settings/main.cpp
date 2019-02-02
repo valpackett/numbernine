@@ -77,7 +77,7 @@ struct settings_app {
 		settings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
 		                                 "/technology/unrelenting/numbernine/settings/");
 		wpsettings = Gio::Settings::create("technology.unrelenting.numbernine.wallpaper",
-																		 "/technology/unrelenting/numbernine/wallpaper/");
+		                                   "/technology/unrelenting/numbernine/wallpaper/");
 
 		auto builder = Gtk::Builder::create_from_resource(RESPREFIX "settings.glade");
 		builder->get_widget("toplevel", window);
@@ -159,9 +159,8 @@ struct settings_app {
 			}
 		}
 
-		chooser_wp->signal_file_set().connect([&]() {
-				wpsettings->set_string("picture-path", chooser_wp->get_filename());
-				});
+		chooser_wp->signal_file_set().connect(
+		    [&]() { wpsettings->set_string("picture-path", chooser_wp->get_filename()); });
 
 		window->add_action("add-keyboard-layout", [&]() {
 			dialog_add_keyboard_layout->set_transient_for(*window);
