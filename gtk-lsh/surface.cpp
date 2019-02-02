@@ -5,76 +5,44 @@
 
 namespace lsh {
 
-static void on_configure(void *data, struct zwlr_layer_surface_v1 *ls, uint32_t serial,
-                         uint32_t width, uint32_t height) {
-	auto *surf = reinterpret_cast<surface *>(data);
-	Glib::signal_idle().connect([=] {
-		surf->window->show_all();
-		if (width > 0 && height > 0) {
-			surf->window->resize(width, height);
-		}
-		zwlr_layer_surface_v1_ack_configure(ls, serial);
-		return false;
-	});
-}
-
-static void on_closed(void *data, struct zwlr_layer_surface_v1 * /*unused*/) {
-	auto *surf = reinterpret_cast<surface *>(data);
-	Glib::signal_idle().connect([=] {
-		if (surf->on_closed) {
-			surf->on_closed(surf->window);
-		} else {
-			surf->window->close();
-		}
-		return false;
-	});
-}
-
-static const struct zwlr_layer_surface_v1_listener surface_listener = {on_configure, on_closed};
-
-layer operator|(const layer a, const layer b) {
-	return static_cast<layer>(static_cast<int>(a) | static_cast<int>(b));
-}
-
-anchor operator|(const anchor a, const anchor b) {
-	return static_cast<anchor>(static_cast<int>(a) | static_cast<int>(b));
-}
+using namespace wayland;
 
 surface::surface(manager &mgr, std::shared_ptr<Gtk::Window> w,
-                 std::variant<any_output_t, wl_output *, GdkMonitor *> output, layer layer)
+                 std::variant<any_output_t, wl_output *, GdkMonitor *> output,
+                 zwlr_layer_shell_v1_layer layer)
     : window(std::move(w)) {
 	gtk_widget_realize(reinterpret_cast<GtkWidget *>(window->gobj()));
 	auto *gdwnd = window->get_window()->gobj();
 	gdk_wayland_window_set_use_custom_surface(gdwnd);
-	auto *wlsurf = gdk_wayland_window_get_wl_surface(gdwnd);
+	surface_t wlsurf{gdk_wayland_window_get_wl_surface(gdwnd), proxy_t::wrapper_type::foreign};
 	wl_output *outputptr = nullptr;
 	if (std::holds_alternative<wl_output *>(output)) {
 		outputptr = std::get<wl_output *>(output);
 	} else if (std::holds_alternative<GdkMonitor *>(output)) {
 		outputptr = gdk_wayland_monitor_get_wl_output(std::get<GdkMonitor *>(output));
 	}
-	lsurf = zwlr_layer_shell_v1_get_layer_surface(
-	    mgr.lshell, wlsurf, outputptr, static_cast<zwlr_layer_shell_v1_layer>(layer), "test");
-	zwlr_layer_surface_v1_add_listener(lsurf, &surface_listener, this);
-	wl_surface_commit(wlsurf);
-}
-
-void surface::set_anchor(anchor anchor) {
-	zwlr_layer_surface_v1_set_anchor(lsurf, static_cast<zwlr_layer_surface_v1_anchor>(anchor));
-}
-
-void surface::set_size(int32_t w, int32_t h) { zwlr_layer_surface_v1_set_size(lsurf, w, h); }
-
-void surface::set_exclusive_zone(int32_t zone) {
-	zwlr_layer_surface_v1_set_exclusive_zone(lsurf, zone);
-}
-
-void surface::set_margin(int32_t top, int32_t right, int32_t bottom, int32_t left) {
-	zwlr_layer_surface_v1_set_margin(lsurf, top, right, bottom, left);
-}
-
-void surface::set_keyboard_interactivity(bool enable) {
-	zwlr_layer_surface_v1_set_keyboard_interactivity(lsurf, static_cast<uint32_t>(enable));
+	lsurf = mgr.lshell.get_layer_surface(wlsurf, outputptr, layer, "test");
+	lsurf.on_closed() = [=]() {
+		Glib::signal_idle().connect([=] {
+			if (on_closed) {
+				on_closed(window);
+			} else {
+				window->close();
+			}
+			return false;
+		});
+	};
+	lsurf.on_configure() = [=](uint32_t serial, uint32_t width, uint32_t height) {
+		Glib::signal_idle().connect([=] {
+			window->show();
+			if (width > 0 && height > 0) {
+				window->resize(width, height);
+			}
+			lsurf.ack_configure(serial);
+			return false;
+		});
+	};
+	wlsurf.commit();
 }
 
 }  // namespace lsh

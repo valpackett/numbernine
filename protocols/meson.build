@@ -1,22 +1,22 @@
 dep_protos = dependency('wayland-protocols')
 system_protos_dir = dep_protos.get_pkgconfig_variable('pkgdatadir')
 
-dep_scanner = dependency('wayland-scanner', native: true)
-prog_scanner = find_program(dep_scanner.get_pkgconfig_variable('wayland_scanner'))
+dep_scannerpp = dependency('wayland-scanner++', native: true)
+prog_scannerpp = find_program(dep_scannerpp.get_pkgconfig_variable('wayland_scannerpp'))
 
-wl_code = generator(prog_scanner,
-	output: '@BASENAME@-protocol.c',
-	arguments: ['private-code', '@INPUT@', '@OUTPUT@'])
-wl_client_header = generator(prog_scanner,
-	output: '@BASENAME@-client-protocol.h',
-	arguments: ['client-header', '@INPUT@', '@OUTPUT@'])
+scannerpp = generator(prog_scannerpp,
+	output: ['@BASENAME@-protocol.hpp', '@BASENAME@-protocol.cpp'],
+	arguments: ['@EXTRA_ARGS@', '@INPUT@', '@BUILD_DIR@/@BASENAME@-protocol.hpp', '@BUILD_DIR@/@BASENAME@-protocol.cpp'])
 
-capabilities_code = wl_code.process('wldip-capabilities.xml')
-capabilities_client_header = wl_client_header.process('wldip-capabilities.xml')
-
-layer_shell_code = wl_code.process('wlr-layer-shell-unstable-v1.xml')
-layer_shell_client_header = wl_client_header.process('wlr-layer-shell-unstable-v1.xml')
+#capabilities_code = wl_code.process('wldip-capabilities.xml')
+#capabilities_client_header = wl_client_header.process('wldip-capabilities.xml')
 
 xdg_shell_path = system_protos_dir / 'stable/xdg-shell/xdg-shell.xml'
-xdg_shell_code = wl_code.process(xdg_shell_path)
-xdg_shell_client_header = wl_client_header.process(xdg_shell_path)
+xdg_shell_code = scannerpp.process(xdg_shell_path)
+
+layer_shell_code = scannerpp.process('wlr-layer-shell-unstable-v1.xml',
+	extra_args: ['-x', 'xdg-shell-protocol.hpp'])
+
+layer_shell = declare_dependency(
+	sources: [xdg_shell_code, layer_shell_code],
+	dependencies: [wayland_clientpp])

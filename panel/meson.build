@@ -27,10 +27,8 @@ panel_hdrs = files(
 
 panel = executable('n9-panel',
 	panel_srcs, panel_schemas, panel_res,
-	layer_shell_client_header,
 	gtk_actions_code,
-	dependencies: [gtk, gtkmm],
-	link_with: [lsh],
+	dependencies: [gtk_lsh, gtk, gtkmm],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
 	install: true,

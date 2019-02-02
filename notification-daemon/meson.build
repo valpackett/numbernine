@@ -8,9 +8,8 @@ nd_srcs = files(
 )
 
 notification_daemon = executable('n9-notification-daemon',
-	nd_srcs, nd_res, layer_shell_client_header, fdp_notifications_code,
-	dependencies: [gtk, gtkmm],
-	link_with: [lsh],
+	nd_srcs, nd_res, fdp_notifications_code,
+	dependencies: [gtk_lsh, gtk, gtkmm],
 	include_directories: [include_directories('../')],
 	install: true,
 	install_dir: get_option('libexecdir'))

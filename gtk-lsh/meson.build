@@ -9,7 +9,10 @@ lsh_hdrs = files(
 	'multimonitor.hpp',
 )
 
-lsh = static_library('gtk-lsh',
+lsh_lib = static_library('gtk-lsh',
 	lsh_srcs,
-	layer_shell_code, layer_shell_client_header, xdg_shell_code,
-	dependencies: [wayland_client, gtk, gtkmm])
+	dependencies: [layer_shell, gtk, gtkmm])
+
+gtk_lsh = declare_dependency(
+	include_directories: lsh_lib.private_dir_include(),
+	link_with: lsh_lib)

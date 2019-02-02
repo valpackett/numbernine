@@ -13,9 +13,7 @@ launcher_hdrs = files(
 
 launcher = executable('n9-launcher',
 	launcher_srcs, launcher_res,
-	layer_shell_client_header,
-	dependencies: [gtk, gtkmm, cairomm],
-	link_with: [lsh, gutil],
+	dependencies: [gtk_lsh, gtk_util, gtk, gtkmm],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
 	install: true,

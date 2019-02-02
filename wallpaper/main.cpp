@@ -18,9 +18,10 @@ class wallpaper {
 		window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
 		window->set_decorated(false);
 		layer_surface.emplace(lsh_mgr, window, monitor, lsh::layer::background);
-		layer_surface->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
-		                          lsh::anchor::right);
-		layer_surface->set_size(0, 0);
+		(*layer_surface)
+		    ->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
+		                 lsh::anchor::right);
+		(*layer_surface)->set_size(0, 0);
 		settings->bind("picture-path", &image, "path");
 		window->add(image);
 	}

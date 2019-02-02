@@ -12,9 +12,8 @@ wallpaper_hdrs = files(
 
 wallpaper = executable('n9-wallpaper',
 	wallpaper_srcs,
-	layer_shell_client_header, wallpaper_schemas,
-	dependencies: [gtk, gtkmm, cairomm],
-	link_with: [lsh],
+	wallpaper_schemas,
+	dependencies: [gtk_lsh, gtk, gtkmm, cairomm],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
 	include_directories: [include_directories('../')],
 	install: true,
