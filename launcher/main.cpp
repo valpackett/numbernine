@@ -96,6 +96,7 @@ struct launcher {
 				window->hide();
 				return true;
 			}
+			return false;
 		});
 
 		searchbar->signal_activate().connect([&] {
