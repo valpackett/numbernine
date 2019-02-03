@@ -25,7 +25,7 @@ class notification {
 	             const std::vector<Glib::ustring> &actions,
 	             sigc::signal<void, guint32, guint32> *closed_,
 	             sigc::signal<void, guint32, Glib::ustring> *invoked_)
-	    : id(id_), closed_signal(closed_), invoked_signal(invoked_) {
+	    : closed_signal(closed_), invoked_signal(invoked_), id(id_) {
 		Glib::RefPtr<Gtk::Builder> builder =
 		    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
 
@@ -190,8 +190,8 @@ int main(int argc, char *argv[]) {
 	window->set_default_size(480, 0);
 	window->set_decorated(false);
 	lsh::surface window_lsh(lsh_mgr, window, lsh::any_output, lsh::layer::top);
-	window_lsh.set_anchor(lsh::anchor::top | lsh::anchor::right);
-	window_lsh.set_size(480, 1);
+	window_lsh->set_anchor(lsh::anchor::top | lsh::anchor::right);
+	window_lsh->set_size(480, 1);
 	window->set_app_paintable(true);
 
 	auto css = Gtk::CssProvider::create();
