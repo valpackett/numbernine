@@ -1,7 +1,9 @@
+#define HANDY_USE_UNSTABLE_API
 #include <fcntl.h>
 #include <gdk/gdkwayland.h>
 #include <glibmm/i18n.h>
 #include <gtkmm.h>
+#include <libhandy-0.0/handy.h>
 #include <sys/mman.h>
 #include <sys/stat.h>
 #include <iostream>
@@ -61,11 +63,15 @@ struct settings_app {
 	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
 	Glib::RefPtr<Gio::Settings> settings, wpsettings;
 	Gtk::ApplicationWindow *window = nullptr;
+	Gtk::Button *header_back = nullptr;
+	HdyLeaflet *header_leaflet = nullptr, *content_leaflet = nullptr;
+	Gtk::Revealer *header_back_revealer = nullptr;
 	Gtk::Dialog *dialog_add_keyboard_layout = nullptr;
 	Gtk::TreeView *tree_add_keyboard_layout = nullptr;
 	Glib::RefPtr<Gtk::TreeStore> tree_store_xkb_layouts;
-	Gtk::HeaderBar *headerbar_main = nullptr;
+	Gtk::HeaderBar *headerbar_main = nullptr, *headerbar_sidebar = nullptr;
 	Gtk::Stack *stack_main = nullptr;
+	Gtk::StackSidebar *switcher_main = nullptr;
 	Gtk::FileChooserButton *chooser_wp = nullptr;
 	Gtk::ListBox *kb_layouts = nullptr;
 	Gtk::ListBox *curr_devices = nullptr;
@@ -81,8 +87,14 @@ struct settings_app {
 
 		auto builder = Gtk::Builder::create_from_resource(RESPREFIX "settings.glade");
 		builder->get_widget("toplevel", window);
+		builder->get_widget("header-back-button", header_back);
+		builder->get_widget("header-back-button-revealer", header_back_revealer);
+		header_leaflet = HDY_LEAFLET(gtk_builder_get_object(builder->gobj(), "header-leaflet"));
+		content_leaflet = HDY_LEAFLET(gtk_builder_get_object(builder->gobj(), "content-leaflet"));
 		builder->get_widget("headerbar-main", headerbar_main);
+		builder->get_widget("headerbar-sidebar", headerbar_sidebar);
 		builder->get_widget("stack-main", stack_main);
+		builder->get_widget("switcher-main", switcher_main);
 		builder->get_widget("file-wallpaper", chooser_wp);
 		builder->get_widget("list-keyboard-layouts", kb_layouts);
 		builder->get_widget("list-current-devices", curr_devices);
@@ -141,6 +153,8 @@ struct settings_app {
 			headerbar_main->set_title(
 			    stack_main->child_property_title(*stack_main->property_visible_child().get_value())
 			        .get_value());
+			hdy_leaflet_set_visible_child_name(header_leaflet, "content");
+			// XXX: clicking the already active row doesn't open content
 		};
 		update_title();
 		stack_main->property_visible_child().signal_changed().connect(update_title);
@@ -195,6 +209,35 @@ struct settings_app {
 			    Glib::Variant<std::vector<std::tuple<Glib::ustring, Glib::ustring>>>::create(v));
 			// TODO notification bar with undo
 		});
+
+		header_back->signal_clicked().connect(
+		    [=] { hdy_leaflet_set_visible_child_name(header_leaflet, "sidebar"); });
+
+		// xml builder supports bindings, but glade erases them on saving :(
+		// https://source.puri.sm/Librem5/libhandy/issues/12 -- probably an issue about this
+		g_object_bind_property(header_leaflet, "folded", header_back_revealer->gobj(), "reveal-child",
+		                       static_cast<GBindingFlags>(G_BINDING_SYNC_CREATE));
+		g_object_bind_property(header_leaflet, "folded", headerbar_sidebar->gobj(), "show-close-button",
+		                       static_cast<GBindingFlags>(G_BINDING_SYNC_CREATE));
+		g_object_bind_property(
+		    header_leaflet, "visible-child-name", content_leaflet, "visible-child-name",
+		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
+		g_object_bind_property(
+		    header_leaflet, "mode-transition-duration", header_back_revealer->gobj(),
+		    "transition-duration",
+		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
+		g_object_bind_property(
+		    header_leaflet, "child-transition-duration", content_leaflet, "child-transition-duration",
+		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
+		g_object_bind_property(
+		    header_leaflet, "child-transition-type", content_leaflet, "child-transition-type",
+		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
+		g_object_bind_property(
+		    header_leaflet, "mode-transition-duration", content_leaflet, "mode-transition-duration",
+		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
+		g_object_bind_property(
+		    header_leaflet, "mode-transition-type", content_leaflet, "mode-transition-type",
+		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 
 		window->reference();
 	}
@@ -290,6 +333,7 @@ struct settings_app {
 };
 
 int main(int argc, char *argv[]) {
+	hdy_init(&argc, &argv);
 	auto app = Gtk::Application::create(argc, argv, "technology.unrelenting.numbernine.settings");
 	settings_app sapp;
 

@@ -12,6 +12,7 @@ endif
 gtk = dependency('gtk+-wayland-3.0', version: '>=3.22.0')
 gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
 cairomm = dependency('cairomm-1.0')
+handy = dependency('libhandy-0.0', version: '>=0.0.7')
 wayland_client = dependency('wayland-client')
 wayland_clientpp = dependency('wayland-client++')
 #flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])

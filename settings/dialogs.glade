@@ -2,6 +2,7 @@
 <!-- Glade 3.22 doesn't support the dialog headerbar stuff -->
 <interface>
   <requires lib="gtk+" version="3.20"/>
+  <requires lib="libhandy" version="0.0"/>
   <!-- interface-css-provider-path style.css -->
   <object class="GtkTreeStore" id="tree-store-xkb-layouts">
     <columns>
@@ -11,7 +12,7 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="GtkDialog" id="dialog-add-keyboard-layout">
+  <object class="HdyDialog" id="dialog-add-keyboard-layout">
     <property name="use-header-bar">1</property>
     <property name="can_focus">False</property>
     <property name="window_position">center-on-parent</property>
