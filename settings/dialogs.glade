@@ -4,7 +4,7 @@
   <requires lib="gtk+" version="3.20"/>
   <requires lib="libhandy" version="0.0"/>
   <!-- interface-css-provider-path style.css -->
-  <object class="GtkTreeStore" id="tree-store-xkb-layouts">
+  <object class="GtkTreeStore" id="tree_store_xkb_layouts">
     <columns>
       <column type="gchararray"/>
       <column type="gchararray"/>
@@ -12,7 +12,7 @@
       <column type="gchararray"/>
     </columns>
   </object>
-  <object class="HdyDialog" id="dialog-add-keyboard-layout">
+  <object class="HdyDialog" id="dialog_add_keyboard_layout">
     <property name="use-header-bar">1</property>
     <property name="can_focus">False</property>
     <property name="window_position">center-on-parent</property>
@@ -21,21 +21,21 @@
     <property name="default_width">420</property>
     <property name="default_height">500</property>
     <child type="action">
-      <object class="GtkButton" id="cancel-add-keyboard-layout">
+      <object class="GtkButton" id="cancel_add_keyboard_layout">
         <property name="visible">True</property>
         <property name="label">Cancel</property>
       </object>
     </child>
     <child type="action">
-      <object class="GtkButton" id="ok-add-keyboard-layout">
+      <object class="GtkButton" id="ok_add_keyboard_layout">
         <property name="visible">True</property>
         <property name="label">Add</property>
         <property name="can-default">True</property>
       </object>
     </child>
     <action-widgets>
-      <action-widget response="ok" default="true">ok-add-keyboard-layout</action-widget>
-      <action-widget response="cancel">cancel-add-keyboard-layout</action-widget>
+      <action-widget response="ok" default="true">ok_add_keyboard_layout</action-widget>
+      <action-widget response="cancel">cancel_add_keyboard_layout</action-widget>
     </action-widgets>
     <child internal-child="vbox">
       <object class="GtkBox">
@@ -48,11 +48,11 @@
             <property name="can_focus">False</property>
             <property name="shadow_type">in</property>
             <child>
-              <object class="GtkTreeView" id="tree-add-keyboard-layout">
+              <object class="GtkTreeView" id="tree_add_keyboard_layout">
                 <property name="visible">True</property>
                 <property name="can_focus">True</property>
                 <property name="has_focus">True</property>
-                <property name="model">tree-store-xkb-layouts</property>
+                <property name="model">tree_store_xkb_layouts</property>
                 <property name="headers_visible">False</property>
                 <property name="headers_clickable">False</property>
                 <child internal-child="selection">

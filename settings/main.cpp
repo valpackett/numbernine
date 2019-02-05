@@ -9,136 +9,129 @@
 #include <iostream>
 #include "fmt/format.h"
 #include "gtk-util/button_toggler.hpp"
+#include "gtk-util/glade.hpp"
 #include "gtk-util/list_box_reuser.hpp"
 #include "xkb.hpp"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/settings/"
 
-template <typename T>
-static inline T *get_widget(Glib::RefPtr<Gtk::Builder> &builder, Glib::ustring key) {
-	T *wdg = nullptr;
-	builder->get_widget(key, wdg);
-	return wdg;
-}
-
-template <typename T>
-static inline Glib::RefPtr<T> get_object(Glib::RefPtr<Gtk::Builder> &builder, Glib::ustring key) {
-	return Glib::RefPtr<T>::cast_static(builder->get_object(key));
-}
-
 struct input_device_row {
-	Gtk::Grid *grid = nullptr;
-	Gtk::Label *name = nullptr, *desc = nullptr;
-	Gtk::Image *icon = nullptr;
+	Glib::RefPtr<Gtk::Builder> builder;
+	GLADE(Gtk::Grid, row_input_device);
+	GLADE(Gtk::Label, input_device_name);
+	GLADE(Gtk::Label, input_device_description);
+	GLADE(Gtk::Image, input_device_icon);
 
-	input_device_row(Glib::RefPtr<Gtk::Builder> &builder) {
-		builder->get_widget("row-input-device", grid);
-		builder->get_widget("input-device-name", name);
-		builder->get_widget("input-device-icon", icon);
-		builder->get_widget("input-device-description", desc);
+	input_device_row(Glib::RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
+
+	void on_added() {
+		row_input_device->get_parent()->get_style_context()->add_class("n9-settings-row");
 	}
 
-	void on_added() { grid->get_parent()->get_style_context()->add_class("n9-settings-row"); }
-
-	Gtk::Grid *toplevel() { return grid; }
+	Gtk::Grid *toplevel() { return row_input_device; }
 };
 
 struct kb_layout_row {
-	Gtk::Grid *grid = nullptr;
-	Gtk::Label *name = nullptr, *desc = nullptr;
+	Glib::RefPtr<Gtk::Builder> builder;
+	GLADE(Gtk::Grid, row_kb_layout);
+	GLADE(Gtk::Label, kb_layout_name);
+	GLADE(Gtk::Label, kb_layout_description);
 
-	kb_layout_row(Glib::RefPtr<Gtk::Builder> &builder) {
-		builder->get_widget("row-kb-layout", grid);
-		builder->get_widget("kb-layout-name", name);
-		builder->get_widget("kb-layout-description", desc);
+	kb_layout_row(Glib::RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
+
+	void on_added() {
+		row_kb_layout->get_parent()->get_style_context()->add_class("n9-settings-row");
 	}
 
-	void on_added() { grid->get_parent()->get_style_context()->add_class("n9-settings-row"); }
-
-	Gtk::Grid *toplevel() { return grid; }
+	Gtk::Grid *toplevel() { return row_kb_layout; }
 };
 
 struct settings_app {
 	xkbdb xkbdb;
-	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
-	Glib::RefPtr<Gio::Settings> settings, wpsettings;
-	Gtk::ApplicationWindow *window = nullptr;
-	Gtk::Button *header_back = nullptr;
-	HdyLeaflet *header_leaflet = nullptr, *content_leaflet = nullptr;
-	Gtk::Revealer *header_back_revealer = nullptr;
-	Gtk::Dialog *dialog_add_keyboard_layout = nullptr;
-	Gtk::TreeView *tree_add_keyboard_layout = nullptr;
-	Glib::RefPtr<Gtk::TreeStore> tree_store_xkb_layouts;
-	Gtk::HeaderBar *headerbar_main = nullptr, *headerbar_sidebar = nullptr;
-	Gtk::Stack *stack_main = nullptr;
-	Gtk::StackSidebar *switcher_main = nullptr;
-	Gtk::FileChooserButton *chooser_wp = nullptr;
-	Gtk::ListBox *kb_layouts = nullptr;
-	Gtk::ListBox *curr_devices = nullptr;
-	std::optional<gutil::list_box_reuser<input_device_row>> inputdevs;
-	std::optional<gutil::list_box_reuser<kb_layout_row>> kblayouts;
-	gutil::button_toggler *output_toggler = nullptr;
+	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xsa_keyboard_layouts_list;
+
+	Glib::RefPtr<Gio::Settings> settings = Gio::Settings::create(
+	                                "technology.unrelenting.numbernine.settings",
+	                                "/technology/unrelenting/numbernine/settings/"),
+	                            wpsettings = Gio::Settings::create(
+	                                "technology.unrelenting.numbernine.wallpaper",
+	                                "/technology/unrelenting/numbernine/wallpaper/");
+
+	Glib::RefPtr<Gtk::Builder> builder =
+	                               Gtk::Builder::create_from_resource(RESPREFIX "settings.glade"),
+	                           dbuilder =
+	                               Gtk::Builder::create_from_resource(RESPREFIX "dialogs.glade");
+
+	GLADE(Gtk::ApplicationWindow, sa_toplevel);
+
+	// Header
+	GLADE(Gtk::Button, sa_header_back);
+	GLADE(Gtk::Revealer, sa_header_back_revealer);
+	GLADE_GOBJ(HdyLeaflet, HDY_LEAFLET, sa_header_leaflet);
+	GLADE(Gtk::HeaderBar, sa_header_bar_main);
+	GLADE(Gtk::HeaderBar, sa_header_bar_sidebar);
+
+	// Window content
+	GLADE_GOBJ(HdyLeaflet, HDY_LEAFLET, sa_top_leaflet);
+	GLADE(Gtk::StackSidebar, sa_top_stack_sidebar);
+	GLADE(Gtk::Stack, sa_top_stack);
+
+	// Tab: Appearance
+	GLADE(Gtk::FileChooserButton, sa_appear_wp_picture_chooser);
+
+	// Tab: Mouse and Touchpad
+	GLADE(Gtk::ListBox, sa_input_current_devices_list);
+	gutil::list_box_reuser<input_device_row> inputdevs{RESPREFIX "settings.glade",
+	                                                   sa_input_current_devices_list, false};
+
+	// Tab: Keyboard
+	GLADE(Gtk::ListBox, sa_keyboard_layouts_list);
+	gutil::list_box_reuser<kb_layout_row> kblayouts{RESPREFIX "settings.glade",
+	                                                sa_keyboard_layouts_list, false};
+
+	// Tab: Display
+	GLADE_DERIVED(gutil::button_toggler, sa_display_output_toggler);
+
+	// Dialog: New keyboard layout
+	GLADEB(dbuilder, Gtk::Dialog, dialog_add_keyboard_layout);
+	GLADEB(dbuilder, Gtk::TreeView, tree_add_keyboard_layout);
+	GLADEB_OBJ(dbuilder, Gtk::TreeStore, tree_store_xkb_layouts);
 
 	settings_app() {
-		settings = Gio::Settings::create("technology.unrelenting.numbernine.settings",
-		                                 "/technology/unrelenting/numbernine/settings/");
-		wpsettings = Gio::Settings::create("technology.unrelenting.numbernine.wallpaper",
-		                                   "/technology/unrelenting/numbernine/wallpaper/");
-
-		auto builder = Gtk::Builder::create_from_resource(RESPREFIX "settings.glade");
-		builder->get_widget("toplevel", window);
-		builder->get_widget("header-back-button", header_back);
-		builder->get_widget("header-back-button-revealer", header_back_revealer);
-		header_leaflet = HDY_LEAFLET(gtk_builder_get_object(builder->gobj(), "header-leaflet"));
-		content_leaflet = HDY_LEAFLET(gtk_builder_get_object(builder->gobj(), "content-leaflet"));
-		builder->get_widget("headerbar-main", headerbar_main);
-		builder->get_widget("headerbar-sidebar", headerbar_sidebar);
-		builder->get_widget("stack-main", stack_main);
-		builder->get_widget("switcher-main", switcher_main);
-		builder->get_widget("file-wallpaper", chooser_wp);
-		builder->get_widget("list-keyboard-layouts", kb_layouts);
-		builder->get_widget("list-current-devices", curr_devices);
-		builder->get_widget_derived("selector-output", output_toggler);
-
-		auto dbuilder = Gtk::Builder::create_from_resource(RESPREFIX "dialogs.glade");
-		dbuilder->get_widget("dialog-add-keyboard-layout", dialog_add_keyboard_layout);
-		dbuilder->get_widget("tree-add-keyboard-layout", tree_add_keyboard_layout);
-		tree_store_xkb_layouts = get_object<Gtk::TreeStore>(dbuilder, "tree-store-xkb-layouts");
-
-		inputdevs =
-		    gutil::list_box_reuser<input_device_row>(RESPREFIX "settings.glade", curr_devices, false);
-
-		kblayouts =
-		    gutil::list_box_reuser<kb_layout_row>(RESPREFIX "settings.glade", kb_layouts, false);
-
-		settings->bind("mice-accel-speed",
-		               get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
+		settings->bind(
+		    "mice-accel-speed",
+		    gutil::get_object<Gtk::Adjustment>(builder, "adj-mouse-speed")->property_value());
 		settings->bind(
 		    "mice-scroll-speed",
-		    get_object<Gtk::Adjustment>(builder, "adj-mouse-scroll-speed")->property_value());
-		settings->bind("touchpads-accel-speed",
-		               get_object<Gtk::Adjustment>(builder, "adj-touchpad-speed")->property_value());
+		    gutil::get_object<Gtk::Adjustment>(builder, "adj-mouse-scroll-speed")->property_value());
+		settings->bind(
+		    "touchpads-accel-speed",
+		    gutil::get_object<Gtk::Adjustment>(builder, "adj-touchpad-speed")->property_value());
 		settings->bind(
 		    "touchpads-scroll-speed",
-		    get_object<Gtk::Adjustment>(builder, "adj-touchpad-scroll-speed")->property_value());
-		settings->bind("touchpads-natural-scrolling",
-		               get_widget<Gtk::Switch>(builder, "toggle-natural-scrolling")->property_active());
+		    gutil::get_object<Gtk::Adjustment>(builder, "adj-touchpad-scroll-speed")->property_value());
+		settings->bind(
+		    "touchpads-natural-scrolling",
+		    gutil::get_widget<Gtk::Switch>(builder, "toggle-natural-scrolling")->property_active());
 		settings->bind("touchpads-tap-click",
-		               get_widget<Gtk::Switch>(builder, "toggle-tap-click")->property_active());
+		               gutil::get_widget<Gtk::Switch>(builder, "toggle-tap-click")->property_active());
 		settings->bind(
 		    "touchpads-click-method",
-		    get_widget<Gtk::ComboBoxText>(builder, "choose-click-method")->property_active_id());
+		    gutil::get_widget<Gtk::ComboBoxText>(builder, "choose-click-method")->property_active_id());
+		settings->bind("touchpads-scroll-method",
+		               gutil::get_widget<Gtk::ComboBoxText>(builder, "choose-scroll-method")
+		                   ->property_active_id());
 		settings->bind(
-		    "touchpads-scroll-method",
-		    get_widget<Gtk::ComboBoxText>(builder, "choose-scroll-method")->property_active_id());
-		settings->bind("touchpads-dwt",
-		               get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
+		    "touchpads-dwt",
+		    gutil::get_widget<Gtk::Switch>(builder, "toggle-touchpad-dwt")->property_active());
 		settings->bind("touchpads-dwmouse",
-		               get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
-		settings->bind("kb-repeat-rate",
-		               get_object<Gtk::Adjustment>(builder, "adj-repeat-rate")->property_value());
-		settings->bind("kb-repeat-delay",
-		               get_object<Gtk::Adjustment>(builder, "adj-repeat-delay")->property_value());
+		               gutil::get_widget<Gtk::Switch>(builder, "toggle-dwmouse")->property_active());
+		settings->bind(
+		    "kb-repeat-rate",
+		    gutil::get_object<Gtk::Adjustment>(builder, "adj-repeat-rate")->property_value());
+		settings->bind(
+		    "kb-repeat-delay",
+		    gutil::get_object<Gtk::Adjustment>(builder, "adj-repeat-delay")->property_value());
 
 		wpsettings->signal_changed().connect([&](auto _) { on_new_settings(); });
 		settings->signal_changed().connect([&](auto _) { on_new_settings(); });
@@ -146,18 +139,18 @@ struct settings_app {
 
 		auto css = Gtk::CssProvider::create();
 		css->load_from_resource(RESPREFIX "style.css");
-		window->get_style_context()->add_provider_for_screen(Gdk::Screen::get_default(), css,
-		                                                     GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
+		sa_toplevel->get_style_context()->add_provider_for_screen(
+		    Gdk::Screen::get_default(), css, GTK_STYLE_PROVIDER_PRIORITY_APPLICATION);
 
 		auto update_title = [=] {
-			headerbar_main->set_title(
-			    stack_main->child_property_title(*stack_main->property_visible_child().get_value())
+			sa_header_bar_main->set_title(
+			    sa_top_stack->child_property_title(*sa_top_stack->property_visible_child().get_value())
 			        .get_value());
-			hdy_leaflet_set_visible_child_name(header_leaflet, "content");
+			hdy_leaflet_set_visible_child_name(sa_header_leaflet, "content");
 			// XXX: clicking the already active row doesn't open content
 		};
 		update_title();
-		stack_main->property_visible_child().signal_changed().connect(update_title);
+		sa_top_stack->property_visible_child().signal_changed().connect(update_title);
 
 		for (const auto &l : xkbdb.layouts) {
 			Gtk::TreeModel::iterator it = tree_store_xkb_layouts->append();
@@ -173,20 +166,21 @@ struct settings_app {
 			}
 		}
 
-		chooser_wp->signal_file_set().connect(
-		    [&]() { wpsettings->set_string("picture-path", chooser_wp->get_filename()); });
+		sa_appear_wp_picture_chooser->signal_file_set().connect([&]() {
+			wpsettings->set_string("picture-path", sa_appear_wp_picture_chooser->get_filename());
+		});
 
-		window->add_action("add-keyboard-layout", [&]() {
-			dialog_add_keyboard_layout->set_transient_for(*window);
+		sa_toplevel->add_action("add-keyboard-layout", [&]() {
+			dialog_add_keyboard_layout->set_transient_for(*sa_toplevel);
 			if (dialog_add_keyboard_layout->run() == Gtk::RESPONSE_OK) {
 				std::string layout, variant;
 				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(2, layout);
 				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(3, variant);
 				std::vector<std::tuple<Glib::ustring, Glib::ustring>> v;
-				for (const auto &p : xkb_layouts.get()) {
-					v.push_back(std::make_tuple(p.first, p.second));
+				for (const auto &p : xsa_keyboard_layouts_list.get()) {
+					v.emplace_back(p.first, p.second);
 				}
-				v.push_back(std::make_tuple(layout, variant));
+				v.emplace_back(layout, variant);
 				settings->set_value(
 				    "xkb-layouts",
 				    Glib::Variant<std::vector<std::tuple<Glib::ustring, Glib::ustring>>>::create(v));
@@ -194,13 +188,13 @@ struct settings_app {
 			dialog_add_keyboard_layout->hide();
 		});
 
-		window->add_action("remove-keyboard-layout", [&]() {
-			auto idx = kb_layouts->get_selected_row()->get_index();
+		sa_toplevel->add_action("remove-keyboard-layout", [&]() {
+			auto idx = sa_keyboard_layouts_list->get_selected_row()->get_index();
 			int i = 0;
 			std::vector<std::tuple<Glib::ustring, Glib::ustring>> v;
-			for (const auto &p : xkb_layouts.get()) {
+			for (const auto &p : xsa_keyboard_layouts_list.get()) {
 				if (i != idx) {
-					v.push_back(std::make_tuple(p.first, p.second));
+					v.emplace_back(p.first, p.second);
 				}
 				i++;
 			}
@@ -210,49 +204,49 @@ struct settings_app {
 			// TODO notification bar with undo
 		});
 
-		header_back->signal_clicked().connect(
-		    [=] { hdy_leaflet_set_visible_child_name(header_leaflet, "sidebar"); });
+		sa_header_back->signal_clicked().connect(
+		    [=] { hdy_leaflet_set_visible_child_name(sa_header_leaflet, "sidebar"); });
 
 		// xml builder supports bindings, but glade erases them on saving :(
 		// https://source.puri.sm/Librem5/libhandy/issues/12 -- probably an issue about this
-		g_object_bind_property(header_leaflet, "folded", header_back_revealer->gobj(), "reveal-child",
-		                       static_cast<GBindingFlags>(G_BINDING_SYNC_CREATE));
-		g_object_bind_property(header_leaflet, "folded", headerbar_sidebar->gobj(), "show-close-button",
-		                       static_cast<GBindingFlags>(G_BINDING_SYNC_CREATE));
+		g_object_bind_property(sa_header_leaflet, "folded", sa_header_back_revealer->gobj(),
+		                       "reveal-child", static_cast<GBindingFlags>(G_BINDING_SYNC_CREATE));
+		g_object_bind_property(sa_header_leaflet, "folded", sa_header_bar_sidebar->gobj(),
+		                       "show-close-button", static_cast<GBindingFlags>(G_BINDING_SYNC_CREATE));
 		g_object_bind_property(
-		    header_leaflet, "visible-child-name", content_leaflet, "visible-child-name",
+		    sa_header_leaflet, "visible-child-name", sa_top_leaflet, "visible-child-name",
 		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 		g_object_bind_property(
-		    header_leaflet, "mode-transition-duration", header_back_revealer->gobj(),
+		    sa_header_leaflet, "mode-transition-duration", sa_header_back_revealer->gobj(),
 		    "transition-duration",
 		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 		g_object_bind_property(
-		    header_leaflet, "child-transition-duration", content_leaflet, "child-transition-duration",
+		    sa_header_leaflet, "child-transition-duration", sa_top_leaflet, "child-transition-duration",
 		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 		g_object_bind_property(
-		    header_leaflet, "child-transition-type", content_leaflet, "child-transition-type",
+		    sa_header_leaflet, "child-transition-type", sa_top_leaflet, "child-transition-type",
 		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 		g_object_bind_property(
-		    header_leaflet, "mode-transition-duration", content_leaflet, "mode-transition-duration",
+		    sa_header_leaflet, "mode-transition-duration", sa_top_leaflet, "mode-transition-duration",
 		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 		g_object_bind_property(
-		    header_leaflet, "mode-transition-type", content_leaflet, "mode-transition-type",
+		    sa_header_leaflet, "mode-transition-type", sa_top_leaflet, "mode-transition-type",
 		    static_cast<GBindingFlags>(G_BINDING_BIDIRECTIONAL | G_BINDING_SYNC_CREATE));
 
-		window->reference();
+		// sa_toplevel->reference();
 	}
 
 	void on_new_settings() {
-		chooser_wp->select_filename(wpsettings->get_string("picture-path"));
+		sa_appear_wp_picture_chooser->select_filename(wpsettings->get_string("picture-path"));
 
-		settings->get_value("xkb-layouts", xkb_layouts);
-		kblayouts->ensure_row_count(xkb_layouts.get().size());
+		settings->get_value("xkb-layouts", xsa_keyboard_layouts_list);
+		kblayouts.ensure_row_count(xsa_keyboard_layouts_list.get().size());
 		size_t i = 0;
-		for (auto &layout : xkb_layouts.get()) {
-			auto &row = (*kblayouts)[i++];
-			row.name->set_label(xkbdb.layouts[layout.first].desc);
+		for (auto &layout : xsa_keyboard_layouts_list.get()) {
+			auto &row = kblayouts[i++];
+			row.kb_layout_name->set_label(xkbdb.layouts[layout.first].desc);
 			auto desc = xkbdb.layouts[layout.first].variants[layout.second];
-			row.desc->set_label(desc.size() == 0 ? "Default Layout" : desc);
+			row.kb_layout_description->set_label(desc.empty() ? "Default Layout" : desc);
 		}
 	}
 
@@ -321,11 +315,11 @@ struct settings_app {
 			}
 		}
 
-		output_toggler->clear();
+		sa_display_output_toggler->clear();
 		for (const auto output : *state->outputs()) {
 			Glib::RefPtr<Gtk::ToggleButton> btn(new Gtk::ToggleButton);
 			btn->set_label(output->name()->str());
-			output_toggler->append(btn);
+			sa_display_output_toggler->append(btn);
 			btn->show();
 		}
 	}
@@ -344,5 +338,5 @@ int main(int argc, char *argv[]) {
 	}
 #endif
 
-	app->run(*sapp.window);
+	app->run(*sapp.sa_toplevel);
 }

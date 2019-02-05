@@ -5,6 +5,7 @@
 #include <vector>
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/surface.hpp"
+#include "gtk-util/glade.hpp"
 #include "org.freedesktop.Notifications_stub.h"
 
 #define RESPREFIX "/technology/unrelenting/numbernine/notification-daemon/"
@@ -15,43 +16,36 @@ Gtk::Box *box;
 class notification {
 	sigc::signal<void, guint32, guint32> *closed_signal = nullptr;
 	sigc::signal<void, guint32, Glib::ustring> *invoked_signal = nullptr;
-	Gtk::EventBox *topl = nullptr;
 	bool dead = false;
 	guint32 id;
 
+	Glib::RefPtr<Gtk::Builder> builder =
+	    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
+
+	GLADE(Gtk::EventBox, toplevel);
+	GLADE(Gtk::Grid, grid);
+	GLADE(Gtk::Label, title);
+	GLADE(Gtk::Label, body);
+	GLADE(Gtk::Image, icon);
+	GLADE(Gtk::Button, close);
+	GLADE(Gtk::ButtonBox, btns);
+
  public:
-	notification(guint32 id_, int position, int urgency, const Glib::ustring &title,
-	             const Glib::ustring &body, const Glib::ustring &icon_name,
+	notification(guint32 id_, int position, int urgency, const Glib::ustring &title_text,
+	             const Glib::ustring &body_text, const Glib::ustring &icon_name,
 	             const std::vector<Glib::ustring> &actions,
 	             sigc::signal<void, guint32, guint32> *closed_,
 	             sigc::signal<void, guint32, Glib::ustring> *invoked_)
 	    : closed_signal(closed_), invoked_signal(invoked_), id(id_) {
-		Glib::RefPtr<Gtk::Builder> builder =
-		    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
+		box->add(*toplevel);
+		box->reorder_child(*toplevel, position);
 
-		builder->get_widget("toplevel", topl);
-		topl->reference();
-		box->add(*topl);
-		box->reorder_child(*topl, position);
+		title->set_text(title_text);
+		body->set_markup(body_text);
+		icon->set_from_icon_name(icon_name, Gtk::ICON_SIZE_DIALOG);
 
-		Gtk::Label *l_title = nullptr;
-		builder->get_widget("title", l_title);
-		l_title->set_text(title);
-
-		Gtk::Label *l_body = nullptr;
-		builder->get_widget("body", l_body);
-		l_body->set_markup(body);
-
-		Gtk::Image *l_icon = nullptr;
-		builder->get_widget("icon", l_icon);
-		l_icon->set_from_icon_name(icon_name, Gtk::ICON_SIZE_DIALOG);
-
-		Gtk::Button *close = nullptr;
-		builder->get_widget("close", close);
 		close->signal_clicked().connect([this] { die(2); });
 
-		Gtk::ButtonBox *btns = nullptr;
-		builder->get_widget("btns", btns);
 		for (auto it = actions.begin(); it != actions.end() && it + 1 != actions.end(); it += 2) {
 			auto *action_btn = new Gtk::Button;
 			action_btn->set_label(*(it + 1));
@@ -60,17 +54,15 @@ class notification {
 			btns->add(*action_btn);
 		}
 
-		Gtk::Grid *grid = nullptr;
-		builder->get_widget("grid", grid);
 		grid->get_style_context()->add_class("n9-nd-urgency-" + std::to_string(urgency));
 
-		topl->set_events(Gdk::BUTTON_PRESS_MASK);
-		topl->signal_button_press_event().connect([this](GdkEventButton *evt) {
+		toplevel->set_events(Gdk::BUTTON_PRESS_MASK);
+		toplevel->signal_button_press_event().connect([this](GdkEventButton *evt) {
 			invoked_signal->emit(id, "default");
 			die(4);
 			return true;
 		});
-		topl->show_all();
+		toplevel->show_all();
 	}
 
 	guint32 get_id() { return id; }
@@ -80,7 +72,7 @@ class notification {
 		if (dead) {
 			return -1;
 		}
-		return box->child_property_position(*topl);
+		return box->child_property_position(*toplevel);
 	}
 
 	void die(guint32 reason) {
@@ -88,8 +80,8 @@ class notification {
 			return;
 		}
 		dead = true;
-		box->remove(*topl);
-		delete topl;
+		box->remove(*toplevel);
+		delete toplevel;
 		// let the window recompute the height to fit the box
 		window->set_size_request(480, 0);
 		window->resize(480, 1);

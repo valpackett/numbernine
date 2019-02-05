@@ -4,6 +4,7 @@ gutil_srcs = files(
 )
 
 gutil_hdrs = files(
+	'glade.hpp',
 	'icon.hpp',
 	'button_toggler.hpp',
 	'list_box_reuser.hpp',

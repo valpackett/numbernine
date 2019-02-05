@@ -49,12 +49,12 @@
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <child>
-                      <object class="GtkGrid" id="row-double">
+                      <object class="GtkGrid" id="row_dbl_toplevel">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="valign">start</property>
                         <child>
-                          <object class="GtkImage" id="row-double-icon">
+                          <object class="GtkImage" id="row_dbl_icon">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="stock">gtk-missing-image</property>
@@ -71,7 +71,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="row-double-title">
+                          <object class="GtkLabel" id="row_dbl_title">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>
@@ -94,7 +94,7 @@
                           </packing>
                         </child>
                         <child>
-                          <object class="GtkLabel" id="row-double-subtitle">
+                          <object class="GtkLabel" id="row_dbl_subtitle">
                             <property name="visible">True</property>
                             <property name="can_focus">False</property>
                             <property name="halign">start</property>

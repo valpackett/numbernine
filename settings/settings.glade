@@ -53,7 +53,7 @@
       <mime-type>image/*</mime-type>
     </mime-types>
   </object>
-  <object class="GtkApplicationWindow" id="toplevel">
+  <object class="GtkApplicationWindow" id="sa_toplevel">
     <property name="height_request">550</property>
     <property name="can_focus">False</property>
     <property name="default_width">800</property>
@@ -65,13 +65,13 @@
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <child>
-          <object class="HdyLeaflet" id="header-leaflet">
+          <object class="HdyLeaflet" id="sa_header_leaflet">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="mode_transition_type">slide</property>
             <property name="child_transition_type">slide</property>
             <child>
-              <object class="GtkHeaderBar" id="headerbar-sidebar">
+              <object class="GtkHeaderBar" id="sa_header_bar_sidebar">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="title" translatable="yes">Settings</property>
@@ -82,7 +82,7 @@
               </packing>
             </child>
             <child>
-              <object class="GtkSeparator" id="headerbar-separator">
+              <object class="GtkSeparator" id="sa_header_bar_separator">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <style>
@@ -94,20 +94,20 @@
               </packing>
             </child>
             <child>
-              <object class="GtkHeaderBar" id="headerbar-main">
+              <object class="GtkHeaderBar" id="sa_header_bar_main">
                 <property name="visible">True</property>
                 <property name="can_focus">False</property>
                 <property name="hexpand">True</property>
                 <property name="title" translatable="yes">Current Pane</property>
                 <property name="show_close_button">True</property>
                 <child>
-                  <object class="GtkRevealer" id="header-back-button-revealer">
+                  <object class="GtkRevealer" id="sa_header_back_revealer">
                     <property name="visible">True</property>
                     <property name="can_focus">False</property>
                     <property name="transition_type">crossfade</property>
                     <property name="transition_duration">0</property>
                     <child>
-                      <object class="GtkButton" id="header-back-button">
+                      <object class="GtkButton" id="sa_header_back">
                         <property name="visible">True</property>
                         <property name="can_focus">False</property>
                         <property name="receives_default">False</property>
@@ -136,18 +136,18 @@
       </object>
     </child>
     <child>
-      <object class="HdyLeaflet" id="content-leaflet">
+      <object class="HdyLeaflet" id="sa_top_leaflet">
         <property name="name">content-leaflet</property>
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="mode_transition_duration">0</property>
         <property name="child_transition_duration">0</property>
         <child>
-          <object class="GtkStackSidebar" id="switcher-main">
+          <object class="GtkStackSidebar" id="sa_top_stack_sidebar">
             <property name="width_request">230</property>
             <property name="visible">True</property>
             <property name="can_focus">False</property>
-            <property name="stack">stack-main</property>
+            <property name="stack">sa_top_stack</property>
             <style>
               <class name="n9-settings-sidebar"/>
             </style>
@@ -157,7 +157,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkSeparator" id="separator-main">
+          <object class="GtkSeparator" id="sa_top_separator">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <style>
@@ -169,7 +169,7 @@
           </packing>
         </child>
         <child>
-          <object class="GtkStack" id="stack-main">
+          <object class="GtkStack" id="sa_top_stack">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="hexpand">True</property>
@@ -236,7 +236,7 @@
                                               </packing>
                                             </child>
                                             <child>
-                                              <object class="GtkFileChooserButton" id="file-wallpaper">
+                                              <object class="GtkFileChooserButton" id="sa_appear_wp_picture_chooser">
                                                 <property name="width_request">300</property>
                                                 <property name="visible">True</property>
                                                 <property name="can_focus">False</property>
@@ -945,7 +945,7 @@
                                 <property name="label_xalign">0</property>
                                 <property name="shadow_type">none</property>
                                 <child>
-                                  <object class="GtkListBox" id="list-current-devices">
+                                  <object class="GtkListBox" id="sa_input_current_devices_list">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="selection_mode">none</property>
@@ -1019,7 +1019,7 @@
                                     <property name="can_focus">False</property>
                                     <property name="orientation">vertical</property>
                                     <child>
-                                      <object class="GtkListBox" id="list-keyboard-layouts">
+                                      <object class="GtkListBox" id="sa_keyboard_layouts_list">
                                         <property name="visible">True</property>
                                         <property name="can_focus">False</property>
                                         <child>
@@ -1371,7 +1371,7 @@
                                   </object>
                                 </child>
                                 <child type="label">
-                                  <object class="GtkBox" id="selector-output">
+                                  <object class="GtkBox" id="sa_display_output_toggler">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
                                     <property name="homogeneous">True</property>
@@ -1440,8 +1440,8 @@
   </object>
   <object class="GtkSizeGroup" id="size-content">
     <widgets>
-      <widget name="headerbar-main"/>
-      <widget name="stack-main"/>
+      <widget name="sa_header_bar_main"/>
+      <widget name="sa_top_stack"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="size-input-scales">
@@ -1454,23 +1454,23 @@
   </object>
   <object class="GtkSizeGroup" id="size-separator">
     <widgets>
-      <widget name="headerbar-separator"/>
-      <widget name="separator-main"/>
+      <widget name="sa_header_bar_separator"/>
+      <widget name="sa_top_separator"/>
     </widgets>
   </object>
   <object class="GtkSizeGroup" id="size-sidebar">
     <widgets>
-      <widget name="headerbar-sidebar"/>
-      <widget name="switcher-main"/>
+      <widget name="sa_header_bar_sidebar"/>
+      <widget name="sa_top_stack_sidebar"/>
     </widgets>
   </object>
-  <object class="GtkGrid" id="row-input-device">
+  <object class="GtkGrid" id="row_input_device">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="row_spacing">2</property>
     <property name="column_spacing">10</property>
     <child>
-      <object class="GtkLabel" id="input-device-name">
+      <object class="GtkLabel" id="input_device_name">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="halign">start</property>
@@ -1485,7 +1485,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkImage" id="input-device-icon">
+      <object class="GtkImage" id="input_device_icon">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="valign">start</property>
@@ -1505,7 +1505,7 @@
         <property name="can_focus">True</property>
         <property name="hexpand">True</property>
         <child>
-          <object class="GtkLabel" id="input-device-description">
+          <object class="GtkLabel" id="input_device_description">
             <property name="visible">True</property>
             <property name="can_focus">False</property>
             <property name="halign">start</property>
@@ -1534,13 +1534,13 @@
       </packing>
     </child>
   </object>
-  <object class="GtkGrid" id="row-kb-layout">
+  <object class="GtkGrid" id="row_kb_layout">
     <property name="visible">True</property>
     <property name="can_focus">False</property>
     <property name="row_spacing">2</property>
     <property name="column_spacing">10</property>
     <child>
-      <object class="GtkLabel" id="kb-layout-name">
+      <object class="GtkLabel" id="kb_layout_name">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="halign">start</property>
@@ -1555,7 +1555,7 @@
       </packing>
     </child>
     <child>
-      <object class="GtkLabel" id="kb-layout-description">
+      <object class="GtkLabel" id="kb_layout_description">
         <property name="visible">True</property>
         <property name="can_focus">False</property>
         <property name="halign">start</property>

@@ -7,6 +7,7 @@
 #include "app_list.hpp"
 #include "gtk-lsh/manager.hpp"
 #include "gtk-lsh/surface.hpp"
+#include "gtk-util/glade.hpp"
 #include "gtk-util/icon.hpp"
 #include "gtk-util/list_box_reuser.hpp"
 
@@ -28,39 +29,35 @@ static void select_row_delta(Gtk::ListBox *listbox, int delta) {
 }
 
 struct app_row {
-	Gtk::Grid *grid = nullptr;
-	Gtk::Label *title = nullptr, *subtitle = nullptr;
-	gutil::icon *icon = nullptr;
+	Glib::RefPtr<Gtk::Builder> builder;
+	GLADE(Gtk::Grid, row_dbl_toplevel);
+	GLADE(Gtk::Label, row_dbl_title);
+	GLADE(Gtk::Label, row_dbl_subtitle);
+	GLADE_DERIVED(gutil::icon, row_dbl_icon);
 
-	app_row(Glib::RefPtr<Gtk::Builder> &builder) {
-		builder->get_widget("row-double", grid);
-		builder->get_widget("row-double-title", title);
-		builder->get_widget("row-double-subtitle", subtitle);
-		builder->get_widget_derived("row-double-icon", icon);
-	}
+	app_row(Glib::RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
 
 	void on_added() {}
 
-	Gtk::Grid *toplevel() { return grid; }
+	Gtk::Grid *toplevel() { return row_dbl_toplevel; }
 };
 
 struct launcher {
 	app_list applist;
 	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> current_apps;
-	std::optional<gutil::list_box_reuser<app_row>> app_rows;
-	Gtk::Box *topl = nullptr;
-	Gtk::ListBox *resultbox = nullptr;
-	Gtk::SearchEntry *searchbar = nullptr;
 	std::shared_ptr<Gtk::Window> window;
 	std::optional<sigc::connection> update_timer;
 
+	Glib::RefPtr<Gtk::Builder> builder =
+	    Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
+
+	GLADE(Gtk::Box, toplevel);
+	GLADE(Gtk::ListBox, resultbox);
+	GLADE(Gtk::SearchEntry, searchbar);
+
+	gutil::list_box_reuser<app_row> app_rows{RESPREFIX "launcher.glade", resultbox, true};
+
 	launcher(std::shared_ptr<Gtk::Window> w) : window(std::move(std::move(w))) {
-		Glib::RefPtr<Gtk::Builder> builder =
-		    Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
-		builder->get_widget("toplevel", topl);
-		builder->get_widget("resultbox", resultbox);
-		builder->get_widget("searchbar", searchbar);
-		app_rows = gutil::list_box_reuser<app_row>(RESPREFIX "launcher.glade", resultbox, true);
 		clear();
 
 		searchbar->signal_changed().connect([&] {
@@ -71,7 +68,7 @@ struct launcher {
 			    [&] {
 				    current_apps.clear();
 				    auto results = applist.fuzzy_search(searchbar->get_text());
-				    app_rows->ensure_row_count(results.size());
+				    app_rows.ensure_row_count(results.size());
 				    size_t i = 0;
 				    for (auto idx : results) {
 					    set_row_to_app(i++, applist.apps[idx]);
@@ -116,20 +113,19 @@ struct launcher {
 			window->hide();
 		});
 
-		topl->reference();
 		applist.refresh();
 	}
 
 	void clear() {
 		current_apps.clear();
-		app_rows->clear();
+		app_rows.clear();
 	}
 
 	void set_row_to_app(size_t idx, const Glib::RefPtr<Gio::DesktopAppInfo> &app) {
-		auto &row = (*app_rows)[idx];
-		row.title->set_text(app->get_name());
-		row.subtitle->set_text(app->get_description());
-		row.icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
+		auto &row = app_rows[idx];
+		row.row_dbl_title->set_text(app->get_name());
+		row.row_dbl_subtitle->set_text(app->get_description());
+		row.row_dbl_icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
 	}
 };
 
@@ -169,18 +165,18 @@ int main(int argc, char *argv[]) {
 		click_rect.set_height(1);
 		click_rect.set_x(b->x_root);
 		click_rect.set_y(b->y_root);
-		if (!click_rect.intersects(launcher.topl->get_allocation())) {
+		if (!click_rect.intersects(launcher.toplevel->get_allocation())) {
 			window->hide();
 		}
 		return true;
 	});
 
-	launcher.topl->set_valign(Gtk::Align::ALIGN_CENTER);
-	launcher.topl->set_halign(Gtk::Align::ALIGN_CENTER);
-	launcher.topl->set_hexpand(true);
-	launcher.topl->set_size_request(700, 400);
+	launcher.toplevel->set_valign(Gtk::Align::ALIGN_CENTER);
+	launcher.toplevel->set_halign(Gtk::Align::ALIGN_CENTER);
+	launcher.toplevel->set_hexpand(true);
+	launcher.toplevel->set_size_request(700, 400);
 
-	wrapper.add(*launcher.topl);
+	wrapper.add(*launcher.toplevel);
 	wrapper.show_all();
 	window->add(wrapper);
 

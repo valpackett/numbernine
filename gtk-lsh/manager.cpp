@@ -16,7 +16,7 @@ manager::manager(Glib::RefPtr<Gtk::Application>& /*unused*/) {
 		}
 		display_t disp(gdk_wayland_display_get_wl_display(gddisp->gobj()));
 		auto reg = disp.get_registry();
-		reg.on_global() = [&](std::uint32_t name, std::string interface, std::uint32_t version) {
+		reg.on_global() = [&](std::uint32_t name, const std::string& interface, std::uint32_t version) {
 			if (interface == zwlr_layer_shell_v1_t::interface_name) {
 				reg.bind(name, lshell, version);
 			}
