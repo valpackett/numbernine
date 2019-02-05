@@ -13,6 +13,9 @@
 
 #define RESPREFIX "/technology/unrelenting/numbernine/launcher/"
 
+using Glib::RefPtr, Glib::VariantBase;
+using std::vector, std::unique_ptr, std::shared_ptr;
+
 static void select_row_delta(Gtk::ListBox *listbox, int delta) {
 	Gtk::ListBoxRow *new_row = nullptr;
 	auto *sel_row = listbox->get_selected_row();
@@ -29,13 +32,13 @@ static void select_row_delta(Gtk::ListBox *listbox, int delta) {
 }
 
 struct app_row {
-	Glib::RefPtr<Gtk::Builder> builder;
+	RefPtr<Gtk::Builder> builder;
 	GLADE(Gtk::Grid, row_dbl_toplevel);
 	GLADE(Gtk::Label, row_dbl_title);
 	GLADE(Gtk::Label, row_dbl_subtitle);
 	GLADE_DERIVED(gutil::icon, row_dbl_icon);
 
-	app_row(Glib::RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
+	app_row(RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
 
 	void on_added() {}
 
@@ -44,12 +47,11 @@ struct app_row {
 
 struct launcher {
 	app_list applist;
-	std::vector<Glib::RefPtr<Gio::DesktopAppInfo>> current_apps;
-	std::shared_ptr<Gtk::Window> window;
+	vector<RefPtr<Gio::DesktopAppInfo>> current_apps;
+	shared_ptr<Gtk::Window> window;
 	std::optional<sigc::connection> update_timer;
 
-	Glib::RefPtr<Gtk::Builder> builder =
-	    Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
+	RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_resource(RESPREFIX "launcher.glade");
 
 	GLADE(Gtk::Box, toplevel);
 	GLADE(Gtk::ListBox, resultbox);
@@ -57,7 +59,7 @@ struct launcher {
 
 	gutil::list_box_reuser<app_row> app_rows{RESPREFIX "launcher.glade", resultbox, true};
 
-	launcher(std::shared_ptr<Gtk::Window> w) : window(std::move(std::move(w))) {
+	launcher(shared_ptr<Gtk::Window> w) : window(std::move(std::move(w))) {
 		clear();
 
 		searchbar->signal_changed().connect([&] {
@@ -108,7 +110,7 @@ struct launcher {
 
 		resultbox->signal_row_activated().connect([&](auto &row) {
 			std::cerr << "launching " << current_apps[row->get_index()]->get_name() << std::endl;
-			std::vector<Glib::RefPtr<Gio::File>> files;
+			vector<RefPtr<Gio::File>> files;
 			current_apps[row->get_index()]->launch(files);
 			window->hide();
 		});
@@ -121,15 +123,15 @@ struct launcher {
 		app_rows.clear();
 	}
 
-	void set_row_to_app(size_t idx, const Glib::RefPtr<Gio::DesktopAppInfo> &app) {
+	void set_row_to_app(size_t idx, const RefPtr<Gio::DesktopAppInfo> &app) {
 		auto &row = app_rows[idx];
 		row.row_dbl_title->set_text(app->get_name());
 		row.row_dbl_subtitle->set_text(app->get_description());
-		row.row_dbl_icon->set_app(Glib::RefPtr<Gio::AppInfo>::cast_static(app));
+		row.row_dbl_icon->set_app(RefPtr<Gio::AppInfo>::cast_static(app));
 	}
 };
 
-std::unique_ptr<lsh::surface> init_lsh(lsh::manager &lsh_mgr, std::shared_ptr<Gtk::Window> window) {
+unique_ptr<lsh::surface> init_lsh(lsh::manager &lsh_mgr, shared_ptr<Gtk::Window> window) {
 	auto window_lsh =
 	    std::make_unique<lsh::surface>(lsh_mgr, window, lsh::any_output, lsh::layer::top);
 	(*window_lsh)
@@ -147,7 +149,7 @@ int main(int argc, char *argv[]) {
 	window->set_default_size(700, 400);
 	window->set_decorated(false);
 	window->set_app_paintable(true);
-	std::unique_ptr<lsh::surface> window_lsh;
+	unique_ptr<lsh::surface> window_lsh;
 
 	auto css = Gtk::CssProvider::create();
 	css->load_from_resource(RESPREFIX "style.css");
@@ -180,8 +182,8 @@ int main(int argc, char *argv[]) {
 	wrapper.show_all();
 	window->add(wrapper);
 
-	Glib::RefPtr<Gio::SimpleAction> reveal = Gio::SimpleAction::create("reveal");
-	reveal->signal_activate().connect([&](const Glib::VariantBase &param) {
+	RefPtr<Gio::SimpleAction> reveal = Gio::SimpleAction::create("reveal");
+	reveal->signal_activate().connect([&](const VariantBase &param) {
 		window->hide();
 		window_lsh = init_lsh(lsh_mgr, window);
 		launcher.searchbar->grab_focus();

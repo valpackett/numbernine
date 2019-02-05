@@ -10,7 +10,10 @@
 
 #define RESPREFIX "/technology/unrelenting/numbernine/notification-daemon/"
 
-std::shared_ptr<Gtk::Window> window;
+using Glib::RefPtr, Glib::Variant, Glib::VariantBase;
+using std::vector, std::shared_ptr, std::unique_ptr;
+
+shared_ptr<Gtk::Window> window;
 Gtk::Box *box;
 
 class notification {
@@ -19,8 +22,7 @@ class notification {
 	bool dead = false;
 	guint32 id;
 
-	Glib::RefPtr<Gtk::Builder> builder =
-	    Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
+	RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_resource(RESPREFIX "notification.glade");
 
 	GLADE(Gtk::EventBox, toplevel);
 	GLADE(Gtk::Grid, grid);
@@ -33,8 +35,7 @@ class notification {
  public:
 	notification(guint32 id_, int position, int urgency, const Glib::ustring &title_text,
 	             const Glib::ustring &body_text, const Glib::ustring &icon_name,
-	             const std::vector<Glib::ustring> &actions,
-	             sigc::signal<void, guint32, guint32> *closed_,
+	             const vector<Glib::ustring> &actions, sigc::signal<void, guint32, guint32> *closed_,
 	             sigc::signal<void, guint32, Glib::ustring> *invoked_)
 	    : closed_signal(closed_), invoked_signal(invoked_), id(id_) {
 		box->add(*toplevel);
@@ -97,7 +98,7 @@ class notification {
 	notification(notification &&) = delete;
 };
 
-std::vector<std::unique_ptr<notification>> notifications;
+vector<unique_ptr<notification>> notifications;
 guint32 next_id = 0;
 
 void cleanup_dead() {
@@ -134,14 +135,13 @@ class bus_impl : public org::freedesktop::Notifications {
  public:
 	void Notify(const Glib::ustring &app_name, guint32 replaces_id, const Glib::ustring &app_icon,
 	            const Glib::ustring &summary, const Glib::ustring &body,
-	            const std::vector<Glib::ustring> &actions,
-	            const std::map<Glib::ustring, Glib::VariantBase> &hints, gint32 timeout,
+	            const vector<Glib::ustring> &actions,
+	            const std::map<Glib::ustring, VariantBase> &hints, gint32 timeout,
 	            NotificationsMessageHelper msg) override {
 		guint32 id = next_id;
-		int urgency =
-		    hints.count("urgency") != 0
-		        ? Glib::Variant<guint8>::cast_dynamic<Glib::Variant<guint8>>(hints.at("urgency")).get()
-		        : 0;
+		int urgency = hints.count("urgency") != 0
+		                  ? Variant<guint8>::cast_dynamic<Variant<guint8>>(hints.at("urgency")).get()
+		                  : 0;
 		Glib::signal_idle().connect([=] {
 			cleanup_dead();
 			int pos = position_of_id(replaces_id);

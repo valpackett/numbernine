@@ -15,14 +15,17 @@
 
 #define RESPREFIX "/technology/unrelenting/numbernine/settings/"
 
+using Glib::RefPtr, Glib::Variant;
+using std::vector, std::tuple, std::pair, std::string;
+
 struct input_device_row {
-	Glib::RefPtr<Gtk::Builder> builder;
+	RefPtr<Gtk::Builder> builder;
 	GLADE(Gtk::Grid, row_input_device);
 	GLADE(Gtk::Label, input_device_name);
 	GLADE(Gtk::Label, input_device_description);
 	GLADE(Gtk::Image, input_device_icon);
 
-	input_device_row(Glib::RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
+	input_device_row(RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
 
 	void on_added() {
 		row_input_device->get_parent()->get_style_context()->add_class("n9-settings-row");
@@ -32,12 +35,12 @@ struct input_device_row {
 };
 
 struct kb_layout_row {
-	Glib::RefPtr<Gtk::Builder> builder;
+	RefPtr<Gtk::Builder> builder;
 	GLADE(Gtk::Grid, row_kb_layout);
 	GLADE(Gtk::Label, kb_layout_name);
 	GLADE(Gtk::Label, kb_layout_description);
 
-	kb_layout_row(Glib::RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
+	kb_layout_row(RefPtr<Gtk::Builder> &_builder) : builder(_builder) {}
 
 	void on_added() {
 		row_kb_layout->get_parent()->get_style_context()->add_class("n9-settings-row");
@@ -48,19 +51,17 @@ struct kb_layout_row {
 
 struct settings_app {
 	xkbdb xkbdb;
-	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xsa_keyboard_layouts_list;
+	Variant<vector<pair<string, string>>> xsa_keyboard_layouts_list;
 
-	Glib::RefPtr<Gio::Settings> settings = Gio::Settings::create(
-	                                "technology.unrelenting.numbernine.settings",
-	                                "/technology/unrelenting/numbernine/settings/"),
-	                            wpsettings = Gio::Settings::create(
-	                                "technology.unrelenting.numbernine.wallpaper",
-	                                "/technology/unrelenting/numbernine/wallpaper/");
+	RefPtr<Gio::Settings> settings =
+	                          Gio::Settings::create("technology.unrelenting.numbernine.settings",
+	                                                "/technology/unrelenting/numbernine/settings/"),
+	                      wpsettings =
+	                          Gio::Settings::create("technology.unrelenting.numbernine.wallpaper",
+	                                                "/technology/unrelenting/numbernine/wallpaper/");
 
-	Glib::RefPtr<Gtk::Builder> builder =
-	                               Gtk::Builder::create_from_resource(RESPREFIX "settings.glade"),
-	                           dbuilder =
-	                               Gtk::Builder::create_from_resource(RESPREFIX "dialogs.glade");
+	RefPtr<Gtk::Builder> builder = Gtk::Builder::create_from_resource(RESPREFIX "settings.glade"),
+	                     dbuilder = Gtk::Builder::create_from_resource(RESPREFIX "dialogs.glade");
 
 	GLADE(Gtk::ApplicationWindow, sa_toplevel);
 
@@ -173,17 +174,16 @@ struct settings_app {
 		sa_toplevel->add_action("add-keyboard-layout", [&]() {
 			dialog_add_keyboard_layout->set_transient_for(*sa_toplevel);
 			if (dialog_add_keyboard_layout->run() == Gtk::RESPONSE_OK) {
-				std::string layout, variant;
+				string layout, variant;
 				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(2, layout);
 				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(3, variant);
-				std::vector<std::tuple<Glib::ustring, Glib::ustring>> v;
+				vector<tuple<Glib::ustring, Glib::ustring>> v;
 				for (const auto &p : xsa_keyboard_layouts_list.get()) {
 					v.emplace_back(p.first, p.second);
 				}
 				v.emplace_back(layout, variant);
-				settings->set_value(
-				    "xkb-layouts",
-				    Glib::Variant<std::vector<std::tuple<Glib::ustring, Glib::ustring>>>::create(v));
+				settings->set_value("xkb-layouts",
+				                    Variant<vector<tuple<Glib::ustring, Glib::ustring>>>::create(v));
 			}
 			dialog_add_keyboard_layout->hide();
 		});
@@ -191,16 +191,15 @@ struct settings_app {
 		sa_toplevel->add_action("remove-keyboard-layout", [&]() {
 			auto idx = sa_keyboard_layouts_list->get_selected_row()->get_index();
 			int i = 0;
-			std::vector<std::tuple<Glib::ustring, Glib::ustring>> v;
+			vector<tuple<Glib::ustring, Glib::ustring>> v;
 			for (const auto &p : xsa_keyboard_layouts_list.get()) {
 				if (i != idx) {
 					v.emplace_back(p.first, p.second);
 				}
 				i++;
 			}
-			settings->set_value(
-			    "xkb-layouts",
-			    Glib::Variant<std::vector<std::tuple<Glib::ustring, Glib::ustring>>>::create(v));
+			settings->set_value("xkb-layouts",
+			                    Variant<vector<tuple<Glib::ustring, Glib::ustring>>>::create(v));
 			// TODO notification bar with undo
 		});
 
@@ -260,7 +259,7 @@ struct settings_app {
 			for (const auto device : *seat->input_devices()) {
 				auto &row = (*inputdevs)[i++];
 				row.name->set_text(device->name()->str());
-				std::string desc = fmt::format(_("Vendor ID: {:#06x}, product ID: {:#06x}.\n"),
+				string desc = fmt::format(_("Vendor ID: {:#06x}, product ID: {:#06x}.\n"),
 				                               device->vendor_id(), device->product_id());
 				if (inputdev::is_pointer(device)) {
 					if (device->disable_while_typing_available()) {
@@ -317,7 +316,7 @@ struct settings_app {
 
 		sa_display_output_toggler->clear();
 		for (const auto output : *state->outputs()) {
-			Glib::RefPtr<Gtk::ToggleButton> btn(new Gtk::ToggleButton);
+			RefPtr<Gtk::ToggleButton> btn(new Gtk::ToggleButton);
 			btn->set_label(output->name()->str());
 			sa_display_output_toggler->append(btn);
 			btn->show();
