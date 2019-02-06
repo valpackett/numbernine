@@ -25,7 +25,7 @@ panel::panel(const std::string& key, lsh::manager& lsh_mgr, GdkMonitor* monitor)
 void panel::recreate_widgets() {
 	Glib::Variant<std::vector<std::pair<Glib::ustring, Glib::ustring>>> widget_conf_list;
 	settings->get_value("widgets", widget_conf_list);
-	for (auto widget_conf : widget_conf_list.get()) {
+	for (const auto& widget_conf : widget_conf_list.get()) {
 		widgets.emplace(widget_conf.second, make_widget(widget_conf.first, widget_conf.second));
 		if (widgets[widget_conf.second] == nullptr) {
 			g_log_structured(G_LOG_DOMAIN, G_LOG_LEVEL_WARNING, "MESSAGE",

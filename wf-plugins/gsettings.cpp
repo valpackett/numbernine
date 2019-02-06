@@ -121,7 +121,7 @@ struct gsettings_ctx : public wf_custom_data_t {
 };
 
 static int handle_update(int fd, uint32_t mask, void *data) {
-	gsettings_ctx *ctx = reinterpret_cast<gsettings_ctx *>(data);
+	auto *ctx = reinterpret_cast<gsettings_ctx *>(data);
 	char buff;
 	read(fd, &buff, 1);
 	log_info("gsettings update received, applying");

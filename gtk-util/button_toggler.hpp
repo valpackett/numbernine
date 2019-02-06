@@ -11,7 +11,7 @@ class button_toggler : public Gtk::Box {
  public:
 	button_toggler(BaseObjectType* cobject, const Glib::RefPtr<Gtk::Builder>& builder);
 
-	void append(Glib::RefPtr<Gtk::ToggleButton> butt);
+	void append(const Glib::RefPtr<Gtk::ToggleButton>& butt);
 	void select_by_index(size_t idx);
 	void clear();
 };

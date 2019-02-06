@@ -7,7 +7,7 @@ gutil::button_toggler::button_toggler(BaseObjectType *cobject,
 	set_homogeneous(true);
 }
 
-void gutil::button_toggler::append(Glib::RefPtr<Gtk::ToggleButton> butt) {
+void gutil::button_toggler::append(const Glib::RefPtr<Gtk::ToggleButton> &butt) {
 	add(*butt.get());
 	size_t idx = count;
 	butt->signal_toggled().connect([=] {

@@ -85,13 +85,16 @@ struct launcher {
 			if (evt->keyval == GDK_KEY_Tab || evt->keyval == GDK_KEY_KP_Tab ||
 			    evt->keyval == GDK_KEY_ISO_Left_Tab) {
 				return true;
-			} else if (evt->keyval == GDK_KEY_Up || evt->keyval == GDK_KEY_KP_Up) {
+			}
+			if (evt->keyval == GDK_KEY_Up || evt->keyval == GDK_KEY_KP_Up) {
 				select_row_delta(resultbox, -1);
 				return true;
-			} else if (evt->keyval == GDK_KEY_Down || evt->keyval == GDK_KEY_KP_Down) {
+			}
+			if (evt->keyval == GDK_KEY_Down || evt->keyval == GDK_KEY_KP_Down) {
 				select_row_delta(resultbox, 1);
 				return true;
-			} else if (evt->keyval == GDK_KEY_Escape) {
+			}
+			if (evt->keyval == GDK_KEY_Escape) {
 				window->hide();
 				return true;
 			}
@@ -131,13 +134,13 @@ struct launcher {
 	}
 };
 
-unique_ptr<lsh::surface> init_lsh(lsh::manager &lsh_mgr, shared_ptr<Gtk::Window> window) {
+unique_ptr<lsh::surface> init_lsh(lsh::manager &lsh_mgr, const shared_ptr<Gtk::Window> &window) {
 	auto window_lsh =
 	    std::make_unique<lsh::surface>(lsh_mgr, window, lsh::any_output, lsh::layer::top);
 	(*window_lsh)
 	    ->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom | lsh::anchor::right);
 	(*window_lsh)->set_size(0, 0);
-	(*window_lsh)->set_keyboard_interactivity(true);
+	(*window_lsh)->set_keyboard_interactivity(1u);
 	return window_lsh;
 }
 
