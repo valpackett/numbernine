@@ -1,5 +1,5 @@
 [technology/unrelenting/numbernine/panel/default]
-widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'gala-launch'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.clock', 'clock')]
+widgets=[('.remoteaction', 'launcher'), ('.quicklaunch', 'gala-launch'), ('.quicklaunch', 'term-launch'), ('.separator', 'sep-1'), ('.battery', 'bat-1'), ('.clock', 'clock')]
 
 [technology/unrelenting/numbernine/panel/default/launcher]
 icon-name='system-search'
@@ -17,6 +17,9 @@ command=['/usr/local/bin/gnome-terminal']
 
 [technology/unrelenting/numbernine/panel/default/sep-1]
 expand=true
+
+[technology/unrelenting/numbernine/panel/default/bat-1]
+percent=true
 
 [technology/unrelenting/numbernine/panel/default/clock]
 format='%a %b %d, %R'

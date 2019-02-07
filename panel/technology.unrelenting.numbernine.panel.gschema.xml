@@ -7,6 +7,13 @@
 		</key>
 	</schema>
 
+	<schema id="technology.unrelenting.numbernine.panel.widgets.battery">
+		<key name="percent" type="b">
+			<default>true</default>
+			<summary>Whether to show percentage on the panel</summary>
+		</key>
+	</schema>
+
 	<schema id="technology.unrelenting.numbernine.panel.widgets.quicklaunch">
 		<key name="icon-name" type="s">
 			<default>'utilities-terminal'</default>

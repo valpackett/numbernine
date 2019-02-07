@@ -12,6 +12,7 @@ panel::panel(const std::string& key, lsh::manager& lsh_mgr, GdkMonitor* monitor)
 	(*layer_surface)->set_exclusive_zone(34);
 
 	recreate_widgets();
+	widgetbox.show();
 	window->add(widgetbox);
 
 	auto css_prov = Gtk::CssProvider::create();
