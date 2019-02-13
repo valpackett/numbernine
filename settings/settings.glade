@@ -1114,6 +1114,166 @@
                                 <property name="label_xalign">0</property>
                                 <property name="shadow_type">none</property>
                                 <child>
+                                  <object class="GtkListBox" id="list-modifer-tricks">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="selection_mode">none</property>
+                                    <child>
+                                      <object class="GtkListBoxRow">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="activatable">False</property>
+                                        <property name="selectable">False</property>
+                                        <child>
+                                          <object class="GtkGrid">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="row_spacing">2</property>
+                                            <property name="column_spacing">10</property>
+                                            <property name="row_homogeneous">True</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">Left Ctrl as Escape</property>
+                                                <style>
+                                                  <class name="n9-settings-title"/>
+                                                </style>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkSwitch" id="toggle-ctrl-as-esc">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="hexpand">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="height">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">Pressed on its own, LCtrl (or Caps Lock if remapped to Ctrl) will act as Esc</property>
+                                                <property name="ellipsize">end</property>
+                                                <style>
+                                                  <class name="n9-settings-description"/>
+                                                </style>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="n9-settings-row"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                    <child>
+                                      <object class="GtkListBoxRow">
+                                        <property name="visible">True</property>
+                                        <property name="can_focus">True</property>
+                                        <property name="activatable">False</property>
+                                        <property name="selectable">False</property>
+                                        <child>
+                                          <object class="GtkGrid">
+                                            <property name="visible">True</property>
+                                            <property name="can_focus">False</property>
+                                            <property name="row_spacing">2</property>
+                                            <property name="column_spacing">10</property>
+                                            <property name="row_homogeneous">True</property>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">Shifts as Parentheses</property>
+                                                <style>
+                                                  <class name="n9-settings-title"/>
+                                                </style>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">0</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkSwitch" id="toggle-shifts-as-parens">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">True</property>
+                                                <property name="halign">end</property>
+                                                <property name="valign">center</property>
+                                                <property name="hexpand">True</property>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">1</property>
+                                                <property name="top_attach">0</property>
+                                                <property name="height">2</property>
+                                              </packing>
+                                            </child>
+                                            <child>
+                                              <object class="GtkLabel">
+                                                <property name="visible">True</property>
+                                                <property name="can_focus">False</property>
+                                                <property name="halign">start</property>
+                                                <property name="label" translatable="yes">Pressed on its own, LShift will act as Shift+9, RShift as Shift+0</property>
+                                                <property name="ellipsize">end</property>
+                                                <style>
+                                                  <class name="n9-settings-description"/>
+                                                </style>
+                                              </object>
+                                              <packing>
+                                                <property name="left_attach">0</property>
+                                                <property name="top_attach">1</property>
+                                              </packing>
+                                            </child>
+                                          </object>
+                                        </child>
+                                        <style>
+                                          <class name="n9-settings-row"/>
+                                        </style>
+                                      </object>
+                                    </child>
+                                  </object>
+                                </child>
+                                <child type="label">
+                                  <object class="GtkLabel">
+                                    <property name="visible">True</property>
+                                    <property name="can_focus">False</property>
+                                    <property name="label" translatable="yes">Modifier Tricks</property>
+                                    <style>
+                                      <class name="n9-settings-group-title"/>
+                                    </style>
+                                  </object>
+                                </child>
+                              </object>
+                              <packing>
+                                <property name="expand">False</property>
+                                <property name="fill">True</property>
+                                <property name="position">1</property>
+                              </packing>
+                            </child>
+                            <child>
+                              <object class="GtkFrame">
+                                <property name="visible">True</property>
+                                <property name="can_focus">False</property>
+                                <property name="label_xalign">0</property>
+                                <property name="shadow_type">none</property>
+                                <child>
                                   <object class="GtkListBox" id="list-key-repeat-settings">
                                     <property name="visible">True</property>
                                     <property name="can_focus">False</property>
@@ -1246,7 +1406,7 @@
                               <packing>
                                 <property name="expand">False</property>
                                 <property name="fill">True</property>
-                                <property name="position">1</property>
+                                <property name="position">2</property>
                               </packing>
                             </child>
                             <style>

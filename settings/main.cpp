@@ -133,6 +133,12 @@ struct settings_app {
 		settings->bind(
 		    "kb-repeat-delay",
 		    gutil::get_object<Gtk::Adjustment>(builder, "adj-repeat-delay")->property_value());
+		settings->bind(
+		    "m2k-ctrl-as-esc",
+		    gutil::get_widget<Gtk::Switch>(builder, "toggle-ctrl-as-esc")->property_active());
+		settings->bind(
+		    "m2k-shifts-as-parens",
+		    gutil::get_widget<Gtk::Switch>(builder, "toggle-shifts-as-parens")->property_active());
 
 		wpsettings->signal_changed().connect([&](auto _) { on_new_settings(); });
 		settings->signal_changed().connect([&](auto _) { on_new_settings(); });

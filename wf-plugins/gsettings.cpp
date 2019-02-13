@@ -35,6 +35,7 @@ struct the_settings {
 	bool natural_scroll, tap_to_click;
 	std::string click_method, scroll_method;
 	bool disable_while_typing, disable_touchpad_while_mouse;
+	bool ctrl_as_esc, shifts_as_parens;
 
 	void fill(const Glib::RefPtr<Gio::Settings> &gsettings) {
 		gsettings->get_value("xkb-layouts", xkb_layouts);
@@ -52,6 +53,8 @@ struct the_settings {
 		scroll_method = gsettings->get_string("touchpads-scroll-method");
 		disable_while_typing = gsettings->get_boolean("touchpads-dwt");
 		disable_touchpad_while_mouse = gsettings->get_boolean("touchpads-dwmouse");
+		ctrl_as_esc = gsettings->get_boolean("m2k-ctrl-as-esc");
+		shifts_as_parens = gsettings->get_boolean("m2k-shifts-as-parens");
 	}
 
 	void apply(wayfire_config *config) {
@@ -79,6 +82,9 @@ struct the_settings {
 		input->get_option("scroll_method", "default")->set_value(scroll_method);
 		input->get_option("disable_while_typing", "0")->set_value(disable_while_typing);
 		input->get_option("disable_touchpad_while_mouse", "0")->set_value(disable_touchpad_while_mouse);
+		auto mod2key = config->get_section("mod2key");
+		mod2key->get_option("ctrl_as_esc", "0")->set_value(ctrl_as_esc);
+		mod2key->get_option("shifts_as_parens", "0")->set_value(shifts_as_parens);
 	}
 };
 
