@@ -24,6 +24,7 @@ class wallpaper {
 		(*layer_surface)->set_size(0, 0);
 		settings->bind("picture-path", &image, "path");
 		window->add(image);
+		image.show();
 	}
 
 	std::shared_ptr<Gtk::Window> get_window() const { return window; };
