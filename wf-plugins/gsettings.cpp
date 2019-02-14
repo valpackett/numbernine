@@ -83,8 +83,8 @@ struct the_settings {
 		input->get_option("disable_while_typing", "0")->set_value(disable_while_typing);
 		input->get_option("disable_touchpad_while_mouse", "0")->set_value(disable_touchpad_while_mouse);
 		auto mod2key = config->get_section("mod2key");
-		mod2key->get_option("ctrl_as_esc", "0")->set_value(ctrl_as_esc);
-		mod2key->get_option("shifts_as_parens", "0")->set_value(shifts_as_parens);
+		mod2key->get_option("ctrl_as_esc", "0")->set_value(static_cast<int>(ctrl_as_esc));
+		mod2key->get_option("shifts_as_parens", "0")->set_value(static_cast<int>(shifts_as_parens));
 	}
 };
 
