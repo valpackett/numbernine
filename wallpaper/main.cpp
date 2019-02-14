@@ -22,6 +22,7 @@ class wallpaper {
 		    ->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
 		                 lsh::anchor::right);
 		(*layer_surface)->set_size(0, 0);
+		(*layer_surface)->set_exclusive_zone(-1);
 		settings->bind("picture-path", &image, "path");
 		window->add(image);
 		image.show();

@@ -1,5 +1,5 @@
 .n9-panel {
-	background: alpha(@theme_bg_color, 0.94);
+	background: alpha(@theme_bg_color, 0.8);
 }
 
 .n9-panel-widget:not(button):first-child {
