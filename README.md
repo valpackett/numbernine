@@ -22,7 +22,7 @@ Install with Meson (into the same prefix as Wayfire), configure Wayfire like thi
 
 ```ini
 [core]
-plugins = … wobbly decoration alpha mod2key gsettings
+plugins = … wobbly decoration alpha mod2key magic-mirror gsettings
 
 [autostart]
 background = $PREFIX/libexec/n9-wallpaper
