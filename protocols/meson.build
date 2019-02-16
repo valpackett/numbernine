@@ -1,7 +1,7 @@
 dep_protos = dependency('wayland-protocols')
 system_protos_dir = dep_protos.get_pkgconfig_variable('pkgdatadir')
 
-dep_scannerpp = dependency('wayland-scanner++', native: true)
+dep_scannerpp = dependency('wayland-scanner++', version: '>=0.2.4', native: true)
 prog_scannerpp = find_program(dep_scannerpp.get_pkgconfig_variable('wayland_scannerpp'))
 
 scannerpp = generator(prog_scannerpp,
