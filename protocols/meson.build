@@ -14,9 +14,13 @@ scannerpp = generator(prog_scannerpp,
 xdg_shell_path = system_protos_dir / 'stable/xdg-shell/xdg-shell.xml'
 xdg_shell_code = scannerpp.process(xdg_shell_path)
 
+xdg_shell = declare_dependency(
+	sources: [xdg_shell_code],
+	dependencies: [wayland_clientpp])
+
 layer_shell_code = scannerpp.process('wlr-layer-shell-unstable-v1.xml',
 	extra_args: ['-x', 'xdg-shell-protocol.hpp'])
 
 layer_shell = declare_dependency(
-	sources: [xdg_shell_code, layer_shell_code],
-	dependencies: [wayland_clientpp])
+	sources: [layer_shell_code],
+	dependencies: [xdg_shell, wayland_clientpp])
