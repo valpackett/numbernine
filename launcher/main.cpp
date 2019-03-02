@@ -101,6 +101,14 @@ struct launcher {
 			return false;
 		});
 
+		searchbar->signal_key_release_event().connect([&](GdkEventKey *evt) {
+			if (evt->keyval == GDK_KEY_Escape) {
+				window->hide();
+				return true;
+			}
+			return false;
+		});
+
 		searchbar->signal_activate().connect([&] {
 			auto *row = resultbox->get_selected_row();
 			if (row == nullptr || !row->is_visible()) {
