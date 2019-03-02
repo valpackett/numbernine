@@ -1,0 +1,8 @@
+.n9-polkit-transparent-wrapper { background: alpha(@theme_base_color, 0.1); }
+
+.n9-dialog { background: alpha(@theme_bg_color, 0.85); border-radius: 7px; }
+
+.n9-dialog-button-box button { padding: 10px 14px; border-radius: 0; border-left-style: solid; border-right-style: none; border-bottom-style: none; }
+.n9-dialog-button-box button:first-child { border-left-style: none; border-bottom-left-radius: 7px; -gtk-outline-bottom-left-radius: 5px; }
+.n9-dialog-button-box button:last-child { border-bottom-right-radius: 7px; -gtk-outline-bottom-right-radius: 5px; }
+

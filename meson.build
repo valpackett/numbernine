@@ -21,6 +21,7 @@ fmtlib = dependency('fmt')
 pugixml = dependency('pugixml')
 wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
 wayfire = dependency('wayfire')
+polkit_agent = dependency('polkit-agent-1')
 
 gnome = import('gnome')
 i18n = import('i18n')
@@ -43,12 +44,13 @@ subdir('wallpaper')
 subdir('panel')
 subdir('launcher')
 subdir('notification-daemon')
+subdir('pk-agent')
 subdir('settings')
 subdir('wf-plugins')
 
 # supervisor_srcs_all, supervisor_hdrs, 
-all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, settings_srcs, wfp_srcs ]
-all_hdrs = [ lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_hdrs ]
+all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, settings_srcs, wfp_srcs ]
+all_hdrs = [ lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, pk_agent_hdrs, settings_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
 if prog_clang_format.found()
