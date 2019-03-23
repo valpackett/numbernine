@@ -195,6 +195,9 @@ struct settings_app {
 		});
 
 		sa_toplevel->add_action("remove-keyboard-layout", [&]() {
+			if (sa_keyboard_layouts_list->get_selected_row() == nullptr) {
+				return;
+			}
 			auto idx = sa_keyboard_layouts_list->get_selected_row()->get_index();
 			int i = 0;
 			vector<tuple<Glib::ustring, Glib::ustring>> v;
