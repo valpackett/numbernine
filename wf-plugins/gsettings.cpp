@@ -82,6 +82,7 @@ struct the_settings {
 		input->get_option("scroll_method", "default")->set_value(scroll_method);
 		input->get_option("disable_while_typing", "0")->set_value(disable_while_typing);
 		input->get_option("disable_touchpad_while_mouse", "0")->set_value(disable_touchpad_while_mouse);
+		input->get_option("modifier_binding_timeout", "0")->set_value(1000);
 		auto mod2key = config->get_section("mod2key");
 		mod2key->get_option("ctrl_as_esc", "0")->set_value(static_cast<int>(ctrl_as_esc));
 		mod2key->get_option("shifts_as_parens", "0")->set_value(static_cast<int>(shifts_as_parens));
