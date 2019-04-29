@@ -1,3 +1,4 @@
+#include <fmt/format.h>
 #include <gdk/gdkwayland.h>
 #include <gtkmm.h>
 #include <iostream>
@@ -131,13 +132,28 @@ int position_of_id(guint32 id) {
 	return -1;
 }
 
-class bus_impl : public org::freedesktop::Notifications {
+class bus_impl : public org::freedesktop::NotificationsStub {
  public:
+	void own_name() {
+		Gio::DBus::own_name(
+		    Gio::DBus::BUS_TYPE_SESSION, "org.freedesktop.Notifications",
+		    [&](const Glib::RefPtr<Gio::DBus::Connection> &connection, const Glib::ustring &name) {
+			    fmt::print(stderr, "Connected to D-Bus, name: {}.\n", name.c_str());
+			    if (register_object(connection, "/org/freedesktop/Notifications") == 0) {
+				    fmt::print(stderr, "Failed to register D-Bus object.\n");
+				    exit(1);
+			    }
+		    },
+		    Gio::DBus::SlotNameAcquired(),
+		    [&](const Glib::RefPtr<Gio::DBus::Connection> & /* connection */,
+		        const Glib::ustring &name) { fmt::print(stderr, "Name {} lost.\n", name.c_str()); });
+	}
+
 	void Notify(const Glib::ustring &app_name, guint32 replaces_id, const Glib::ustring &app_icon,
 	            const Glib::ustring &summary, const Glib::ustring &body,
 	            const vector<Glib::ustring> &actions,
 	            const std::map<Glib::ustring, VariantBase> &hints, gint32 timeout,
-	            NotificationsMessageHelper msg) override {
+	            MethodInvocation &msg) override {
 		guint32 id = next_id;
 		int urgency = hints.count("urgency") != 0
 		                  ? Variant<guint8>::cast_dynamic<Variant<guint8>>(hints.at("urgency")).get()
@@ -159,16 +175,16 @@ class bus_impl : public org::freedesktop::Notifications {
 		next_id++;
 	}
 
-	void CloseNotification(guint32 id, NotificationsMessageHelper msg) override {
+	void CloseNotification(guint32 id, MethodInvocation &msg) override {
 		remove_by_id(id, 3);
 		msg.ret();
 	}
 
-	void GetCapabilities(NotificationsMessageHelper msg) override {
+	void GetCapabilities(MethodInvocation &msg) override {
 		msg.ret({"actions", "body", "body-markup", "body-hyperlinks"});
 	}
 
-	void GetServerInformation(NotificationsMessageHelper msg) override {
+	void GetServerInformation(MethodInvocation &msg) override {
 		msg.ret("NumberNine", "unrelenting.technology", "0.0", "1.2");
 	}
 };
@@ -200,7 +216,7 @@ int main(int argc, char *argv[]) {
 	window->add(*box);
 
 	bus_impl bi;
-	bi.connect(Gio::DBus::BUS_TYPE_SESSION, "org.freedesktop.Notifications");
+	bi.own_name();
 
 	app->hold();
 	return app->run();

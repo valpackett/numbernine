@@ -1,8 +1,8 @@
 #include "battery.hpp"
 #include <fmt/format.h>
 
-using lol::org::freedesktop::UPower::Device;
-using org::freedesktop::UPower;
+using org::freedesktop::UPowerProxy;
+using org::freedesktop::UPower::DeviceProxy;
 
 typedef enum {
 	UP_DEVICE_KIND_UNKNOWN,
@@ -31,11 +31,11 @@ battery::battery(const std::string &settings_key) {
 
 	toplevel.show_all();
 
-	UPower::createForBus(
+	UPowerProxy::createForBus(
 	    Gio::DBus::BUS_TYPE_SYSTEM, Gio::DBus::PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES,
 	    "org.freedesktop.UPower", "/org/freedesktop/UPower",
 	    [=](Glib::RefPtr<Gio::AsyncResult> result) {
-		    electric_power = UPower::createForBusFinish(std::move(result));
+		    electric_power = UPowerProxy::createForBusFinish(std::move(result));
 		    watch_add = (*electric_power)
 		                    ->DeviceAdded_signal.connect(sigc::mem_fun(*this, &battery::on_add_device));
 		    watch_remove =
@@ -82,16 +82,16 @@ void battery::on_add_device(const Glib::DBusObjectPathString &path) {
 	if (!electric_power) {
 		return;
 	}
-	Device::createForBus(Gio::DBus::BUS_TYPE_SYSTEM, Gio::DBus::PROXY_FLAGS_NONE,
-	                     "org.freedesktop.UPower", path, [=](Glib::RefPtr<Gio::AsyncResult> result) {
-		                     devices.emplace(path, Device::createForBusFinish(std::move(result)));
-		                     make_widgets_for_device(path);
-		                     auto conn =
-		                         devices[path]->dbusProxy()->signal_properties_changed().connect(
-		                             [=](auto /* unused */, auto /* unused */) { tick(); });
-		                     watches.emplace(path, std::make_unique<sigc::connection>(conn));
-		                     tick();
-	                     });
+	DeviceProxy::createForBus(
+	    Gio::DBus::BUS_TYPE_SYSTEM, Gio::DBus::PROXY_FLAGS_NONE, "org.freedesktop.UPower", path,
+	    [=](Glib::RefPtr<Gio::AsyncResult> result) {
+		    devices.emplace(path, DeviceProxy::createForBusFinish(std::move(result)));
+		    make_widgets_for_device(path);
+		    auto conn = devices[path]->dbusProxy()->signal_properties_changed().connect(
+		        [=](auto /* unused */, auto /* unused */) { tick(); });
+		    watches.emplace(path, std::make_unique<sigc::connection>(conn));
+		    tick();
+	    });
 }
 
 void battery::on_remove_device(const Glib::DBusObjectPathString &path) {

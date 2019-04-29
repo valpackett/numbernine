@@ -10,8 +10,7 @@ gtk_actions_code = gdbus_code.process('org.gtk.Actions.xml')
 fdp_notifications_code = gdbus_code.process('org.freedesktop.Notifications.xml')
 
 upower_code = gdbus_code.process('org.freedesktop.UPower.xml')
-upower_device_code = gdbus_code.process('org.freedesktop.UPower.Device.xml',
-	extra_args: ['--cpp-namespace=lol'])
+upower_device_code = gdbus_code.process('org.freedesktop.UPower.Device.xml')
 
 polkit_authority_code = gdbus_code.process('org.freedesktop.PolicyKit1.Authority.xml')
 polkit_agent_code = gdbus_code.process('org.freedesktop.PolicyKit1.AuthenticationAgent.xml')

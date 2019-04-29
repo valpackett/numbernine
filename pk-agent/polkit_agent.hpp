@@ -11,7 +11,7 @@
 
 #include "org.freedesktop.PolicyKit1.AuthenticationAgent_stub.h"
 
-class polkit_agent : public org::freedesktop::PolicyKit1::AuthenticationAgent,
+class polkit_agent : public org::freedesktop::PolicyKit1::AuthenticationAgentStub,
                      public auth_requester {
 	PolkitAgentSession *session = nullptr;
 	lsh::manager &lsh;
@@ -25,9 +25,11 @@ class polkit_agent : public org::freedesktop::PolicyKit1::AuthenticationAgent,
 	std::vector<std::function<void(bool)>> completed_callback;
 	std::vector<std::function<void(Glib::ustring)>> show_error_callback;
 	std::vector<std::function<void(Glib::ustring)>> show_info_callback;
-	std::optional<AuthenticationAgentMessageHelper> auth_msg;
+	std::optional<MethodInvocation> auth_msg;
 
 	polkit_agent(lsh::manager &);
+
+	void own_name();
 
 	void request(Glib::ustring prompt);
 
@@ -36,10 +38,9 @@ class polkit_agent : public org::freedesktop::PolicyKit1::AuthenticationAgent,
 	    const std::map<Glib::ustring, Glib::ustring> &details, const Glib::ustring &cookie,
 	    const std::vector<std::tuple<Glib::ustring, std::map<Glib::ustring, Glib::VariantBase>>>
 	        &identities,
-	    AuthenticationAgentMessageHelper msg) override;
+	    MethodInvocation &msg) override;
 
-	void CancelAuthentication(const Glib::ustring &cookie,
-	                          AuthenticationAgentMessageHelper msg) override;
+	void CancelAuthentication(const Glib::ustring &cookie, MethodInvocation &msg) override;
 
 	void on_response(Glib::ustring &) override;
 	void add_completed_callback(std::function<void(bool)>) override;

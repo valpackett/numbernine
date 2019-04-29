@@ -10,13 +10,30 @@ using Glib::ustring;
 using std::string, std::vector, std::shared_ptr, std::map, std::tuple;
 
 polkit_agent::polkit_agent(lsh::manager& l)
-    : org::freedesktop::PolicyKit1::AuthenticationAgent(), lsh(l){};
+    : org::freedesktop::PolicyKit1::AuthenticationAgentStub(), lsh(l){};
 
 void polkit_agent::request(ustring prompt) {
 	completed_callback.clear();
 	show_error_callback.clear();
 	show_info_callback.clear();
 	dialog.emplace(this, lsh, prompt);
+}
+
+void polkit_agent::own_name() {
+	Gio::DBus::own_name(
+	    Gio::DBus::BUS_TYPE_SYSTEM, "org.freedesktop.PolicyKit1.AuthenticationAgent",
+	    [&](const Glib::RefPtr<Gio::DBus::Connection>& connection, const Glib::ustring& name) {
+		    fmt::print(stderr, "Connected to D-Bus, name: {}.\n", name.c_str());
+		    if (register_object(connection, "/org/freedesktop/PolicyKit1/AuthenticationAgent") == 0) {
+			    fmt::print(stderr, "Failed to register D-Bus object.\n");
+			    exit(1);
+		    }
+	    },
+	    Gio::DBus::SlotNameAcquired(),
+	    [&](const Glib::RefPtr<Gio::DBus::Connection>& /* connection */, const Glib::ustring& name) {
+		    fmt::print(stderr, "Name {} lost.\n", name.c_str());
+		    // we get this even though everything is fine??
+	    });
 }
 
 static void on_completed(PolkitAgentSession* session, gboolean result, polkit_agent* agent) {
@@ -59,7 +76,7 @@ void polkit_agent::BeginAuthentication(
     const ustring& action_id, const ustring& message_, const ustring& icon_name,
     const map<ustring, ustring>& details, const ustring& cookie,
     const vector<tuple<ustring, map<ustring, Glib::VariantBase>>>& identities,
-    AuthenticationAgentMessageHelper msg) {
+    MethodInvocation& msg) {
 	// TODO handle if (session != nullptr)
 	// TODO use identities
 	message = message_;
@@ -86,8 +103,7 @@ void polkit_agent::BeginAuthentication(
 	auth_msg = msg;
 }
 
-void polkit_agent::CancelAuthentication(const ustring& cookie,
-                                        AuthenticationAgentMessageHelper msg) {
+void polkit_agent::CancelAuthentication(const ustring& cookie, MethodInvocation& msg) {
 	cancel_auth();
 	msg.ret();
 }

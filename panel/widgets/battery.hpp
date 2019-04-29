@@ -9,8 +9,8 @@
 class battery : public widget {
 	Glib::RefPtr<Gio::Settings> settings;
 	Gtk::Box toplevel;
-	std::optional<Glib::RefPtr<org::freedesktop::UPower>> electric_power;
-	std::unordered_map<std::string, Glib::RefPtr<lol::org::freedesktop::UPower::Device>> devices;
+	std::optional<Glib::RefPtr<org::freedesktop::UPowerProxy>> electric_power;
+	std::unordered_map<std::string, Glib::RefPtr<org::freedesktop::UPower::DeviceProxy>> devices;
 	std::unordered_map<std::string, std::unique_ptr<Gtk::Image>> icons;
 	std::unordered_map<std::string, std::unique_ptr<Gtk::Label>> percentages;
 	std::unordered_map<std::string, std::unique_ptr<sigc::connection>> watches;
