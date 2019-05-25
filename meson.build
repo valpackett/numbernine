@@ -16,7 +16,7 @@ handy = dependency('libhandy-0.0', version: '>=0.0.7')
 xkbcommon = dependency('xkbcommon')
 wayland_client = dependency('wayland-client')
 wayland_clientpp = dependency('wayland-client++')
-#flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
+flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
 fmtlib = dependency('fmt')
 pugixml = dependency('pugixml')
 wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
@@ -34,7 +34,7 @@ configure_file(output: 'n9config.h', configuration: conf_data)
 conf_dir = include_directories('.')
 
 subdir('protocols')
-#subdir('schemas')
+subdir('schemas')
 subdir('dbus')
 
 subdir('gtk-lsh')
@@ -49,8 +49,8 @@ subdir('settings')
 subdir('wf-plugins')
 
 # supervisor_srcs_all, supervisor_hdrs, 
-all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, settings_srcs, wfp_srcs ]
-all_hdrs = [ lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, pk_agent_hdrs, settings_hdrs ]
+all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, pk_agent_dialog_srcs, settings_srcs, wfp_srcs ]
+all_hdrs = [ lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
 if prog_clang_format.found()
