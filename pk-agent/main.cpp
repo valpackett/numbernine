@@ -1,10 +1,10 @@
 #include <fcntl.h>
 #include <fmt/format.h>
 #include <giomm.h>
-#include <signal.h>
 #include <sys/mman.h>
 #include <sys/types.h>
 #include <unistd.h>
+#include <csignal>
 #include "PkAgent_generated.h"
 #include "org.freedesktop.PolicyKit1.AuthenticationAgent_stub.h"
 #include "org.freedesktop.PolicyKit1.Authority_proxy.h"
@@ -14,7 +14,7 @@ using std::string, std::vector, std::shared_ptr, std::map, std::tuple;
 
 struct agent_impl : public org::freedesktop::PolicyKit1::AuthenticationAgentStub {
 	std::optional<MethodInvocation> auth_msg;
-	Glib::Pid dialog_pid;
+	Glib::Pid dialog_pid{};
 
 	void own_name() {
 		Gio::DBus::own_name(

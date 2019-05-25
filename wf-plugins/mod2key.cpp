@@ -8,14 +8,14 @@
 #include <output.hpp>
 
 static void tap_wlr_key(wlr_seat *seat, uint32_t key) {
-	struct timespec now;
+	struct timespec now {};
 	clock_gettime(CLOCK_MONOTONIC, &now);
 	auto ms = now.tv_nsec / 1000;
 	wlr_seat_keyboard_notify_key(seat, ms, key, WLR_KEY_PRESSED);
 	wlr_seat_keyboard_notify_key(seat, ms + 1, key, WLR_KEY_RELEASED);
 }
 
-static void with_wlr_modifier(wlr_seat *seat, xkb_mod_mask_t mod, std::function<void()> cb) {
+static void with_wlr_modifier(wlr_seat *seat, xkb_mod_mask_t mod, const std::function<void()> &cb) {
 	wlr_keyboard_modifiers mods_with{
 	    .depressed = mod,
 	    .latched = 0,
@@ -54,7 +54,7 @@ class wayfire_mod2key : public wayfire_plugin_t {
 		}
 	};
 
-	std::vector<wf_binding *> binds;
+	std::vector<wf_binding *> binds{};
 
 	void clear_bindings() {
 		for (const auto b : binds) {
@@ -76,7 +76,7 @@ class wayfire_mod2key : public wayfire_plugin_t {
  public:
 	signal_callback_t reload_config;
 
-	void init(wayfire_config *config) {
+	void init(wayfire_config *config) override {
 		setup_bindings_from_config(config);
 
 		reload_config = [=](signal_data *) {
@@ -87,7 +87,7 @@ class wayfire_mod2key : public wayfire_plugin_t {
 		core->connect_signal("reload-config", &reload_config);
 	}
 
-	void fini() {
+	void fini() override {
 		core->disconnect_signal("reload-config", &reload_config);
 		clear_bindings();
 	}

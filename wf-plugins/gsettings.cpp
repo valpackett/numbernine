@@ -27,15 +27,16 @@ static inline std::string join(const std::vector<std::string> &v, const char del
 }
 
 struct the_settings {
-	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts;
-	std::vector<std::string> xkb_options;
+	Glib::Variant<std::vector<std::pair<std::string, std::string>>> xkb_layouts{};
+	std::vector<std::string> xkb_options{};
 	std::string xkb_rule;
-	uint32_t kb_repeat_rate, kb_repeat_delay;
-	double mouse_cursor_speed, mouse_scroll_speed, touchpad_cursor_speed, touchpad_scroll_speed;
-	bool natural_scroll, tap_to_click;
+	uint32_t kb_repeat_rate{}, kb_repeat_delay{};
+	double mouse_cursor_speed{}, mouse_scroll_speed{}, touchpad_cursor_speed{},
+	    touchpad_scroll_speed{};
+	bool natural_scroll{}, tap_to_click{};
 	std::string click_method, scroll_method;
-	bool disable_while_typing, disable_touchpad_while_mouse;
-	bool ctrl_as_esc, shifts_as_parens;
+	bool disable_while_typing{}, disable_touchpad_while_mouse{};
+	bool ctrl_as_esc{}, shifts_as_parens{};
 
 	void fill(const Glib::RefPtr<Gio::Settings> &gsettings) {
 		gsettings->get_value("xkb-layouts", xkb_layouts);

@@ -180,7 +180,8 @@ struct settings_app {
 		sa_toplevel->add_action("add-keyboard-layout", [&]() {
 			dialog_add_keyboard_layout->set_transient_for(*sa_toplevel);
 			if (dialog_add_keyboard_layout->run() == Gtk::RESPONSE_OK) {
-				string layout, variant;
+				string layout;
+				string variant;
 				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(2, layout);
 				tree_add_keyboard_layout->get_selection()->get_selected()->get_value(3, variant);
 				vector<tuple<Glib::ustring, Glib::ustring>> v;

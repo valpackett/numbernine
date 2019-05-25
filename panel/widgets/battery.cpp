@@ -35,7 +35,7 @@ battery::battery(const std::string &settings_key) {
 	    Gio::DBus::BUS_TYPE_SYSTEM, Gio::DBus::PROXY_FLAGS_DO_NOT_LOAD_PROPERTIES,
 	    "org.freedesktop.UPower", "/org/freedesktop/UPower",
 	    [=](Glib::RefPtr<Gio::AsyncResult> result) {
-		    electric_power = UPowerProxy::createForBusFinish(std::move(result));
+		    electric_power = UPowerProxy::createForBusFinish(result);
 		    watch_add = (*electric_power)
 		                    ->DeviceAdded_signal.connect(sigc::mem_fun(*this, &battery::on_add_device));
 		    watch_remove =
@@ -85,7 +85,7 @@ void battery::on_add_device(const Glib::DBusObjectPathString &path) {
 	DeviceProxy::createForBus(
 	    Gio::DBus::BUS_TYPE_SYSTEM, Gio::DBus::PROXY_FLAGS_NONE, "org.freedesktop.UPower", path,
 	    [=](Glib::RefPtr<Gio::AsyncResult> result) {
-		    devices.emplace(path, DeviceProxy::createForBusFinish(std::move(result)));
+		    devices.emplace(path, DeviceProxy::createForBusFinish(result));
 		    make_widgets_for_device(path);
 		    auto conn = devices[path]->dbusProxy()->signal_properties_changed().connect(
 		        [=](auto /* unused */, auto /* unused */) { tick(); });

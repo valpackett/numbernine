@@ -20,7 +20,7 @@ class wayfire_magic_mirror_view_t : public wayfire_mirror_view_t {
 };
 
 class wayfire_magic_mirror : public wayfire_plugin_t {
-	std::unordered_map<wayfire_view, wayfire_view, lol_hash> mirrors;
+	std::unordered_map<wayfire_view, wayfire_view, lol_hash> mirrors{};
 
 	signal_callback_t handle_mirror_view_unmapped = [=](signal_data *data) {
 		auto mview = get_signaled_view(data);
@@ -50,13 +50,13 @@ class wayfire_magic_mirror : public wayfire_plugin_t {
 	};
 
  public:
-	void init(wayfire_config *config) {
+	void init(wayfire_config *config) override {
 		auto section = config->get_section("magic-mirror");
 		auto toggle_key = section->get_option("toggle", "<super> <shift> KEY_M");
 		output->add_activator(toggle_key, &toggle_cb);
 	}
 
-	void fini() {}
+	void fini() override {}
 };
 
 extern "C" {

@@ -1,7 +1,6 @@
 #include "wpimage.hpp"
 
-wpimage::wpimage()
-    : Glib::ObjectBase(typeid(wpimage)), Gtk::DrawingArea(), _path(*this, "path", "/dev/null") {
+wpimage::wpimage() : Glib::ObjectBase(typeid(wpimage)), _path(*this, "path", "/dev/null") {
 	_path.get_proxy().signal_changed().connect([this] {
 		auto win = get_window();
 		if (win) {

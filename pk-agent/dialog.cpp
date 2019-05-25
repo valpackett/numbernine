@@ -33,7 +33,7 @@ struct dialog {
 	std::shared_ptr<Gtk::Window> window;
 	std::optional<lsh::surface> layer_surface;
 
-	dialog(lsh::manager &lsh_mgr, Glib::ustring prompt_str, GdkMonitor *monitor) {
+	dialog(lsh::manager &lsh_mgr, const Glib::ustring &prompt_str, GdkMonitor *monitor) {
 		window = std::make_shared<Gtk::Window>(Gtk::WINDOW_TOPLEVEL);
 		window->set_decorated(false);
 		window->set_app_paintable(true);
@@ -42,7 +42,7 @@ struct dialog {
 		    ->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom |
 		                 lsh::anchor::right);
 		(*layer_surface)->set_size(0, 0);
-		(*layer_surface)->set_keyboard_interactivity(1u);
+		(*layer_surface)->set_keyboard_interactivity(1U);
 
 		auto css = Gtk::CssProvider::create();
 		css->load_from_resource(RESPREFIX "style.css");
@@ -101,27 +101,28 @@ struct dialog {
 std::optional<lsh::manager> lsh_mgr;
 std::optional<lsh::multimonitor<dialog, lsh::manager &, Glib::ustring>> auth_dialog;
 
-void on_completed(PolkitAgentSession *, gboolean result, void *) {
+void on_completed(PolkitAgentSession * /*unused*/, gboolean result, void * /*unused*/) {
 	fmt::print(stderr, "polkit: result: {}\n", result);
 	exit(69);
 }
 
-void on_request(PolkitAgentSession *, gchar *request, gboolean _echo_on, void *) {
+void on_request(PolkitAgentSession * /*unused*/, gchar *request, gboolean _echo_on,
+                void * /*unused*/) {
 	fmt::print(stderr, "polkit: request: {}\n", request);
 	auth_dialog.emplace(*lsh_mgr, request);
 }
 
-void on_show_error(PolkitAgentSession *, gchar *err, void *) {
+void on_show_error(PolkitAgentSession * /*unused*/, gchar *err, void * /*unused*/) {
 	fmt::print(stderr, "polkit: error: {}\n", err);
 }
 
-void on_show_info(PolkitAgentSession *, gchar *inf, void *) {
+void on_show_info(PolkitAgentSession * /*unused*/, gchar *inf, void * /*unused*/) {
 	fmt::print(stderr, "polkit: info: {}\n", inf);
 }
 
 void atexit_handler() {
 	fmt::print(stderr, "atexit: has auth_req_buf: {}\n", auth_req_buf != nullptr);
-	if (auth_req_buf) {
+	if (auth_req_buf != nullptr) {
 		memset_s(auth_req_buf, auth_req_buf_len, 0x0, auth_req_buf_len);
 		explicit_bzero(auth_req_buf, auth_req_buf_len);
 	}

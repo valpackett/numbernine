@@ -148,7 +148,7 @@ unique_ptr<lsh::surface> init_lsh(lsh::manager &lsh_mgr, const shared_ptr<Gtk::W
 	(*window_lsh)
 	    ->set_anchor(lsh::anchor::top | lsh::anchor::left | lsh::anchor::bottom | lsh::anchor::right);
 	(*window_lsh)->set_size(0, 0);
-	(*window_lsh)->set_keyboard_interactivity(1u);
+	(*window_lsh)->set_keyboard_interactivity(1U);
 	return window_lsh;
 }
 
