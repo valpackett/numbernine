@@ -21,7 +21,7 @@ supervisor_hdrs = files(
 
 supervisor = executable('n9-supervisor',
 	supervisor_srcs, capabilities_code, capabilities_client_header,
-	include_directories: [conf_dir],
+	include_directories: [conf_dir, include_directories('../')],
 	dependencies: [wayland_client, cxxfs],
 	install: true,
 	install_dir: get_option('libexecdir'))

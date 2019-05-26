@@ -30,6 +30,12 @@ conf_data = configuration_data()
 conf_data.set_quoted('XKB_DIR', '/usr/local/share/X11/xkb') # TODO configurable
 conf_data.set_quoted('N9_LIBEXEC_DIR', get_option('prefix') / get_option('libexecdir'))
 conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
+if cxx.has_function('explicit_bzero', prefix: '#include <strings.h>')
+	conf_data.set('HAVE_EXPLICIT_BZERO', 1)
+endif
+if cxx.has_function('memset_s', prefix: '#include <cstring>')
+	conf_data.set('HAVE_MEMSET_S', 1)
+endif
 configure_file(output: 'n9config.h', configuration: conf_data)
 conf_dir = include_directories('.')
 
@@ -50,7 +56,7 @@ subdir('wf-plugins')
 
 # supervisor_srcs_all, supervisor_hdrs, 
 all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, pk_agent_dialog_srcs, settings_srcs, wfp_srcs ]
-all_hdrs = [ lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_hdrs ]
+all_hdrs = [ 'shared_util.hpp', lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
 if prog_clang_format.found()

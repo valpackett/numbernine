@@ -17,7 +17,7 @@ pk_agent_dialog = executable('n9-pk-agent-dialog',
 	pk_agent_fb,
 	dependencies: [gtk_lsh, gtk_util, gtk, gtkmm, polkit_agent, fmtlib],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
-	include_directories: [include_directories('../')],
+	include_directories: [conf_dir, include_directories('../')],
 	install: true,
 	install_dir: get_option('libexecdir'))
 
@@ -26,11 +26,14 @@ pk_agent = executable('n9-pk-agent',
 	pk_agent_fb,
 	polkit_authority_code,
 	polkit_agent_code,
-	dependencies: [gtk, gtkmm, fmtlib],
+	dependencies: [gtk, gtkmm, fmtlib, cxxfs],
 	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
-	include_directories: [include_directories('../')],
+	include_directories: [conf_dir, include_directories('../')],
 	install: true,
 	install_dir: get_option('libexecdir'))
 
 run_target('run-pk-agent', command: [
-	'env', 'GSETTINGS_SCHEMA_DIR=' + meson.current_build_dir(), pk_agent ])
+	'env',
+	'GSETTINGS_SCHEMA_DIR=' + meson.current_build_dir(),
+	'N9_LIBEXEC_DIR=' + meson.current_build_dir(),
+	pk_agent ])

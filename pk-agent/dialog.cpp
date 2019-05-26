@@ -10,6 +10,7 @@
 #include "gtk-lsh/multimonitor.hpp"
 #include "gtk-lsh/surface.hpp"
 #include "gtk-util/glade.hpp"
+#include "shared_util.hpp"
 #define RESPREFIX "/technology/unrelenting/numbernine/pk-agent/"
 
 PolkitAgentSession *session = nullptr;
@@ -123,8 +124,7 @@ void on_show_info(PolkitAgentSession * /*unused*/, gchar *inf, void * /*unused*/
 void atexit_handler() {
 	fmt::print(stderr, "atexit: has auth_req_buf: {}\n", auth_req_buf != nullptr);
 	if (auth_req_buf != nullptr) {
-		memset_s(auth_req_buf, auth_req_buf_len, 0x0, auth_req_buf_len);
-		explicit_bzero(auth_req_buf, auth_req_buf_len);
+		sutil::memeset_s(auth_req_buf, auth_req_buf_len);
 	}
 	fmt::print(stderr, "atexit: has auth_dialog: {}\n", auth_dialog.has_value());
 }

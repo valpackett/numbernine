@@ -8,6 +8,7 @@
 #include "PkAgent_generated.h"
 #include "org.freedesktop.PolicyKit1.AuthenticationAgent_stub.h"
 #include "org.freedesktop.PolicyKit1.Authority_proxy.h"
+#include "shared_util.hpp"
 
 using Glib::ustring;
 using std::string, std::vector, std::shared_ptr, std::map, std::tuple;
@@ -70,8 +71,7 @@ struct agent_impl : public org::freedesktop::PolicyKit1::AuthenticationAgentStub
 		ftruncate(fd, builder.GetSize());
 		write(fd, builder.GetBufferPointer(), builder.GetSize());
 		lseek(fd, 0, SEEK_SET);
-		vector<string> argv{
-		    "/home/greg/src/github.com/myfreeweb/numbernine/build/pk-agent/n9-pk-agent-dialog"};
+		vector<string> argv{sutil::find_binary("n9-pk-agent-dialog")};
 		Glib::setenv("N9_PK_FD", fmt::format("{}", fd));
 		fcntl(fd, F_SETFD, 0);
 		Glib::spawn_async("", argv, Glib::SPAWN_LEAVE_DESCRIPTORS_OPEN | Glib::SPAWN_DO_NOT_REAP_CHILD,

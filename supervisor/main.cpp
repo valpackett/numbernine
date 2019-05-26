@@ -4,6 +4,7 @@
 #include <unordered_map>
 #include <vector>
 #include "n9config.h"
+#include "shared_util.hpp"
 #include "supervisor.hpp"
 #include "wldip-capabilities-client-protocol.h"
 
@@ -52,22 +53,8 @@ int connect_with_caps(std::vector<std::string> grants) {
 	return fd;
 }
 
-fs::path find_binary(fs::path name) {
-	fs::path libexec(N9_LIBEXEC_DIR);
-	if (getenv("N9_LIBEXEC_DIR") != nullptr) {
-		fs::path from_env(getenv("N9_LIBEXEC_DIR"));
-		if (fs::is_directory(from_env)) {
-			libexec = from_env;
-		}
-	}
-	if (fs::is_regular_file(libexec / name)) {
-		return libexec / name;
-	}
-	std::cerr << "could not find " << name << std::endl;
-	return "";
-}
-
 int main(int argc, char *argv[]) {
+	using namespace sutil;
 	display = wl_display_connect(nullptr);
 	if (display == nullptr) {
 		std::cerr << "failed to create display" << std::endl;
