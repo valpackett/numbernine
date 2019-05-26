@@ -101,6 +101,7 @@ struct dialog {
 
 std::optional<lsh::manager> lsh_mgr;
 std::optional<lsh::multimonitor<dialog, lsh::manager &, Glib::ustring>> auth_dialog;
+std::optional<wayland::zwlr_input_inhibitor_v1_t> input_inhibitor;
 
 void on_completed(PolkitAgentSession * /*unused*/, gboolean result, void * /*unused*/) {
 	fmt::print(stderr, "polkit: result: {}\n", result);
@@ -111,6 +112,7 @@ void on_request(PolkitAgentSession * /*unused*/, gchar *request, gboolean _echo_
                 void * /*unused*/) {
 	fmt::print(stderr, "polkit: request: {}\n", request);
 	auth_dialog.emplace(*lsh_mgr, request);
+	input_inhibitor = lsh_mgr->inhibit();
 }
 
 void on_show_error(PolkitAgentSession * /*unused*/, gchar *err, void * /*unused*/) {

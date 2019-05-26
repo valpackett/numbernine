@@ -11,6 +11,12 @@ scannerpp = generator(prog_scannerpp,
 #capabilities_code = wl_code.process('wldip-capabilities.xml')
 #capabilities_client_header = wl_client_header.process('wldip-capabilities.xml')
 
+input_inhibitor_code = scannerpp.process('wlr-input-inhibitor-unstable-v1.xml')
+
+input_inhibitor = declare_dependency(
+	sources: [input_inhibitor_code],
+	dependencies: [wayland_clientpp])
+
 xdg_shell_path = system_protos_dir / 'stable/xdg-shell/xdg-shell.xml'
 xdg_shell_code = scannerpp.process(xdg_shell_path)
 
