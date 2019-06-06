@@ -1,8 +1,12 @@
-#define WLR_USE_UNSTABLE
 #define WAYFIRE_PLUGIN
+#define WLR_USE_UNSTABLE
+extern "C" {
+#include <wlr/types/wlr_seat.h>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
 #include <xkbcommon/xkbcommon.h>
+}
+#include <plugin.hpp>
 #include <config.hpp>
 #include <core.hpp>
 #include <output.hpp>
@@ -35,7 +39,7 @@ static void with_wlr_modifier(wlr_seat *seat, xkb_mod_mask_t mod, const std::fun
 
 class wayfire_mod2key : public wayfire_plugin_t {
 	key_callback on_binding = [=](uint32_t value) {
-		auto seat = core->get_current_seat();
+		auto seat = wf::get_core().get_current_seat();
 
 		xkb_keycode_t keycode = value + 8;
 		auto keyboard = wlr_seat_get_keyboard(seat);
@@ -74,21 +78,21 @@ class wayfire_mod2key : public wayfire_plugin_t {
 	}
 
  public:
-	signal_callback_t reload_config;
+	wf::signal_callback_t reload_config;
 
 	void init(wayfire_config *config) override {
 		setup_bindings_from_config(config);
 
-		reload_config = [=](signal_data *) {
+		reload_config = [=](wf::signal_data_t *) {
 			clear_bindings();
-			setup_bindings_from_config(core->config);
+			setup_bindings_from_config(wf::get_core().config);
 		};
 
-		core->connect_signal("reload-config", &reload_config);
+		wf::get_core().connect_signal("reload-config", &reload_config);
 	}
 
 	void fini() override {
-		core->disconnect_signal("reload-config", &reload_config);
+		wf::get_core().disconnect_signal("reload-config", &reload_config);
 		clear_bindings();
 	}
 };

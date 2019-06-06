@@ -10,19 +10,22 @@ A lightweight Wayland desktop environment.
 ## Requirements
 
 - Right now, being a developer :) This is an early stage project.
-- FreeBSD -CURRENT (or 12-STABLE guess, but [r342768](https://reviews.freebsd.org/rS342768) wasn't MFC'd yet) or Linux
-	- FreeBSD currently needs either `chmod g+rw /dev/input/*` (bad security) or [patched kernel](https://reviews.freebsd.org/D18694) plus [patched libudev-devd](https://github.com/FreeBSDDesktop/libudev-devd/pull/8) for input devices to be recognized
-- [Wayfire](https://github.com/WayfireWM/wayfire) git master
+- FreeBSD -CURRENT (or 12-STABLE I guess), Linux, any other system you can run Wayfire on (DragonFly??)
+	- FreeBSD currently needs either `chmod g+rw /dev/input/*` (bad security) or [patched libudev-devd](https://github.com/FreeBSDDesktop/libudev-devd/pull/8) for input devices to be recognized
+- [Wayfire](https://github.com/WayfireWM/wayfire) git `stabilize-api-v2`
 - `gtkmm30`
+- `libhandy`
+- `polkit`
 - `flatbuffers` (with `flatc` for building)
-- [`fmt`](https://github.com/fmtlib/fmt) ([libfmt in FreeBSD ports needs this update for the pkg-config file](https://bugs.freebsd.org/bugzilla/show_bug.cgi?id=234951))
+- [`fmt`](https://github.com/fmtlib/fmt)
+- `pugixml`
 
 
 Install with Meson (into the same prefix as Wayfire), configure Wayfire like this (substitute `$PREFIX` with where you install it, e.g. `/usr/local` or `$HOME/.local`):
 
 ```ini
 [core]
-plugins = … wobbly decoration alpha mod2key magic-mirror gsettings
+plugins = … wobbly decoration alpha mod2key gsettings
 
 [autostart]
 background = $PREFIX/libexec/n9-wallpaper

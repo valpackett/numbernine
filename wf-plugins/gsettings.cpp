@@ -5,10 +5,9 @@
 #include <libinput.h>
 #include <unistd.h>
 #include <algorithm>
-#include <core.hpp>
-#include <nonstd/make_unique.hpp>
-#include <output.hpp>
 #include <plugin.hpp>
+#include <core.hpp>
+#include <output.hpp>
 #include <sstream>
 #include <thread>
 #include <view-transform.hpp>
@@ -113,7 +112,7 @@ static void gsettings_loop(int fd) {
 
 static int handle_update(int fd, uint32_t mask, void *data);
 
-struct gsettings_ctx : public wf_custom_data_t {
+struct gsettings_ctx : public wf::custom_data_t {
 	std::thread loopthread;
 	int fd[2] = {0, 0};
 	wayfire_config *config = nullptr;
@@ -123,8 +122,8 @@ struct gsettings_ctx : public wf_custom_data_t {
 		pipe(fd);
 		loopthread = std::thread(gsettings_loop, fd[1]);
 		Glib::thread_init();
-		wl_event_loop_add_fd(core->ev_loop, fd[0], WL_EVENT_READABLE, handle_update, this);
-		handle_update(fd[0], 0, this);
+		wl_event_loop_add_fd(wf::get_core().ev_loop, fd[0], WL_EVENT_READABLE, handle_update, this);
+		//handle_update(fd[0], 0, this);
 	}
 };
 
@@ -133,17 +132,17 @@ static int handle_update(int fd, uint32_t mask, void *data) {
 	char buff;
 	read(fd, &buff, 1);
 	log_info("gsettings update received, applying");
-	settings.apply(core->config);
+	settings.apply(wf::get_core().config);
 	write(fd, "!", 1);
-	core->emit_signal("reload-config", nullptr);
+	wf::get_core().emit_signal("reload-config", nullptr);
 	return 1;
 }
 
 // Plugins are per-output, this wrapper is for output independence
 struct wayfire_gsettings : public wayfire_plugin_t {
 	void init(wayfire_config *config) override {
-		if (!core->has_data<gsettings_ctx>()) {
-			core->store_data(std::make_unique<gsettings_ctx>(config));
+		if (!wf::get_core().has_data<gsettings_ctx>()) {
+			wf::get_core().store_data(std::make_unique<gsettings_ctx>(config));
 		}
 	}
 

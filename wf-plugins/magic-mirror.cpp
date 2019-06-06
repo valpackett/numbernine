@@ -1,5 +1,6 @@
 #define WLR_USE_UNSTABLE
 #define WAYFIRE_PLUGIN
+#include <plugin.hpp>
 #include <compositor-view.hpp>
 #include <config.hpp>
 #include <core.hpp>
@@ -11,10 +12,10 @@ struct lol_hash {
 	size_t operator()(const wayfire_view &view) const { return reinterpret_cast<size_t>(view.get()); }
 };
 
-class wayfire_magic_mirror_view_t : public wayfire_mirror_view_t {
-	using wayfire_mirror_view_t::wayfire_mirror_view_t;
+class wayfire_magic_mirror_view_t : public wf::mirror_view_t {
+	using wf::mirror_view_t::mirror_view_t;
 
-	std::string get_title() override { return "[Mirror] " + original_view->get_title(); }
+	std::string get_title() override { return "[Mirror] " + base_view->get_title(); }
 
 	bool should_be_decorated() override { return true; }
 };
@@ -22,7 +23,7 @@ class wayfire_magic_mirror_view_t : public wayfire_mirror_view_t {
 class wayfire_magic_mirror : public wayfire_plugin_t {
 	std::unordered_map<wayfire_view, wayfire_view, lol_hash> mirrors{};
 
-	signal_callback_t handle_mirror_view_unmapped = [=](signal_data *data) {
+	wf::signal_callback_t handle_mirror_view_unmapped = [=](wf::signal_data_t *data) {
 		auto mview = get_signaled_view(data);
 		mview->disconnect_signal("unmap", &handle_mirror_view_unmapped);
 		for (auto it = mirrors.begin(); it != mirrors.end();) {
@@ -38,13 +39,11 @@ class wayfire_magic_mirror : public wayfire_plugin_t {
 		const auto cur = output->get_top_view();
 		if (mirrors.find(cur) != mirrors.end()) {
 			auto m = mirrors[cur];
-			m->unmap();
-			m->destroy();
+			m->close();
 		} else {
 			const auto mview = new wayfire_magic_mirror_view_t(cur);
-			core->add_view(std::unique_ptr<wayfire_view_t>{mview});
+			wf::get_core().add_view(std::unique_ptr<wf::view_interface_t>{mview});
 			mirrors.emplace(cur, mview);
-			mview->map();
 			mview->connect_signal("unmap", &handle_mirror_view_unmapped);
 		}
 	};
