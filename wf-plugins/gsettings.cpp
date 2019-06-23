@@ -139,7 +139,7 @@ static int handle_update(int fd, uint32_t mask, void *data) {
 }
 
 // Plugins are per-output, this wrapper is for output independence
-struct wayfire_gsettings : public wayfire_plugin_t {
+struct wayfire_gsettings : public wf::plugin_interface_t {
 	void init(wayfire_config *config) override {
 		if (!wf::get_core().has_data<gsettings_ctx>()) {
 			wf::get_core().store_data(std::make_unique<gsettings_ctx>(config));
@@ -149,6 +149,4 @@ struct wayfire_gsettings : public wayfire_plugin_t {
 	bool is_unloadable() override { return false; }
 };
 
-extern "C" {
-wayfire_plugin_t *newInstance() { return new wayfire_gsettings(); }
-}
+DECLARE_WAYFIRE_PLUGIN(wayfire_gsettings);

@@ -20,7 +20,7 @@ class wayfire_magic_mirror_view_t : public wf::mirror_view_t {
 	bool should_be_decorated() override { return true; }
 };
 
-class wayfire_magic_mirror : public wayfire_plugin_t {
+class wayfire_magic_mirror : public wf::plugin_interface_t {
 	std::unordered_map<wayfire_view, wayfire_view, lol_hash> mirrors{};
 
 	wf::signal_callback_t handle_mirror_view_unmapped = [=](wf::signal_data_t *data) {
@@ -58,6 +58,4 @@ class wayfire_magic_mirror : public wayfire_plugin_t {
 	void fini() override {}
 };
 
-extern "C" {
-wayfire_plugin_t *newInstance() { return new wayfire_magic_mirror(); }
-}
+DECLARE_WAYFIRE_PLUGIN(wayfire_magic_mirror);

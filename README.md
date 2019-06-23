@@ -12,7 +12,7 @@ A lightweight Wayland desktop environment.
 - Right now, being a developer :) This is an early stage project.
 - FreeBSD -CURRENT (or 12-STABLE I guess), Linux, any other system you can run Wayfire on (DragonFly??)
 	- FreeBSD currently needs either `chmod g+rw /dev/input/*` (bad security) or [patched libudev-devd](https://github.com/FreeBSDDesktop/libudev-devd/pull/8) for input devices to be recognized
-- [Wayfire](https://github.com/WayfireWM/wayfire) git `stabilize-api-v2`
+- [Wayfire](https://github.com/WayfireWM/wayfire) git master
 - `gtkmm30`
 - `libhandy`
 - `polkit`

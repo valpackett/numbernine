@@ -37,7 +37,7 @@ static void with_wlr_modifier(wlr_seat *seat, xkb_mod_mask_t mod, const std::fun
 	wlr_seat_keyboard_notify_modifiers(seat, &mods_without);
 }
 
-class wayfire_mod2key : public wayfire_plugin_t {
+class wayfire_mod2key : public wf::plugin_interface_t {
 	key_callback on_binding = [=](uint32_t value) {
 		auto seat = wf::get_core().get_current_seat();
 
@@ -97,6 +97,4 @@ class wayfire_mod2key : public wayfire_plugin_t {
 	}
 };
 
-extern "C" {
-wayfire_plugin_t *newInstance() { return new wayfire_mod2key(); }
-}
+DECLARE_WAYFIRE_PLUGIN(wayfire_mod2key);
