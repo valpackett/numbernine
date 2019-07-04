@@ -22,7 +22,5 @@ bool wpimage::on_draw(const Cairo::RefPtr<Cairo::Context> &cr) {
 	cr->set_source(surf, (alloc.get_width() - pbuf->get_width() / scale) / 2,
 	               (alloc.get_height() - pbuf->get_height() / scale) / 2);
 	cr->paint();
-	surf->unreference();
-	pbuf->unreference();
 	return true;
 }
