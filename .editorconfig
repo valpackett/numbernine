@@ -7,6 +7,11 @@ charset = utf-8
 indent_style = tab
 indent_size = 2
 
+max_line_length = 120
+dfmt_brace_style = otbs
+dfmt_soft_max_line_length = 100
+dfmt_split_operator_at_line_end = true
+
 [protocols/*.xml]
 indent_style = space
 

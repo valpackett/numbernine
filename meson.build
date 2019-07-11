@@ -1,4 +1,4 @@
-project('numbernine', ['c', 'cpp'], version: '0.0.1', license: 'Unlicense',
+project('numbernine', ['c', 'cpp', 'd'], version: '0.0.1', license: 'Unlicense',
 	default_options: ['cpp_std=c++17', 'warning_level=2'])
 
 cxx = meson.get_compiler('cpp')
@@ -10,6 +10,7 @@ elif cxx.get_id() == 'gcc'
 endif
 
 gtk = dependency('gtk+-wayland-3.0', version: '>=3.22.0')
+gtkd = dependency('gtkd-3', version: '>=3.8.5')
 gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
 cairomm = dependency('cairomm-1.0')
 handy = dependency('libhandy-0.0', version: '>=0.0.7')
@@ -18,7 +19,6 @@ wayland_client = dependency('wayland-client')
 wayland_clientpp = dependency('wayland-client++')
 flatbuffers = dependency('Flatbuffers', method: 'cmake', modules: ['flatbuffers::flatbuffers_shared'])
 fmtlib = dependency('fmt')
-pugixml = dependency('pugixml')
 wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
 wayfire = dependency('wayfire')
 polkit_agent = dependency('polkit-agent-1')
@@ -42,6 +42,8 @@ conf_dir = include_directories('.')
 subdir('protocols')
 subdir('schemas')
 subdir('dbus')
+subdir('bindings')
+subdir('util')
 
 subdir('gtk-lsh')
 subdir('gtk-util')
@@ -55,8 +57,8 @@ subdir('settings')
 subdir('wf-plugins')
 
 # supervisor_srcs_all, supervisor_hdrs, 
-all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, pk_agent_dialog_srcs, settings_srcs, wfp_srcs ]
-all_hdrs = [ 'shared_util.hpp', lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs, settings_hdrs ]
+all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, pk_agent_dialog_srcs, wfp_srcs ]
+all_hdrs = [ 'shared_util.hpp', lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs ]
 
 prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
 if prog_clang_format.found()

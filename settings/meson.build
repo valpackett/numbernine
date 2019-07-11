@@ -4,25 +4,16 @@ settings_schemas = gnome.compile_schemas(build_by_default: true,
 install_data('technology.unrelenting.numbernine.settings.gschema.xml',
 	install_dir: 'share/glib-2.0/schemas')
 
-settings_hdrs = files(
-	'xkb.hpp',
-)
-
 settings_res = gnome.compile_resources(
 	'settings_res', 'r.gresource.xml',
 	source_dir: '.',
 	c_name: 'as')
 
-settings_srcs = files(
-	'xkb.cpp',
-	'main.cpp',
-)
-
 settings_app = executable('n9-settings',
-	settings_srcs, settings_hdrs, settings_schemas, wallpaper_schemas, settings_res,
-	dependencies: [fmtlib, pugixml, gtk_util, gtk, gtkmm, handy],
-	cpp_args: ['-DG_LOG_USE_STRUCTURED'],
-	include_directories: [include_directories('../')],
+	'settings.d', settings_schemas, wallpaper_schemas, settings_res,
+	dependencies: [gtkd, handyd, util],
+	d_args: ['-relocation-model=pic'],
+	link_args: ['-link-defaultlib-shared', '-relocation-model=pic'],
 	install: true)
 
 run_target('run-settings', command: [

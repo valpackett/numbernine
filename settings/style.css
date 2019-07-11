@@ -4,6 +4,8 @@
 .n9-settings-group-title, .n9-settings-group-toggler { margin: 10px 0; }
 .n9-settings-group-title { font-weight: bold; }
 
+.n9-settings-tree { border: 1px solid shade(@theme_bg_color, 0.8); }
+
 .n9-settings-row { padding: 8px; border: 1px solid shade(@theme_bg_color, 0.8); }
 .n9-settings-row:not(:first-child) { border-top-width: 0; }
 
