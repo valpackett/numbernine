@@ -1,6 +1,9 @@
 project('numbernine', ['c', 'cpp', 'd'], version: '0.0.1', license: 'Unlicense',
 	default_options: ['cpp_std=c++17', 'warning_level=2'])
 
+add_global_link_arguments('-link-defaultlib-shared',
+	'-L-Wl,--as-needed', language: 'd')
+
 cxx = meson.get_compiler('cpp')
 
 if cxx.get_id() == 'clang'

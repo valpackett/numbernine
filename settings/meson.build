@@ -13,7 +13,6 @@ settings_app = executable('n9-settings',
 	'settings.d', settings_schemas, wallpaper_schemas, settings_res,
 	dependencies: [gtkd, handyd, util],
 	d_args: ['-relocation-model=pic'],
-	link_args: ['-link-defaultlib-shared', '-relocation-model=pic'],
 	install: true)
 
 run_target('run-settings', command: [
