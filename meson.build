@@ -55,23 +55,3 @@ subdir('notification-daemon')
 subdir('pk-agent')
 subdir('settings')
 subdir('wf-plugins')
-
-# supervisor_srcs_all, supervisor_hdrs, 
-all_srcs = [ lsh_srcs, gutil_srcs, wallpaper_srcs, panel_srcs, launcher_srcs, nd_srcs, pk_agent_srcs, pk_agent_dialog_srcs, wfp_srcs ]
-all_hdrs = [ 'shared_util.hpp', lsh_hdrs, gutil_hdrs, wallpaper_hdrs, panel_hdrs, launcher_hdrs ]
-
-prog_clang_format = find_program('clang-format80', 'clang-format70', 'clang-format60', 'clang-format', required: false)
-if prog_clang_format.found()
-	run_target('fmt', command: [ prog_clang_format, '-i', all_srcs, all_hdrs ])
-endif
-
-prog_clang_tidy = find_program('clang-tidy80', 'clang-tidy70', 'clang-tidy60', 'clang-tidy', required: false)
-if prog_clang_tidy.found()
-	run_target('tidy', command: [ prog_clang_tidy, all_srcs ])
-	run_target('fix',  command: [ prog_clang_tidy, '-fix-errors', '-fix', all_srcs ])
-endif
-
-prog_cppcheck = find_program('cppcheck', required: false)
-if prog_cppcheck.found()
-	run_target('check', command: [ prog_cppcheck, all_srcs, all_hdrs ])
-endif
