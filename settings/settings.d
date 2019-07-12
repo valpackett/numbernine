@@ -37,7 +37,7 @@ mixin template PageAppearance() {
 	@ById("sa_appear_wp_picture_chooser") FileChooserButton picChooser;
 
 	void setupAppearance() {
-		Signals.connect(picChooser, "file-set", () {
+		picChooser.addOnFileSet(delegate void(FileChooserButton) {
 			wpsettings.setString("picture-path", picChooser.getFilename());
 		});
 	}
@@ -112,7 +112,7 @@ mixin template PageKeyboard() {
 		updateKeyboard();
 
 		auto actAdd = new SimpleAction("add-keyboard-layout", null);
-		Signals.connect(actAdd, "activate", () {
+		actAdd.addOnActivate(delegate void(Variant, SimpleAction) {
 			auto dialog = new AddLayoutDialog();
 			dialog.setLayouts(layouts);
 			dialog.dialog.setTransientFor(toplevel);
@@ -124,7 +124,7 @@ mixin template PageKeyboard() {
 		toplevel.addAction(actAdd);
 
 		auto actRemove = new SimpleAction("remove-keyboard-layout", null);
-		Signals.connect(actRemove, "activate", () {
+		actRemove.addOnActivate(delegate void(Variant, SimpleAction) {
 			import std.algorithm : remove;
 
 			auto iter = curLayoutTree.getSelectedIter();
@@ -213,9 +213,8 @@ class SettingsApp {
 				"/technology/unrelenting/numbernine/settings/");
 		wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper",
 				"/technology/unrelenting/numbernine/wallpaper/");
-		Signals.connect(settings, "changed", &callUpdates);
-		Signals.connect(wpsettings, "changed", &callUpdates);
-		callUpdates();
+		settings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
+		wpsettings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
 	}
 
 	mixin PageAppearance!();
@@ -255,7 +254,13 @@ class SettingsApp {
 		updateTitle();
 		Signals.connect(topStack, "notify::visible-child", &updateTitle);
 
-		Signals.connect(headerBack, "clicked", () { headerLeaflet.setVisibleChildName("sidebar"); });
+		headerBack.addOnClicked(delegate void(Button) {
+			headerLeaflet.setVisibleChildName("sidebar");
+		});
+	}
+
+	void setupRunFirstUpdate() {
+		callUpdates();
 	}
 
 	void updateTitle() {
