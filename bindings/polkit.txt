@@ -1,0 +1,2 @@
+wrap: polkit
+file: Polkit-1.0.gir

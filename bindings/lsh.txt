@@ -1,0 +1,12 @@
+wrap: lsh
+file: GtkLayerShell-0.1.gir
+
+move: init_for_window LayerShell
+move: set_namespace LayerShell
+move: set_layer LayerShell
+move: set_monitor LayerShell
+move: set_anchor LayerShell
+move: set_margin LayerShell
+move: set_exclusive_zone LayerShell
+move: auto_exclusive_zone_enable LayerShell
+move: set_keyboard_interactivity LayerShell

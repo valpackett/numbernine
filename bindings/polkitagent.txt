@@ -1,0 +1,2 @@
+wrap: polkitagent
+file: PolkitAgent-1.0.gir
