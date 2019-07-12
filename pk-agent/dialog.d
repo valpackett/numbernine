@@ -7,6 +7,7 @@ import gtk.Label;
 import gtk.Entry;
 import gtk.Button;
 import gdk.Keysyms;
+import gdk.Display;
 import gobject.Signals;
 import glib.Variant;
 import glib.Child;
@@ -35,7 +36,6 @@ class DialogApp {
 
 	void setupDialog() {
 		// TODO: multi-monitor
-		// TODO: input inhibit
 		window = new Window("Auth dialog");
 		window.setDecorated(false);
 		window.setAppPaintable(true);
@@ -76,6 +76,8 @@ class DialogApp {
 
 	mixin Css!("/technology/unrelenting/numbernine/pk-agent/style.css", window);
 
+	bool inhibited = false;
+
 	void connect() {
 		import core.sys.posix.unistd : getuid;
 
@@ -86,11 +88,16 @@ class DialogApp {
 			// TODO: nicer exit?
 			import core.sys.posix.stdlib : exit;
 
+			if (inhibited)
+				gwl_input_uninhibit();
 			exit(0);
 		});
 		session.addOnRequest(delegate void(string req, bool, Session) {
 			prompt.setText(req);
 			window.showAll();
+			inhibited = gwl_input_inhibit(Display.getDefault().getDisplayStruct());
+			if (!inhibited)
+				writeln("WARN: could not inhibit input");
 		});
 		// TODO: show these on the dialog?
 		session.addOnShowError(delegate void(string err, Session) { writeln("err: ", err); });
@@ -105,3 +112,8 @@ int main(string[] args) {
 	app.hold();
 	return app.run(args);
 }
+
+extern (C):
+
+bool gwl_input_inhibit(GdkDisplay*);
+bool gwl_input_uninhibit();

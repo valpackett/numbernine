@@ -12,7 +12,8 @@ elif cxx.get_id() == 'gcc'
 	cxxfs = cxx.find_library('stdc++fs', required: false)
 endif
 
-gtk = dependency('gtk+-wayland-3.0', version: '>=3.22.0')
+gtk = dependency('gtk+-3.0', version: '>=3.22.0')
+gdk_wayland = dependency('gdk-wayland-3.0', version: '>=3.22.0')
 gtklsh = dependency('gtk-layer-shell-0')
 handy = dependency('libhandy-0.0', version: '>=0.0.7')
 polkit = dependency('polkit-gobject-1')
