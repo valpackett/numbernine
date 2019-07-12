@@ -6,12 +6,6 @@ add_global_link_arguments('-link-defaultlib-shared',
 
 cxx = meson.get_compiler('cpp')
 
-if cxx.get_id() == 'clang'
-	cxxfs = cxx.find_library('c++fs', required: false)
-elif cxx.get_id() == 'gcc'
-	cxxfs = cxx.find_library('stdc++fs', required: false)
-endif
-
 gtk = dependency('gtk+-3.0', version: '>=3.22.0')
 gdk_wayland = dependency('gdk-wayland-3.0', version: '>=3.22.0')
 gtklsh = dependency('gtk-layer-shell-0')
@@ -51,7 +45,6 @@ subdir('util')
 
 subdir('gtk-lsh')
 subdir('gtk-util')
-#subdir('supervisor')
 subdir('wallpaper')
 subdir('panel')
 subdir('launcher')
