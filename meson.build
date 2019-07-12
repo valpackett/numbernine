@@ -23,20 +23,6 @@ wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
 wayfire = dependency('wayfire')
 
 gnome = import('gnome')
-i18n = import('i18n')
-
-conf_data = configuration_data()
-conf_data.set_quoted('XKB_DIR', '/usr/local/share/X11/xkb') # TODO configurable
-conf_data.set_quoted('N9_LIBEXEC_DIR', get_option('prefix') / get_option('libexecdir'))
-conf_data.set_quoted('GETTEXT_PACKAGE', meson.project_name())
-if cxx.has_function('explicit_bzero', prefix: '#include <strings.h>')
-	conf_data.set('HAVE_EXPLICIT_BZERO', 1)
-endif
-if cxx.has_function('memset_s', prefix: '#include <cstring>')
-	conf_data.set('HAVE_MEMSET_S', 1)
-endif
-configure_file(output: 'n9config.h', configuration: conf_data)
-conf_dir = include_directories('.')
 
 subdir('protocols')
 subdir('dbus')
