@@ -29,12 +29,17 @@ subdir('dbus')
 subdir('bindings')
 subdir('util')
 
+subdir('wf-plugins')
+
+# ... will be gone ...
 subdir('gtk-lsh')
 subdir('gtk-util')
 subdir('wallpaper')
 subdir('panel')
 subdir('launcher')
 subdir('notification-daemon')
+# ...................
+
+subdir('shell')
 subdir('pk-agent')
 subdir('settings')
-subdir('wf-plugins')

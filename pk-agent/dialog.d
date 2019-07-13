@@ -37,15 +37,17 @@ class DialogApp {
 	void setupDialog() {
 		// TODO: multi-monitor
 		window = new Window("Auth dialog");
-		window.setDecorated(false);
-		window.setAppPaintable(true);
 		LayerShell.initForWindow(window);
 		LayerShell.setLayer(window, GtkLayerShellLayer.OVERLAY);
-		LayerShell.setAnchor(window,
-				GtkLayerShellEdge.TOP | GtkLayerShellEdge.RIGHT | GtkLayerShellEdge.BOTTOM | GtkLayerShellEdge.LEFT,
-				false);
+		LayerShell.setAnchor(window, GtkLayerShellEdge.TOP, true);
+		LayerShell.setAnchor(window, GtkLayerShellEdge.RIGHT, true);
+		LayerShell.setAnchor(window, GtkLayerShellEdge.BOTTOM, true);
+		LayerShell.setAnchor(window, GtkLayerShellEdge.LEFT, true);
 		LayerShell.setKeyboardInteractivity(window, true);
+		window.setAppPaintable(true);
 
+		toplevel.setValign(GtkAlign.CENTER);
+		toplevel.setHalign(GtkAlign.CENTER);
 		wrapper = new EventBox();
 		wrapper.getStyleContext().addClass("n9-polkit-transparent-wrapper");
 		wrapper.setAboveChild(false);
