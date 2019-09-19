@@ -1,0 +1,133 @@
+module Panel;
+import std.stdio : writeln;
+import gtk.Window;
+import gtk.Box;
+import gio.Settings;
+import lsh.LayerShell;
+import Glade;
+import applets.Applet;
+import applets.Clock;
+import applets.Notifier;
+import applets.Spacer;
+
+final class AppletHolder {
+	string name;
+	string curType;
+	Applet applet;
+	Box parent;
+	Settings settings;
+
+	this(string name_, Box parent_) {
+		name = name_;
+		parent = parent_;
+		settings = new Settings("technology.unrelenting.numbernine.Shell.panel.applet",
+				"/technology/unrelenting/numbernine/Shell/applet/" ~ name ~ "/");
+		settings.addOnChanged((string key, Settings _) {
+			if (key == "applet-type")
+				updateAppletType();
+			else if (key == "position")
+				updatePosition();
+		});
+		updateAppletType();
+		updatePosition();
+	}
+
+	void remove() {
+		if (!applet)
+			return;
+		parent.remove(applet.rootWidget());
+	}
+
+	void updatePosition() {
+		if (!applet)
+			return;
+		parent.reorderChild(applet.rootWidget(), settings.getInt("position"));
+	}
+
+	void updateAppletType() {
+		import std.string : split;
+
+		auto newType = settings.getString("applet-type");
+		if (newType == curType && applet)
+			return;
+		if (newType == "unknown")
+			curType = name.split("-")[0];
+		else
+			curType = newType;
+		remove();
+		if (curType == "clock")
+			applet = new Clock(name);
+		else if (curType == "spacer")
+			applet = new Spacer(name);
+		else if (curType == "notifier")
+			applet = new Notifier(name);
+		if (!applet) {
+			writeln("Unknown applet: " ~ curType ~ " for " ~ name);
+			return;
+		}
+		writeln("Adding applet: " ~ curType ~ " for " ~ name);
+		applet.rootWidget().getStyleContext().addClass("n9-panel-widget");
+		parent.add(applet.rootWidget());
+	}
+}
+
+final class Panel {
+	Window toplevel;
+	Box appletbox;
+	AppletHolder[string] applets;
+	Settings settings; // XXX: don't put as first field - panel does not appear?!
+
+	mixin Css!("/technology/unrelenting/numbernine/Shell/style.css", toplevel);
+
+	this(string name) {
+		settings = new Settings("technology.unrelenting.numbernine.Shell.panel",
+				"/technology/unrelenting/numbernine/Shell/panel/" ~ name ~ "/");
+
+		if (!settings.getBoolean("initialized"))
+			initWithDefaultWidgets();
+
+		toplevel = new Window("Panel");
+		LayerShell.initForWindow(toplevel);
+		LayerShell.setLayer(toplevel, GtkLayerShellLayer.TOP);
+		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.RIGHT, true);
+		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.BOTTOM, true);
+		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.LEFT, true);
+		LayerShell.setExclusiveZone(toplevel, 18);
+		toplevel.setAppPaintable(true);
+
+		setupCss();
+
+		appletbox = new Box(GtkOrientation.HORIZONTAL, 2);
+		appletbox.getStyleContext().addClass("n9-panel");
+		toplevel.add(appletbox);
+
+		settings.addOnChanged((string key, Settings _) {
+			if (key == "applets")
+				updateApplets();
+		});
+
+		updateApplets();
+	}
+
+	void updateApplets() {
+		import std.algorithm : canFind;
+
+		auto appletNames = settings.getStrv("applets");
+		foreach (name; appletNames) {
+			if ((name in applets) is null) {
+				applets[name] = new AppletHolder(name, appletbox);
+			}
+		}
+		foreach (name, _; applets) {
+			if (!appletNames.canFind(name)) {
+				applets[name].remove();
+				applets.remove(name);
+			}
+		}
+	}
+
+	void initWithDefaultWidgets() {
+		settings.setStrv("applets", ["clock-0", "spacer-0", "notifier-0", "spacer-1"]);
+		settings.setBoolean("initialized", true);
+	}
+}

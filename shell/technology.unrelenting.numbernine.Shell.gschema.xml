@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<schemalist>
+
+	<schema id="technology.unrelenting.numbernine.Shell" path="/technology/unrelenting/numbernine/Shell/">
+		<key name="panels" type="as">
+			<default>[]</default>
+			<summary>List of panels</summary>
+		</key>
+	</schema>
+
+	<schema id="technology.unrelenting.numbernine.Shell.panel">
+		<key name="initialized" type="b">
+			<default>false</default>
+			<summary>Whether the panel actually exists already</summary>
+		</key>
+
+		<key name="applets" type="as">
+			<default>[]</default>
+			<summary>List of applets in the panel</summary>
+		</key>
+	</schema>
+
+	<schema id="technology.unrelenting.numbernine.Shell.panel.applet">
+		<key name="applet-type" type="s">
+			<default>'unknown'</default>
+			<summary>Type of applet</summary>
+		</key>
+		<key name="position" type="i">
+			<default>0</default>
+			<summary>Position of applet</summary>
+		</key>
+	</schema>
+
+	<schema id="technology.unrelenting.numbernine.Shell.applet.spacer">
+		<key name="expand" type="b">
+			<default>true</default>
+			<summary>Whether to stretch the spacer to maximum available space</summary>
+		</key>
+	</schema>
+
+	<schema id="technology.unrelenting.numbernine.Shell.applet.clock">
+		<key name="format" type="s">
+			<default>'%a %b %d, %R'</default>
+			<summary>Format string for the date and time</summary>
+		</key>
+	</schema>
+
+	<schema id="technology.unrelenting.numbernine.Shell.applet.notifier">
+	</schema>
+
+</schemalist>

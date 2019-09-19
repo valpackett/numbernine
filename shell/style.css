@@ -1,0 +1,15 @@
+.n9-panel {
+	background: alpha(@theme_bg_color, 0.85);
+}
+
+.n9-panel-widget:not(button):first-child {
+	margin-left: 8px;
+}
+
+.n9-panel-widget:not(button):last-child {
+	margin-right: 8px;
+}
+
+.n9-panel-spacer {
+	opacity: 0;
+}
