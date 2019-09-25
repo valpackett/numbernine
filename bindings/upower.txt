@@ -1,0 +1,2 @@
+wrap: upower
+file: UPowerGlib-1.0.gir

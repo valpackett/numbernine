@@ -68,3 +68,17 @@ polkitagentd = declare_dependency(
 	dependencies: [polkit_agent, polkitd, gtkd],
 	link_with: [polkitagentd_lib],
 	include_directories: ['.'])
+
+upowerd_lib = static_library('upowerd',
+	'upower/c/types.d',
+	'upower/c/functions.d',
+	# only build what we use
+	'upower/Device.d',
+	'upower/Client.d',
+	dependencies: [upowerglib, gtkd],
+	pic: true)
+
+upowerd = declare_dependency(
+	dependencies: [upowerglib, gtkd],
+	link_with: [upowerd_lib],
+	include_directories: ['.'])
