@@ -8,6 +8,7 @@ import Glade;
 import applets.Applet;
 import applets.Clock;
 import applets.Notifier;
+import applets.Power;
 import applets.Spacer;
 
 final class AppletHolder {
@@ -61,6 +62,8 @@ final class AppletHolder {
 			applet = new Spacer(name);
 		else if (curType == "notifier")
 			applet = new Notifier(name);
+		else if (curType == "power")
+			applet = new Power(name);
 		if (!applet) {
 			writeln("Unknown applet: " ~ curType ~ " for " ~ name);
 			return;
@@ -127,7 +130,7 @@ final class Panel {
 	}
 
 	void initWithDefaultWidgets() {
-		settings.setStrv("applets", ["clock-0", "spacer-0", "notifier-0", "spacer-1"]);
+		settings.setStrv("applets", ["clock-0", "power-0", "spacer-0", "notifier-0", "spacer-1"]);
 		settings.setBoolean("initialized", true);
 	}
 }

@@ -1,6 +1,7 @@
 module Vals;
 
 import glib.Variant;
+import gobject.Value;
 import std.typecons : Tuple;
 
 pragma(inline, true) T toDVal(T)(Variant v) {
@@ -68,4 +69,16 @@ pragma(inline, true) Variant toVariant(T)(T v) {
 			children[i] = toVariant!(M)(val);
 		return new Variant(children[0].getType(), children);
 	}
+}
+
+pragma(inline, true) string getPropertyString(T)(T o, string prop) {
+	auto val = new Value().init(GType.STRING);
+	o.getProperty(prop, val);
+	return val.getString();
+}
+
+pragma(inline, true) bool getPropertyBool(T)(T o, string prop) {
+	auto val = new Value().init(GType.BOOLEAN);
+	o.getProperty(prop, val);
+	return val.getBoolean();
 }

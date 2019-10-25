@@ -15,10 +15,11 @@ shell = executable('n9-shell',
 	'applets/Clock.d',
 	'applets/Notifier.d',
 	'applets/Spacer.d',
+	'applets/Power.d',
 	'shell.d',
 	shell_schemas,
 	shell_res,
-	dependencies: [gtkd, lshd, util],
+	dependencies: [gtkd, lshd, upowerd, util],
 	d_args: ['-relocation-model=pic', '-J../dbus'],
 	install: true)
 
