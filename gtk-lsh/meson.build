@@ -11,7 +11,7 @@ lsh_hdrs = files(
 
 lsh_lib = static_library('gtk-lsh',
 	lsh_srcs,
-	dependencies: [layer_shell, input_inhibitor, gtk, gtkmm])
+	dependencies: [layer_shell, gtk, gtkmm])
 
 gtk_lsh = declare_dependency(
 	include_directories: lsh_lib.private_dir_include(),

@@ -19,8 +19,6 @@ manager::manager(Glib::RefPtr<Gtk::Application>& /*unused*/) {
 		reg.on_global() = [&](std::uint32_t name, const std::string& interface, std::uint32_t version) {
 			if (interface == zwlr_layer_shell_v1_t::interface_name) {
 				reg.bind(name, lshell, version);
-			} else if (interface == zwlr_input_inhibit_manager_v1_t::interface_name) {
-				reg.bind(name, inhib, version);
 			}
 		};
 		disp.roundtrip();
@@ -28,13 +26,6 @@ manager::manager(Glib::RefPtr<Gtk::Application>& /*unused*/) {
 			throw std::runtime_error("Compositor does not offer layer-shell");
 		}
 	}
-}
-
-std::optional<wayland::zwlr_input_inhibitor_v1_t> manager::inhibit() {
-	if (!inhib.proxy_has_object()) {
-		return {};
-	}
-	return inhib.get_inhibitor();
 }
 
 }  // namespace lsh

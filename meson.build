@@ -26,7 +26,6 @@ wayfire = dependency('wayfire')
 gnome = import('gnome')
 
 subdir('protocols')
-subdir('dbus')
 subdir('bindings')
 subdir('util')
 
