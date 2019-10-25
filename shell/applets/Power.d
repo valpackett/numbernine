@@ -25,6 +25,7 @@ final class Power : Applet {
 				"/technology/unrelenting/numbernine/Shell/applet/" ~ name ~ "/power/");
 		client = new Client();
 		update();
+		root.show();
 	}
 
 	// TODO: be more dynamic, support device add-remove

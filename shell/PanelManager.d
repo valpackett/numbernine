@@ -26,7 +26,7 @@ final class PanelManager {
 		foreach (name; panelNames) {
 			if ((name in panels) is null) {
 				panels[name] = new Panel(name);
-				panels[name].toplevel.showAll();
+				panels[name].toplevel.show();
 			}
 		}
 		foreach (name, _; panels) {

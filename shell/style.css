@@ -2,6 +2,9 @@
 	background: alpha(@theme_bg_color, 0.85);
 }
 
+.n9-panel > button { padding: 0; border: none; }
+.n9-panel > button:not(:hover) { background: none; box-shadow: none; }
+
 .n9-panel-widget:not(button):first-child {
 	margin-left: 8px;
 }

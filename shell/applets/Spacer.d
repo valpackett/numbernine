@@ -19,5 +19,6 @@ final class Spacer : Applet {
 				"/technology/unrelenting/numbernine/Shell/applet/" ~ name ~ "/spacer/");
 		settings.bindWritable("expand", root, "hexpand", false);
 		root.setHexpand(settings.getBoolean("expand"));
+		root.show();
 	}
 }

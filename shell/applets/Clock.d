@@ -31,5 +31,7 @@ final class Clock : Applet {
 			writeln(dt.format("tick %H:%M:%S"));
 			return true;
 		}, true);
+
+		root.show();
 	}
 }

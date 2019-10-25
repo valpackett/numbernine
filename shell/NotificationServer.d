@@ -15,18 +15,6 @@ import lsh.LayerShell;
 import DBus;
 import Vals;
 
-/*
-class Notification {
-	@ById("toplevel") EventBox toplevel;
-	@ById("icon") Image icon;
-	@ById("title") Label title;
-	@ById("title") Label body;
-
-	mixin Glade!("/technology/unrelenting/numbernine/Shell/notification.glade");
-	mixin Css!("/technology/unrelenting/numbernine/Shell/style.css", toplevel);
-}
-*/
-
 struct Notification {
 	uint id;
 	string title;
@@ -54,6 +42,8 @@ final class NotificationServer {
 
 		Notification notif;
 		notif.id = uniform(0, uint.max, rndGen);
+		while (!((notif.id in notifs) is null))
+			notif.id = uniform(0, uint.max, rndGen);
 		notif.title = summary;
 		notif.text = text;
 		notifs[notif.id] = notif;

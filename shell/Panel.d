@@ -103,6 +103,7 @@ final class Panel {
 		appletbox = new Box(GtkOrientation.HORIZONTAL, 2);
 		appletbox.getStyleContext().addClass("n9-panel");
 		toplevel.add(appletbox);
+		appletbox.show();
 
 		settings.addOnChanged((string key, Settings _) {
 			if (key == "applets")
@@ -130,7 +131,7 @@ final class Panel {
 	}
 
 	void initWithDefaultWidgets() {
-		settings.setStrv("applets", ["clock-0", "power-0", "spacer-0", "notifier-0", "spacer-1"]);
+		settings.setStrv("applets", ["clock-0", "power-0", "notifier-0", "spacer-0"]);
 		settings.setBoolean("initialized", true);
 	}
 }
