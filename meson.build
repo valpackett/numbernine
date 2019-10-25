@@ -36,7 +36,6 @@ subdir('wf-plugins')
 subdir('gtk-lsh')
 subdir('gtk-util')
 subdir('wallpaper')
-subdir('panel')
 subdir('launcher')
 # ...................
 
