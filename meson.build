@@ -38,7 +38,6 @@ subdir('gtk-util')
 subdir('wallpaper')
 subdir('panel')
 subdir('launcher')
-subdir('notification-daemon')
 # ...................
 
 subdir('shell')

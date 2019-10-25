@@ -34,9 +34,7 @@ plugins = … wobbly decoration alpha mod2key gsettings
 
 [autostart]
 background = $PREFIX/libexec/n9-wallpaper
-panel = $PREFIX/libexec/n9-panel
-launcher = $PREFIX/libexec/n9-launcher
-notifications = $PREFIX/libexec/n9-notification-daemon
+shell = $PREFIX/libexec/n9-shell
 ```
 
 Don't forget to install GSettings schemas into your main prefix where glib lives, and to compile them, e.g.:
