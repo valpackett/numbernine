@@ -1,3 +1,0 @@
-[submodule "vendor/gdbus-codegen-glibmm"]
-	path = vendor/gdbus-codegen-glibmm
-	url = https://github.com/Pelagicore/gdbus-codegen-glibmm
