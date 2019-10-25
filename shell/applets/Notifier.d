@@ -6,7 +6,7 @@ import applets.Applet;
 import NotificationServer;
 import Global;
 
-class Notifier : Applet {
+final class Notifier : Applet {
 	int curId = -1;
 	Label root;
 	Settings settings;

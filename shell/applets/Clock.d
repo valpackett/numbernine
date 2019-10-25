@@ -8,7 +8,7 @@ import glib.DateTime;
 import glib.c.functions;
 import applets.Applet;
 
-class Clock : Applet {
+final class Clock : Applet {
 	Label root;
 	Timeout timer;
 	Settings settings;

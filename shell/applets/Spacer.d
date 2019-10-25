@@ -4,7 +4,7 @@ import gtk.Separator;
 import gio.Settings;
 import applets.Applet;
 
-class Spacer : Applet {
+final class Spacer : Applet {
 	Separator root;
 	Settings settings;
 
