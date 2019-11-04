@@ -1,6 +1,8 @@
 module Panel;
 import std.stdio : writeln;
+import gdk.Event;
 import gtk.Window;
+import gtk.Widget;
 import gtk.Box;
 import gio.Settings;
 import lsh.LayerShell;
@@ -10,16 +12,19 @@ import applets.Clock;
 import applets.Notifier;
 import applets.Power;
 import applets.Spacer;
+import PanelPopover;
 
 final class AppletHolder {
 	string name;
 	string curType;
 	Applet applet;
 	Box parent;
+	Panel panel;
 	Settings settings;
 
-	this(string name_, Box parent_) {
+	this(string name_, Panel panel_, Box parent_) {
 		name = name_;
+		panel = panel_;
 		parent = parent_;
 		settings = new Settings("technology.unrelenting.numbernine.Shell.panel.applet",
 				"/technology/unrelenting/numbernine/Shell/applet/" ~ name ~ "/");
@@ -61,7 +66,7 @@ final class AppletHolder {
 		else if (curType == "spacer")
 			applet = new Spacer(name);
 		else if (curType == "notifier")
-			applet = new Notifier(name);
+			applet = new Notifier(name, panel);
 		else if (curType == "power")
 			applet = new Power(name);
 		if (!applet) {
@@ -78,6 +83,7 @@ final class Panel {
 	Window toplevel;
 	Box appletbox;
 	AppletHolder[string] applets;
+	PanelPopover activePopover;
 	Settings settings; // XXX: don't put as first field - panel does not appear?!
 
 	mixin Css!("/technology/unrelenting/numbernine/Shell/style.css", toplevel);
@@ -96,7 +102,10 @@ final class Panel {
 		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.BOTTOM, true);
 		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.LEFT, true);
 		LayerShell.setExclusiveZone(toplevel, 18);
+		// '$unfocus' is a Wayfire-specific magic word!!!
+		LayerShell.setNamespace(toplevel, "$unfocus n9 shell panel");
 		toplevel.setAppPaintable(true);
+		toplevel.addOnFocusOut(&unfocus);
 
 		setupCss();
 
@@ -113,13 +122,19 @@ final class Panel {
 		updateApplets();
 	}
 
+	bool unfocus(Event _, Widget w_) {
+		if (activePopover)
+			activePopover.popover.popdown();
+		return true;
+	}
+
 	void updateApplets() {
 		import std.algorithm : canFind;
 
 		auto appletNames = settings.getStrv("applets");
 		foreach (name; appletNames) {
 			if ((name in applets) is null) {
-				applets[name] = new AppletHolder(name, appletbox);
+				applets[name] = new AppletHolder(name, this, appletbox);
 			}
 		}
 		foreach (name, _; applets) {

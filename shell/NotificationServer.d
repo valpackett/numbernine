@@ -17,6 +17,7 @@ import Vals;
 
 struct Notification {
 	uint id;
+	string iconName;
 	string title;
 	string text;
 }
@@ -44,6 +45,7 @@ final class NotificationServer {
 		notif.id = uniform(0, uint.max, rndGen);
 		while (!((notif.id in notifs) is null))
 			notif.id = uniform(0, uint.max, rndGen);
+		notif.iconName = app_icon;
 		notif.title = summary;
 		notif.text = text;
 		notifs[notif.id] = notif;

@@ -2,7 +2,7 @@
 	background: alpha(@theme_bg_color, 0.85);
 }
 
-.n9-panel > button { padding: 0; border: none; }
+.n9-panel > button { padding: 0 2px; border: none; min-height: 0; }
 .n9-panel > button:not(:hover) { background: none; box-shadow: none; }
 
 .n9-panel-widget:not(button):first-child {
@@ -15,4 +15,10 @@
 
 .n9-panel-spacer {
 	opacity: 0;
+}
+
+.n9-notification {
+	margin: 5px;
+	background: rgba(255, 255, 255, 0.85);
+	border-radius: 4px;
 }
