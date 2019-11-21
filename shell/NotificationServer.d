@@ -6,12 +6,6 @@ import gio.DBusNodeInfo;
 import gio.DBusMethodInvocation;
 import gobject.DClosure;
 import glib.Variant;
-import gtk.Window;
-import gtk.Box;
-import gtk.EventBox;
-import gtk.Image;
-import gtk.Label;
-import lsh.LayerShell;
 import DBus;
 import Vals;
 
@@ -51,7 +45,7 @@ final class NotificationServer {
 		notifs[notif.id] = notif;
 		foreach (cb; onAdd)
 			cb(notif.id);
-		invo.returnValue(toVariant(tuple(0u)));
+		invo.returnValue(toVariant(tuple(notif.id)));
 	}
 
 	@BusMethod("CloseNotification")
