@@ -69,10 +69,10 @@ class wayfire_mod2key : public wf::plugin_interface_t {
 
 	void setup_bindings_from_config(wayfire_config *config) {
 		auto section = config->get_section("mod2key");
-		if (section->get_option("ctrl_as_esc", "0")->as_int() == 1) {
+		if (section->get_option("ctrl_as_esc", "1")->as_int() == 1) {
 			binds.emplace_back(output->add_key(new_static_option("<ctrl>"), &on_binding));
 		}
-		if (section->get_option("shifts_as_parens", "0")->as_int() == 1) {
+		if (section->get_option("shifts_as_parens", "1")->as_int() == 1) {
 			binds.emplace_back(output->add_key(new_static_option("<shift>"), &on_binding));
 		}
 	}

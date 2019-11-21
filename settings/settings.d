@@ -48,16 +48,16 @@ mixin template PageAppearance() {
 }
 
 mixin template PageMouse() {
-	@ById("adj-mouse-speed") @Setting("mice-accel-speed", "value") Adjustment mouseSpeed;
-	@ById("adj-mouse-scroll-speed") @Setting("mice-scroll-speed", "value") Adjustment mouseScrollSpeed;
-	@ById("adj-touchpad-speed") @Setting("touchpads-accel-speed", "value") Adjustment touchpadSpeed;
-	@ById("adj-touchpad-scroll-speed") @Setting("touchpads-scroll-speed", "value") Adjustment touchpadScrollSpeed;
-	@ById("toggle-natural-scrolling") @Setting("touchpads-natural-scrolling", "active") Switch touchpadNatScroll;
-	@ById("toggle-tap-click") @Setting("touchpads-tap-click", "active") Switch touchpadTapClick;
-	@ById("choose-click-method") @Setting("touchpads-click-method", "active-id") ComboBoxText touchpadClickMethod;
-	@ById("choose-scroll-method") @Setting("touchpads-scroll-method", "active-id") ComboBoxText touchpadScrollMethod;
-	@ById("toggle-touchpad-dwt") @Setting("touchpads-dwt", "active") Switch touchpadDwt;
-	@ById("toggle-dwmouse") @Setting("touchpads-dwmouse", "active") Switch touchpadDwmouse;
+	@ById("adj-mouse-speed") @Setting("mouse-cursor-speed", "value") Adjustment mouseSpeed;
+	@ById("adj-mouse-scroll-speed") @Setting("mouse-scroll-speed", "value") Adjustment mouseScrollSpeed;
+	@ById("adj-touchpad-speed") @Setting("touchpad-cursor-speed", "value") Adjustment touchpadSpeed;
+	@ById("adj-touchpad-scroll-speed") @Setting("touchpad-scroll-speed", "value") Adjustment touchpadScrollSpeed;
+	@ById("toggle-natural-scrolling") @Setting("natural-scroll", "active") Switch touchpadNatScroll;
+	@ById("toggle-tap-click") @Setting("tap-to-click", "active") Switch touchpadTapClick;
+	@ById("choose-click-method") @Setting("click-method", "active-id") ComboBoxText touchpadClickMethod;
+	@ById("choose-scroll-method") @Setting("scroll-method", "active-id") ComboBoxText touchpadScrollMethod;
+	@ById("toggle-touchpad-dwt") @Setting("disable-while-typing", "active") Switch touchpadDwt;
+	@ById("toggle-dwmouse") @Setting("disable-touchpad-while-mouse", "active") Switch touchpadDwmouse;
 
 }
 
@@ -76,8 +76,8 @@ mixin template PageKeyboard() {
 	@ById("tree-layouts") TreeView curLayoutTree;
 	@ById("adj-repeat-rate") @Setting("kb-repeat-rate", "value") Adjustment kbRepeatRate;
 	@ById("adj-repeat-delay") @Setting("kb-repeat-delay", "value") Adjustment kbRepeatDelay;
-	@ById("toggle-ctrl-as-esc") @Setting("m2k-ctrl-as-esc", "active") Switch ctrlAsEsc;
-	@ById("toggle-shifts-as-parens") @Setting("m2k-shifts-as-parens", "active") Switch shiftsAsParens;
+	// @ById("toggle-ctrl-as-esc") @Setting("m2k-ctrl-as-esc", "active") Switch ctrlAsEsc;
+	// @ById("toggle-shifts-as-parens") @Setting("m2k-shifts-as-parens", "active") Switch shiftsAsParens;
 
 	XkbLayout[string] layouts;
 	XkbGroup[string] optgroups; // TODO use this
@@ -126,24 +126,32 @@ mixin template PageKeyboard() {
 		auto actRemove = new SimpleAction("remove-keyboard-layout", null);
 		actRemove.addOnActivate(delegate void(Variant, SimpleAction) {
 			import std.algorithm : remove;
+			import std.array : split, join;
 
 			auto iter = curLayoutTree.getSelectedIter();
 			if (iter is null)
 				return;
-			auto layList = settings.getValue("xkb-layouts").toDVal!(Tuple!(string, string)[]);
+			auto layList = settings.getValue("xkb-layout").toDVal!(string).split(",");
+			auto varList = settings.getValue("xkb-variant").toDVal!(string).split(",");
 			auto idx = iter.getTreePath().getIndices()[0];
-			settings.setValue("xkb-layouts", layList.remove(idx).toVariant!());
+			settings.setValue("xkb-layout", layList.remove(idx).join(",").toVariant!());
+			settings.setValue("xkb-variant", varList.remove(idx).join(",").toVariant!());
 		});
 		toplevel.addAction(actRemove);
 	}
 
 	void updateKeyboard() {
+		import std.range : lockstep;
+		import std.array : split;
+		import std.stdio : writeln;
+
 		curLayoutStore.clear();
-		auto layList = settings.getValue("xkb-layouts").toDVal!(Tuple!(string, "layout_key",
-				string, "variant_key")[]);
-		foreach (ref tup; layList) {
-			auto layout = layouts.get(tup.layout_key, XkbLayout(format("[UNKNOWN] %s", tup.layout_key), null));
-			auto variant = layout.variants.get(tup.variant_key, "Default");
+		auto layList = settings.getValue("xkb-layout").toDVal!(string).split(",");
+		auto varList = settings.getValue("xkb-variant").toDVal!(string).split(",");
+		foreach (ref layout_key, variant_key; lockstep(layList, varList)) {
+			writeln(layout_key, variant_key);
+			auto layout = layouts.get(layout_key, XkbLayout(format("[UNKNOWN] %s", layout_key), null));
+			auto variant = layout.variants.get(variant_key, "Default");
 			TreeIter row;
 			curLayoutStore.append(row);
 			curLayoutStore.setValue(row, 0, format("%s\n<span size='smaller'>%s</span>", layout.desc, variant));
@@ -160,7 +168,7 @@ class AddLayoutDialog {
 	mixin Css!("/technology/unrelenting/numbernine/settings/style.css", dialog);
 
 	void setLayouts(ref XkbLayout[string] layouts) {
-		layoutStore.clear();
+		// layoutStore.clear();
 		foreach (lkey, layout; layouts) {
 			TreeIter layI = layoutStore.append(null);
 			layoutStore.setValue(layI, 0, lkey);
@@ -177,12 +185,17 @@ class AddLayoutDialog {
 	}
 
 	void addToSettings(Settings settings) {
+		import std.array : split, join;
+
 		auto iter = tree.getSelectedIter();
 		if (iter is null)
 			return;
-		auto layList = settings.getValue("xkb-layouts").toDVal!(Tuple!(string, string)[]);
-		layList ~= tuple(iter.getValueString(2), iter.getValueString(3));
-		settings.setValue("xkb-layouts", layList.toVariant!());
+		auto layList = settings.getValue("xkb-layout").toDVal!(string).split(",");
+		auto varList = settings.getValue("xkb-variant").toDVal!(string).split(",");
+		layList ~= iter.getValueString(2);
+		varList ~= iter.getValueString(3);
+		settings.setValue("xkb-layout", layList.join(",").toVariant!());
+		settings.setValue("xkb-variant", varList.join(",").toVariant!());
 	}
 }
 
@@ -209,8 +222,7 @@ class SettingsApp {
 
 	// Do not include pages before setupSettings -- setup* are auto-called in order
 	void setupSettings() {
-		settings = new Settings("technology.unrelenting.numbernine.settings",
-				"/technology/unrelenting/numbernine/settings/");
+		settings = new Settings("org.wayfire.plugin.input");
 		wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper",
 				"/technology/unrelenting/numbernine/wallpaper/");
 		settings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
