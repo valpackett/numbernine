@@ -31,6 +31,7 @@ import std.algorithm : remove;
 
 // Widgets annotated with this will get bound to GSettings
 struct Setting {
+	string gset;
 	string setting;
 	string prop;
 }
@@ -50,16 +51,16 @@ mixin template PageAppearance() {
 }
 
 mixin template PageMouse() {
-	@ById("adj-mouse-speed") @Setting("mouse-cursor-speed", "value") Adjustment mouseSpeed;
-	@ById("adj-mouse-scroll-speed") @Setting("mouse-scroll-speed", "value") Adjustment mouseScrollSpeed;
-	@ById("adj-touchpad-speed") @Setting("touchpad-cursor-speed", "value") Adjustment touchpadSpeed;
-	@ById("adj-touchpad-scroll-speed") @Setting("touchpad-scroll-speed", "value") Adjustment touchpadScrollSpeed;
-	@ById("toggle-natural-scrolling") @Setting("natural-scroll", "active") Switch touchpadNatScroll;
-	@ById("toggle-tap-click") @Setting("tap-to-click", "active") Switch touchpadTapClick;
-	@ById("choose-click-method") @Setting("click-method", "active-id") ComboBoxText touchpadClickMethod;
-	@ById("choose-scroll-method") @Setting("scroll-method", "active-id") ComboBoxText touchpadScrollMethod;
-	@ById("toggle-touchpad-dwt") @Setting("disable-while-typing", "active") Switch touchpadDwt;
-	@ById("toggle-dwmouse") @Setting("disable-touchpad-while-mouse", "active") Switch touchpadDwmouse;
+	@ById("adj-mouse-speed") @Setting("input", "mouse-cursor-speed", "value") Adjustment mouseSpeed;
+	@ById("adj-mouse-scroll-speed") @Setting("input", "mouse-scroll-speed", "value") Adjustment mouseScrollSpeed;
+	@ById("adj-touchpad-speed") @Setting("input", "touchpad-cursor-speed", "value") Adjustment touchpadSpeed;
+	@ById("adj-touchpad-scroll-speed") @Setting("input", "touchpad-scroll-speed", "value") Adjustment touchpadScrollSpeed;
+	@ById("toggle-natural-scrolling") @Setting("input", "natural-scroll", "active") Switch touchpadNatScroll;
+	@ById("toggle-tap-click") @Setting("input", "tap-to-click", "active") Switch touchpadTapClick;
+	@ById("choose-click-method") @Setting("input", "click-method", "active-id") ComboBoxText touchpadClickMethod;
+	@ById("choose-scroll-method") @Setting("input", "scroll-method", "active-id") ComboBoxText touchpadScrollMethod;
+	@ById("toggle-touchpad-dwt") @Setting("input", "disable-while-typing", "active") Switch touchpadDwt;
+	@ById("toggle-dwmouse") @Setting("input", "disable-touchpad-while-mouse", "active") Switch touchpadDwmouse;
 
 }
 
@@ -90,8 +91,8 @@ void setXkb(Settings settings, XkbStuff stuff) {
 mixin template PageKeyboard() {
 	@ById("store-layouts") ListStore curLayoutStore;
 	@ById("tree-layouts") TreeView curLayoutTree;
-	@ById("adj-repeat-rate") @Setting("kb-repeat-rate", "value") Adjustment kbRepeatRate;
-	@ById("adj-repeat-delay") @Setting("kb-repeat-delay", "value") Adjustment kbRepeatDelay;
+	@ById("adj-repeat-rate") @Setting("input", "kb-repeat-rate", "value") Adjustment kbRepeatRate;
+	@ById("adj-repeat-delay") @Setting("input", "kb-repeat-delay", "value") Adjustment kbRepeatDelay;
 	// @ById("toggle-ctrl-as-esc") @Setting("m2k-ctrl-as-esc", "active") Switch ctrlAsEsc;
 	// @ById("toggle-shifts-as-parens") @Setting("m2k-shifts-as-parens", "active") Switch shiftsAsParens;
 
@@ -133,7 +134,7 @@ mixin template PageKeyboard() {
 			dialog.setLayouts(layouts);
 			dialog.dialog.setTransientFor(toplevel);
 			if (dialog.dialog.run() == GtkResponseType.OK) {
-				dialog.addToSettings(settings);
+				dialog.addToSettings(input);
 			}
 			dialog.dialog.destroy();
 		});
@@ -144,11 +145,11 @@ mixin template PageKeyboard() {
 			auto iter = curLayoutTree.getSelectedIter();
 			if (iter is null)
 				return;
-			auto xkb = getXkb(settings);
+			auto xkb = getXkb(input);
 			auto idx = iter.getTreePath().getIndices()[0];
 			xkb.layouts = xkb.layouts.remove(idx);
 			xkb.variants = xkb.variants.remove(idx);
-			setXkb(settings, xkb);
+			setXkb(input, xkb);
 		});
 		toplevel.addAction(actRemove);
 	}
@@ -157,7 +158,7 @@ mixin template PageKeyboard() {
 		import std.range : lockstep;
 
 		curLayoutStore.clear();
-		auto xkb = getXkb(settings);
+		auto xkb = getXkb(input);
 		foreach (ref layout_key, variant_key; lockstep(xkb.layouts, xkb.variants)) {
 			auto layout = layouts.get(layout_key, XkbLayout(format("[UNKNOWN] %s", layout_key), null));
 			auto variant = layout.variants.get(variant_key, "Default");
@@ -205,7 +206,7 @@ class AddLayoutDialog {
 }
 
 class SettingsApp {
-	Settings settings;
+	Settings input;
 	Settings wpsettings;
 
 	@ById("sa_toplevel") ApplicationWindow toplevel;
@@ -227,10 +228,10 @@ class SettingsApp {
 
 	// Do not include pages before setupSettings -- setup* are auto-called in order
 	void setupSettings() {
-		settings = new Settings("org.wayfire.plugin.input");
+		input = new Settings("org.wayfire.plugin.input");
 		wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper",
 				"/technology/unrelenting/numbernine/wallpaper/");
-		settings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
+		input.addOnChanged(delegate void(string, Settings) { callUpdates(); });
 		wpsettings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
 	}
 
@@ -251,7 +252,8 @@ class SettingsApp {
 
 		static foreach (mem; __traits(allMembers, typeof(this)))
 			static foreach (sett; getUDAs!(__traits(getMember, typeof(this), mem), Setting))
-				settings.bind(sett.setting, __traits(getMember, this, mem), sett.prop, GSettingsBindFlags.DEFAULT);
+				__traits(getMember, this, sett.gset).bind(sett.setting, __traits(getMember, this,
+						mem), sett.prop, GSettingsBindFlags.DEFAULT);
 	}
 
 	void setupLeaflet() {
