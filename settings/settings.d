@@ -26,6 +26,8 @@ import Vals;
 import std.stdio;
 import std.typecons;
 import std.format;
+import std.array : split, join;
+import std.algorithm : remove;
 
 // Widgets annotated with this will get bound to GSettings
 struct Setting {
@@ -69,6 +71,20 @@ struct XkbLayout {
 struct XkbGroup {
 	string desc;
 	string[string] opts;
+}
+
+alias XkbStuff = Tuple!(string[], "layouts", string[], "variants");
+
+XkbStuff getXkb(Settings settings) {
+	XkbStuff result;
+	result.layouts = settings.getValue("xkb-layout").toDVal!(string).split(",");
+	result.variants = settings.getValue("xkb-variant").toDVal!(string).split(",");
+	return result;
+}
+
+void setXkb(Settings settings, XkbStuff stuff) {
+	settings.setValue("xkb-layout", stuff.layouts.join(",").toVariant!());
+	settings.setValue("xkb-variant", stuff.variants.join(",").toVariant!());
 }
 
 mixin template PageKeyboard() {
@@ -125,31 +141,24 @@ mixin template PageKeyboard() {
 
 		auto actRemove = new SimpleAction("remove-keyboard-layout", null);
 		actRemove.addOnActivate(delegate void(Variant, SimpleAction) {
-			import std.algorithm : remove;
-			import std.array : split, join;
-
 			auto iter = curLayoutTree.getSelectedIter();
 			if (iter is null)
 				return;
-			auto layList = settings.getValue("xkb-layout").toDVal!(string).split(",");
-			auto varList = settings.getValue("xkb-variant").toDVal!(string).split(",");
+			auto xkb = getXkb(settings);
 			auto idx = iter.getTreePath().getIndices()[0];
-			settings.setValue("xkb-layout", layList.remove(idx).join(",").toVariant!());
-			settings.setValue("xkb-variant", varList.remove(idx).join(",").toVariant!());
+			xkb.layouts = xkb.layouts.remove(idx);
+			xkb.variants = xkb.variants.remove(idx);
+			setXkb(settings, xkb);
 		});
 		toplevel.addAction(actRemove);
 	}
 
 	void updateKeyboard() {
 		import std.range : lockstep;
-		import std.array : split;
-		import std.stdio : writeln;
 
 		curLayoutStore.clear();
-		auto layList = settings.getValue("xkb-layout").toDVal!(string).split(",");
-		auto varList = settings.getValue("xkb-variant").toDVal!(string).split(",");
-		foreach (ref layout_key, variant_key; lockstep(layList, varList)) {
-			writeln(layout_key, variant_key);
+		auto xkb = getXkb(settings);
+		foreach (ref layout_key, variant_key; lockstep(xkb.layouts, xkb.variants)) {
 			auto layout = layouts.get(layout_key, XkbLayout(format("[UNKNOWN] %s", layout_key), null));
 			auto variant = layout.variants.get(variant_key, "Default");
 			TreeIter row;
@@ -185,17 +194,13 @@ class AddLayoutDialog {
 	}
 
 	void addToSettings(Settings settings) {
-		import std.array : split, join;
-
 		auto iter = tree.getSelectedIter();
 		if (iter is null)
 			return;
-		auto layList = settings.getValue("xkb-layout").toDVal!(string).split(",");
-		auto varList = settings.getValue("xkb-variant").toDVal!(string).split(",");
-		layList ~= iter.getValueString(2);
-		varList ~= iter.getValueString(3);
-		settings.setValue("xkb-layout", layList.join(",").toVariant!());
-		settings.setValue("xkb-variant", varList.join(",").toVariant!());
+		auto xkb = getXkb(settings);
+		xkb.layouts ~= iter.getValueString(2);
+		xkb.variants ~= iter.getValueString(3);
+		setXkb(settings, xkb);
 	}
 }
 
