@@ -50,10 +50,12 @@ final class Notifier : Applet {
 		root.setImagePosition(GtkPositionType.RIGHT);
 		root.setAlwaysShowImage(true);
 		popover = new PanelPopover(root, panel);
+		popover.onOpen = () { root.setLabel(""); };
 		auto sw = new ScrolledWindow();
 		notifList = new Box(GtkOrientation.VERTICAL, 5);
 		notifList.setValign(GtkAlign.START);
 		sw.add(notifList);
+		sw.showAll();
 		popover.popover.add(sw);
 		notifSrv.onAdd ~= &addNotif;
 		notifSrv.onClose ~= &closeNotif;

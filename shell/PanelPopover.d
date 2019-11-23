@@ -9,6 +9,7 @@ final class PanelPopover {
 	Popover popover;
 	Panel panel;
 	ToggleButton btn;
+	void delegate() onOpen;
 
 	this(ToggleButton btn_, Panel panel_) {
 		btn = btn_;
@@ -23,12 +24,16 @@ final class PanelPopover {
 		if (!btn.getActive()) {
 			return deactivate(btn);
 		}
+		if (onOpen) {
+			onOpen();
+		}
 		if (panel.activePopover && panel.activePopover != this) {
-			panel.activePopover.popover.hide();
+			panel.activePopover.popover.popdown();
 		}
 		LayerShell.setKeyboardInteractivity(panel.toplevel, true);
 		btn.setActive(true);
-		popover.showAll();
+		popover.setRelativeTo(btn);
+		popover.popup();
 		panel.activePopover = this;
 	}
 
