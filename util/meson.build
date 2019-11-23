@@ -9,7 +9,3 @@ util_lib = static_library('util',
 util = declare_dependency(
 	link_with: [util_lib],
 	include_directories: ['.'])
-
-input_inhibitor_dep = declare_dependency(
-	sources: ['InputInhibitor.c'],
-	dependencies: [gdk_wayland, wayland_client, input_inhibitor_c])

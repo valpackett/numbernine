@@ -14,6 +14,7 @@ import glib.Child;
 import lsh.LayerShell;
 import polkit.UnixUser;
 import polkitagent.Session;
+import wl_protos;
 import Glade;
 import Vals;
 import std.process : environment;
@@ -78,7 +79,7 @@ class DialogApp {
 
 	mixin Css!("/technology/unrelenting/numbernine/pk-agent/style.css", window);
 
-	bool inhibited = false;
+	zwlr_input_inhibitor_v1 *inhibitor = null;
 
 	void connect() {
 		import core.sys.posix.unistd : getuid;
@@ -90,15 +91,21 @@ class DialogApp {
 			// TODO: nicer exit?
 			import core.sys.posix.stdlib : exit;
 
-			if (inhibited)
-				gwl_input_uninhibit();
+			if (inhibitor != null) {
+				zwlr_input_inhibitor_v1_destroy(inhibitor);
+				inhibitor = null;
+			}
 			exit(0);
 		});
 		session.addOnRequest(delegate void(string req, bool, Session) {
 			prompt.setText(req);
 			window.showAll();
-			inhibited = gwl_input_inhibit(Display.getDefault().getDisplayStruct());
-			if (!inhibited)
+			if (!wl_protos_get_for_gdk(Display.getDefault().getDisplayStruct())) {
+				writeln("WARN: could not get wayland protocols");
+				return;
+			}
+			inhibitor = zwlr_input_inhibit_manager_v1_get_inhibitor(wl_protos_input_inhibit_manager);
+			if (inhibitor == null)
 				writeln("WARN: could not inhibit input");
 		});
 		// TODO: show these on the dialog?
@@ -114,8 +121,3 @@ int main(string[] args) {
 	app.hold();
 	return app.run(args);
 }
-
-extern (C):
-
-bool gwl_input_inhibit(GdkDisplay*);
-bool gwl_input_uninhibit();
