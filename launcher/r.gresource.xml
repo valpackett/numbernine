@@ -1,7 +1,0 @@
-<?xml version="1.0" encoding="UTF-8"?>
-<gresources>
-	<gresource prefix="/technology/unrelenting/numbernine/launcher">
-		<file preprocess="xml-stripblanks">launcher.glade</file>
-		<file>style.css</file>
-	</gresource>
-</gresources>

@@ -14,12 +14,8 @@ polkit = dependency('polkit-gobject-1')
 polkit_agent = dependency('polkit-agent-1')
 upowerglib = dependency('upower-glib')
 gtkd = dependency('gtkd-3', version: '>=3.8.5')
-gtkmm = dependency('gtkmm-3.0', version: '>=3.22.0')
-cairomm = dependency('cairomm-1.0')
 xkbcommon = dependency('xkbcommon')
 wayland_client = dependency('wayland-client')
-wayland_clientpp = dependency('wayland-client++')
-fmtlib = dependency('fmt')
 wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
 wayfire = dependency('wayfire')
 
@@ -30,13 +26,6 @@ subdir('bindings')
 subdir('util')
 
 subdir('wf-plugins')
-
-# ... will be gone ...
-subdir('gtk-lsh')
-subdir('gtk-util')
-subdir('wallpaper')
-subdir('launcher')
-# ...................
 
 subdir('shell')
 subdir('pk-agent')

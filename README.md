@@ -16,16 +16,13 @@ WORK IN PROGRESS
 - **Right now, being a developer :) This is an early stage project. Do not package into OS repos yet, please.**
 - FreeBSD -CURRENT (or 12-STABLE I guess), Linux, any other system you can run Wayfire on (DragonFly??)
 	- FreeBSD currently needs either `chmod g+rw /dev/input/*` (bad security) or [patched libudev-devd](https://github.com/FreeBSDDesktop/libudev-devd/pull/8) for input devices to be recognized
-- [Wayfire](https://github.com/WayfireWM/wayfire) git master (/ 0.2)
+- [Wayfire](https://github.com/WayfireWM/wayfire) git master (/ 0.3)
 - [wf-gsettings](https://github.com/myfreeweb/wf-gsettings)
 - [LDC](https://github.com/ldc-developers/ldc) (or other D language compiler, but LDC is what development is done with)
 - [`GtkD`](https://github.com/gtkd-developers/GtkD/)
-- `gtkmm30`
 - [`libhandy`](https://source.puri.sm/Librem5/libhandy)
 - `polkit`
 - `flatbuffers` (with `flatc` for building)
-- [`fmt`](https://github.com/fmtlib/fmt)
-
 
 Install with Meson (into the same prefix as Wayfire), configure Wayfire like this (substitute `$PREFIX` with where you install it, e.g. `/usr/local` or `$HOME/.local`):
 

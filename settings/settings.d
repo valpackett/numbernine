@@ -41,12 +41,12 @@ mixin template PageAppearance() {
 
 	void setupAppearance() {
 		picChooser.addOnFileSet(delegate void(FileChooserButton) {
-			wpsettings.setString("picture-path", picChooser.getFilename());
+			// wpsettings.setString("picture-path", picChooser.getFilename());
 		});
 	}
 
 	void updateAppearance() {
-		picChooser.selectFilename(wpsettings.getString("picture-path"));
+		// picChooser.selectFilename(wpsettings.getString("picture-path"));
 	}
 }
 
@@ -207,7 +207,7 @@ class AddLayoutDialog {
 
 class SettingsApp {
 	Settings input;
-	Settings wpsettings;
+	// Settings wpsettings;
 
 	@ById("sa_toplevel") ApplicationWindow toplevel;
 
@@ -229,10 +229,9 @@ class SettingsApp {
 	// Do not include pages before setupSettings -- setup* are auto-called in order
 	void setupSettings() {
 		input = new Settings("org.wayfire.plugin.input");
-		wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper",
-				"/technology/unrelenting/numbernine/wallpaper/");
+		// wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper");
 		input.addOnChanged(delegate void(string, Settings) { callUpdates(); });
-		wpsettings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
+		// wpsettings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
 	}
 
 	mixin PageAppearance!();
