@@ -1,8 +1,3 @@
-wfp_srcs = files(
-	'mod2key.cpp',
-	'magic-mirror.cpp',
-)
-
 mod2key = shared_module('mod2key', 'mod2key.cpp',
 	dependencies: [wayfire, wlroots, xkbcommon],
 	install: true,
