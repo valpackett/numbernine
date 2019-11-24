@@ -10,6 +10,7 @@ final class PanelPopover {
 	Panel panel;
 	ToggleButton btn;
 	void delegate() onOpen;
+	void delegate() afterOpen;
 
 	this(ToggleButton btn_, Panel panel_) {
 		btn = btn_;
@@ -35,6 +36,9 @@ final class PanelPopover {
 		popover.setRelativeTo(btn);
 		popover.popup();
 		panel.activePopover = this;
+		if (afterOpen) {
+			afterOpen();
+		}
 	}
 
 	void deactivate(Widget _) {

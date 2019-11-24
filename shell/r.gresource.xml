@@ -3,5 +3,6 @@
 	<gresource prefix="/technology/unrelenting/numbernine/Shell">
 		<file>style.css</file>
 		<file preprocess="xml-stripblanks">applets/NotifierNotification.glade</file>
+		<file preprocess="xml-stripblanks">applets/Launcher.glade</file>
 	</gresource>
 </gresources>

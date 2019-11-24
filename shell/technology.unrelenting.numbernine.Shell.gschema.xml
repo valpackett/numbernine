@@ -45,6 +45,9 @@
 		</key>
 	</schema>
 
+	<schema id="technology.unrelenting.numbernine.Shell.applet.launcher">
+	</schema>
+
 	<schema id="technology.unrelenting.numbernine.Shell.applet.notifier">
 	</schema>
 

@@ -34,6 +34,7 @@ class DialogApp {
 	@ById("allow") Button allowBtn;
 
 	mixin Glade!("/technology/unrelenting/numbernine/pk-agent/auth.glade");
+	mixin AutoThis!();
 
 	void setupDialog() {
 		// TODO: multi-monitor

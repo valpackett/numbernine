@@ -9,6 +9,7 @@ import lsh.LayerShell;
 import Glade;
 import applets.Applet;
 import applets.Clock;
+import applets.Launcher;
 import applets.Notifier;
 import applets.Power;
 import applets.Spacer;
@@ -65,6 +66,8 @@ final class AppletHolder {
 			applet = new Clock(name);
 		else if (curType == "spacer")
 			applet = new Spacer(name);
+		else if (curType == "launcher")
+			applet = new Launcher(name, panel);
 		else if (curType == "notifier")
 			applet = new Notifier(name, panel);
 		else if (curType == "power")
@@ -146,7 +149,7 @@ final class Panel {
 	}
 
 	void initWithDefaultWidgets() {
-		settings.setStrv("applets", ["clock-0", "power-0", "notifier-0", "spacer-0"]);
+		settings.setStrv("applets", ["clock-0", "power-0", "notifier-0", "spacer-0", "launcher-0"]);
 		settings.setBoolean("initialized", true);
 	}
 }

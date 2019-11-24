@@ -25,6 +25,7 @@ final class Notification {
 
 	mixin Glade!("/technology/unrelenting/numbernine/Shell/applets/NotifierNotification.glade");
 	mixin Css!("/technology/unrelenting/numbernine/Shell/style.css", toplevel);
+	mixin AutoThis!();
 }
 
 final class Notifier : Applet {

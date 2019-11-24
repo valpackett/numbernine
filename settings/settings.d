@@ -176,6 +176,7 @@ class AddLayoutDialog {
 
 	mixin Glade!("/technology/unrelenting/numbernine/settings/dialogs.glade");
 	mixin Css!("/technology/unrelenting/numbernine/settings/style.css", dialog);
+	mixin AutoThis!();
 
 	void setLayouts(ref XkbLayout[string] layouts) {
 		// layoutStore.clear();
@@ -225,6 +226,7 @@ class SettingsApp {
 
 	mixin Glade!("/technology/unrelenting/numbernine/settings/settings.glade");
 	mixin Css!("/technology/unrelenting/numbernine/settings/style.css", toplevel);
+	mixin AutoThis!();
 
 	// Do not include pages before setupSettings -- setup* are auto-called in order
 	void setupSettings() {
