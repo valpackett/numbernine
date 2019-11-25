@@ -44,7 +44,7 @@ class Agent {
 					"N9_PK_ICON_NAME": iconName,
 					"N9_PK_COOKIE": cookie
 				]).nullable;
-		Child.childWatchAdd(pid.osHandle, &onChildExit, cast(void*) this);
+		Child.childWatchAdd(pid.get.osHandle, &onChildExit, cast(void*) this);
 		authReqs[cookie] = tuple(invo, pid);
 	}
 
