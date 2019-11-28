@@ -1,7 +1,7 @@
 module applets.Launcher;
-import std.array : split;
-import std.algorithm.iteration : joiner, filter;
-import std.algorithm.searching : canFind;
+import std.array : split, join;
+import std.algorithm.iteration : filter, map;
+import std.algorithm.searching : canFind, any;
 import std.functional : memoize;
 import core.memory : GC;
 import gtk.Widget;
@@ -36,7 +36,9 @@ import Global;
 import Glade;
 
 bool isMatched(string needle, DesktopAppInfo app) {
-	return Fuzzy.hasMatch(needle, app.getDisplayName()) || Fuzzy.hasMatch(needle, app.getDescription());
+	return Fuzzy.hasMatch(needle, app.getDisplayName()) || Fuzzy.hasMatch(needle,
+			app.getGenericName()) || Fuzzy.hasMatch(needle, app.getDescription()) || app.getKeywords().
+		any!(k => Fuzzy.hasMatch(needle, k));
 }
 
 double matchScore(string needle, DesktopAppInfo app) {
@@ -44,8 +46,16 @@ double matchScore(string needle, DesktopAppInfo app) {
 	if (Fuzzy.hasMatch(needle, app.getDisplayName())) {
 		score += Fuzzy.match(needle, app.getDisplayName()) * 10;
 	}
+	if (Fuzzy.hasMatch(needle, app.getGenericName())) {
+		score += Fuzzy.match(needle, app.getGenericName()) * 5;
+	}
 	if (Fuzzy.hasMatch(needle, app.getDescription())) {
 		score += Fuzzy.match(needle, app.getDescription());
+	}
+	foreach (k; app.getKeywords()) {
+		if (Fuzzy.hasMatch(needle, k)) {
+			score += Fuzzy.match(needle, k);
+		}
 	}
 	return score;
 }
@@ -182,7 +192,10 @@ final class Launcher : Applet {
 				// XXX: couldn't get GIcon column to work
 				resultstore.setValue(it, 1, appIcon.toString());
 			}
-			resultstore.setValue(it, 2, "<b>" ~ app.getDisplayName() ~ "</b>\n" ~ app.getDescription());
+			resultstore.setValue(it, 2, "<b>" ~ app.getDisplayName() ~ "</b>" ~ (app.getGenericName().
+					length == 0 ? "" : " <span size=\"small\" weight=\"light\">(" ~ app.getGenericName() ~ ")</span>") ~
+					"\n" ~ app.getDescription() ~ " " ~ app.getKeywords().
+					map!(k => "<span size=\"small\" weight=\"light\">#" ~ k ~ "</span>").join(" "));
 		}
 	}
 
