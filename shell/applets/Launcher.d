@@ -179,6 +179,9 @@ final class Launcher : Applet {
 			return false;
 		});
 		popover.afterOpen = () { searchbar.grabFocus(); };
+		TreeIter it;
+		resultsort.getIterFirst(it);
+		resultview.getSelection().selectIter(it);
 	}
 
 	void setAppResults(R)(R results) {
