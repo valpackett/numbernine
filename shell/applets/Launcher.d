@@ -15,6 +15,7 @@ import gtk.ScrolledWindow;
 import gtk.ListStore;
 import gtk.TreeModelFilter;
 import gtk.TreeModelSort;
+import gtk.TreeModelIF;
 import gtk.TreeSortableIF;
 import gtk.TreeView;
 import gtk.TreeViewColumn;
@@ -154,6 +155,15 @@ final class Launcher : Applet {
 			}
 			if (key.keyval == GdkKeysyms.GDK_Down || key.keyval == GdkKeysyms.GDK_KP_Down) {
 				scrollTo((ref TreeIter it) { resultsort.iterNext(it); });
+				return true;
+			}
+			if (key.keyval == GdkKeysyms.GDK_Return || key.keyval == GdkKeysyms.GDK_KP_Enter) {
+				TreeModelIF m;
+				auto sels = resultview.getSelection().getSelectedRows(m);
+				if (sels.length < 1) {
+					return false;
+				}
+				resultview.rowActivated(sels[0], resultview.getColumn(0));
 				return true;
 			}
 			return false;
