@@ -46,16 +46,20 @@ class wayfire_mod2key : public wf::plugin_interface_t {
 		const xkb_keysym_t *keysyms;
 		auto keysyms_len = xkb_state_key_get_syms(keyboard->xkb_state, keycode, &keysyms);
 
+		bool used = false;
 		for (int i = 0; i < keysyms_len; i++) {
 			auto key = keysyms[i];
 
 			if (key == XKB_KEY_Control_L) {
 				tap_wlr_key(seat, KEY_ESC);
+				used = true;
 			} else if (key == XKB_KEY_Shift_L || key == XKB_KEY_Shift_R) {
 				with_wlr_modifier(seat, WLR_MODIFIER_SHIFT,
 				                  [=] { tap_wlr_key(seat, key == XKB_KEY_Shift_L ? KEY_9 : KEY_0); });
+				used = true;
 			}
 		}
+		return used;
 	};
 
 	std::vector<wf_binding *> binds{};

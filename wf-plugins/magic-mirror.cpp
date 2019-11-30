@@ -46,6 +46,7 @@ class wayfire_magic_mirror : public wf::plugin_interface_t {
 			mirrors.emplace(cur, mview);
 			mview->connect_signal("unmap", &handle_mirror_view_unmapped);
 		}
+		return true;
 	};
 
  public:
