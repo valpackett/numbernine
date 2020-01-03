@@ -1,10 +1,9 @@
 #define WLR_USE_UNSTABLE
 #define WAYFIRE_PLUGIN
-#include <plugin.hpp>
 #include <compositor-view.hpp>
-#include <config.hpp>
 #include <core.hpp>
 #include <output.hpp>
+#include <plugin.hpp>
 #include <signal-definitions.hpp>
 #include <unordered_map>
 
@@ -35,7 +34,7 @@ class wayfire_magic_mirror : public wf::plugin_interface_t {
 		}
 	};
 
-	activator_callback toggle_cb = [=](wf_activator_source, uint32_t) {
+	wf::activator_callback toggle_cb = [=](wf::activator_source_t, uint32_t) {
 		const auto cur = output->get_top_view();
 		if (mirrors.find(cur) != mirrors.end()) {
 			auto m = mirrors[cur];
@@ -49,12 +48,10 @@ class wayfire_magic_mirror : public wf::plugin_interface_t {
 		return true;
 	};
 
+	wf::option_wrapper_t<wf::activatorbinding_t> toggle_key{"magic-mirror/toggle"};
+
  public:
-	void init(wayfire_config *config) override {
-		auto section = config->get_section("magic-mirror");
-		auto toggle_key = section->get_option("toggle", "<super> <shift> KEY_M");
-		output->add_activator(toggle_key, &toggle_cb);
-	}
+	void init() override { output->add_activator(toggle_key, &toggle_cb); }
 
 	void fini() override {}
 };

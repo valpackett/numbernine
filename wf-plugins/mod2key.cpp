@@ -1,15 +1,14 @@
 #define WAYFIRE_PLUGIN
 #define WLR_USE_UNSTABLE
 extern "C" {
-#include <wlr/types/wlr_seat.h>
 #include <linux/input-event-codes.h>
 #include <linux/input.h>
+#include <wlr/types/wlr_seat.h>
 #include <xkbcommon/xkbcommon.h>
 }
-#include <plugin.hpp>
-#include <config.hpp>
 #include <core.hpp>
 #include <output.hpp>
+#include <plugin.hpp>
 
 static void tap_wlr_key(wlr_seat *seat, uint32_t key) {
 	struct timespec now {};
@@ -38,7 +37,7 @@ static void with_wlr_modifier(wlr_seat *seat, xkb_mod_mask_t mod, const std::fun
 }
 
 class wayfire_mod2key : public wf::plugin_interface_t {
-	key_callback on_binding = [=](uint32_t value) {
+	wf::key_callback on_binding = [=](uint32_t value) {
 		auto seat = wf::get_core().get_current_seat();
 
 		xkb_keycode_t keycode = value + 8;
@@ -62,7 +61,7 @@ class wayfire_mod2key : public wf::plugin_interface_t {
 		return used;
 	};
 
-	std::vector<wf_binding *> binds{};
+	std::vector<wf::binding_t *> binds{};
 
 	void clear_bindings() {
 		for (const auto b : binds) {
@@ -71,25 +70,29 @@ class wayfire_mod2key : public wf::plugin_interface_t {
 		binds.clear();
 	}
 
-	void setup_bindings_from_config(wayfire_config *config) {
-		auto section = config->get_section("mod2key");
-		if (section->get_option("ctrl_as_esc", "1")->as_int() == 1) {
-			binds.emplace_back(output->add_key(new_static_option("<ctrl>"), &on_binding));
+	wf::option_wrapper_t<bool> ctrl_as_esc{"mod2key/ctrl_as_esc"};
+	wf::option_wrapper_t<bool> shifts_as_parens{"mod2key/shifts_as_parens"};
+
+	void setup_bindings() {
+		if (ctrl_as_esc) {
+			binds.emplace_back(
+			    output->add_key(wf::create_option_string<wf::keybinding_t>("<ctrl>"), &on_binding));
 		}
-		if (section->get_option("shifts_as_parens", "1")->as_int() == 1) {
-			binds.emplace_back(output->add_key(new_static_option("<shift>"), &on_binding));
+		if (shifts_as_parens) {
+			binds.emplace_back(
+			    output->add_key(wf::create_option_string<wf::keybinding_t>("<shift>"), &on_binding));
 		}
 	}
 
  public:
 	wf::signal_callback_t reload_config;
 
-	void init(wayfire_config *config) override {
-		setup_bindings_from_config(config);
+	void init() override {
+		setup_bindings();
 
 		reload_config = [=](wf::signal_data_t *) {
 			clear_bindings();
-			setup_bindings_from_config(wf::get_core().config);
+			setup_bindings();
 		};
 
 		wf::get_core().connect_signal("reload-config", &reload_config);

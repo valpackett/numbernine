@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="mod2key">
+		<_short>Modifier to Key</_short>
+		<category>Accessibility</category>
+		<option name="ctrl_as_esc" type="bool">
+			<_short>Ctrl as Escape</_short>
+			<default>false</default>
+		</option>
+		<option name="shifts_as_parens" type="bool">
+			<_short>Shifts as Parentheses</_short>
+			<default>false</default>
+		</option>
+	</plugin>
+</wayfire>

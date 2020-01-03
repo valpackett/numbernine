@@ -1,0 +1,11 @@
+<?xml version="1.0"?>
+<wayfire>
+	<plugin name="magic-mirror">
+		<_short>Magic Mirror</_short>
+		<category>Desktop</category>
+		<option name="toggle" type="activator">
+			<_short>Key for creating a mirror of the active window</_short>
+			<default>&lt;super&gt; &lt;shift&gt; KEY_M</default>
+		</option>
+	</plugin>
+</wayfire>
