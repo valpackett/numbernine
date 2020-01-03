@@ -6,9 +6,9 @@ extern "C" {
 #include <wlr/types/wlr_seat.h>
 #include <xkbcommon/xkbcommon.h>
 }
-#include <core.hpp>
-#include <output.hpp>
-#include <plugin.hpp>
+#include <wayfire/core.hpp>
+#include <wayfire/output.hpp>
+#include <wayfire/plugin.hpp>
 
 static void tap_wlr_key(wlr_seat *seat, uint32_t key) {
 	struct timespec now {};

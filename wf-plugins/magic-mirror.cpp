@@ -1,11 +1,11 @@
 #define WLR_USE_UNSTABLE
 #define WAYFIRE_PLUGIN
-#include <compositor-view.hpp>
-#include <core.hpp>
-#include <output.hpp>
-#include <plugin.hpp>
-#include <signal-definitions.hpp>
 #include <unordered_map>
+#include <wayfire/compositor-view.hpp>
+#include <wayfire/core.hpp>
+#include <wayfire/output.hpp>
+#include <wayfire/plugin.hpp>
+#include <wayfire/signal-definitions.hpp>
 
 struct lol_hash {
 	size_t operator()(const wayfire_view &view) const { return reinterpret_cast<size_t>(view.get()); }
