@@ -93,8 +93,8 @@ mixin template PageKeyboard() {
 	@ById("tree-layouts") TreeView curLayoutTree;
 	@ById("adj-repeat-rate") @Setting("input", "kb-repeat-rate", "value") Adjustment kbRepeatRate;
 	@ById("adj-repeat-delay") @Setting("input", "kb-repeat-delay", "value") Adjustment kbRepeatDelay;
-	// @ById("toggle-ctrl-as-esc") @Setting("m2k-ctrl-as-esc", "active") Switch ctrlAsEsc;
-	// @ById("toggle-shifts-as-parens") @Setting("m2k-shifts-as-parens", "active") Switch shiftsAsParens;
+	@ById("toggle-ctrl-as-esc") @Setting("mod2key", "ctrl-as-esc", "active") Switch ctrlAsEsc;
+	@ById("toggle-shifts-as-parens") @Setting("mod2key", "shifts-as-parens", "active") Switch shiftsAsParens;
 
 	XkbLayout[string] layouts;
 	XkbGroup[string] optgroups; // TODO use this
@@ -208,6 +208,7 @@ class AddLayoutDialog {
 
 class SettingsApp {
 	Settings input;
+	Settings mod2key;
 	// Settings wpsettings;
 
 	@ById("sa_toplevel") ApplicationWindow toplevel;
@@ -231,8 +232,10 @@ class SettingsApp {
 	// Do not include pages before setupSettings -- setup* are auto-called in order
 	void setupSettings() {
 		input = new Settings("org.wayfire.plugin.input");
-		// wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper");
 		input.addOnChanged(delegate void(string, Settings) { callUpdates(); });
+		mod2key = new Settings("org.wayfire.plugin.mod2key");
+		mod2key.addOnChanged(delegate void(string, Settings) { callUpdates(); });
+		// wpsettings = new Settings("technology.unrelenting.numbernine.wallpaper");
 		// wpsettings.addOnChanged(delegate void(string, Settings) { callUpdates(); });
 	}
 
