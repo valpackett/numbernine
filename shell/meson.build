@@ -1,6 +1,9 @@
 shell_schemas = gnome.compile_schemas(build_by_default: true,
 	depend_files: files('technology.unrelenting.numbernine.Shell.gschema.xml'))
 
+install_data('technology.unrelenting.numbernine.Shell.gschema.xml',
+	install_dir: get_option('datadir') / 'glib-2.0/schemas')
+
 shell_res = gnome.compile_resources(
 	'shell_res', 'r.gresource.xml',
 	source_dir: '.',
