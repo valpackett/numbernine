@@ -35,30 +35,42 @@ import Panel;
 import Global;
 import Glade;
 
-bool isMatched(string needle, DesktopAppInfo app) {
-	return Fuzzy.hasMatch(needle, app.getDisplayName()) || Fuzzy.hasMatch(needle,
-			app.getGenericName()) || Fuzzy.hasMatch(needle, app.getDescription());
-	// || app.getKeywords().
-	// any!(k => Fuzzy.hasMatch(needle, k));
+struct SimpleAppInfo {
+	string displayName;
+	string genericName;
+	string description;
+	string[] keywords;
+
+	this(DesktopAppInfo app) {
+		this.displayName = app.getDisplayName();
+		this.genericName = app.getGenericName();
+		this.description = app.getDescription();
+		// XXX: reading keywords seems to introduce memory corruption
+		// this.keywords = app.getKeywords();
+	}
 }
 
-double matchScore(string needle, DesktopAppInfo app) {
+pure bool isMatched(string needle, SimpleAppInfo app) {
+	return Fuzzy.hasMatch(needle, app.displayName) || Fuzzy.hasMatch(needle, app.genericName) ||
+		Fuzzy.hasMatch(needle, app.description) || app.keywords.any!(k => Fuzzy.hasMatch(needle, k));
+}
+
+pure double matchScore(string needle, SimpleAppInfo app) {
 	double score = 0;
-	if (Fuzzy.hasMatch(needle, app.getDisplayName())) {
-		score += Fuzzy.match(needle, app.getDisplayName()) * 10;
+	if (Fuzzy.hasMatch(needle, app.displayName)) {
+		score += Fuzzy.match(needle, app.displayName) * 10;
 	}
-	if (Fuzzy.hasMatch(needle, app.getGenericName())) {
-		score += Fuzzy.match(needle, app.getGenericName()) * 5;
+	if (Fuzzy.hasMatch(needle, app.genericName)) {
+		score += Fuzzy.match(needle, app.genericName) * 5;
 	}
-	if (Fuzzy.hasMatch(needle, app.getDescription())) {
-		score += Fuzzy.match(needle, app.getDescription());
+	if (Fuzzy.hasMatch(needle, app.description)) {
+		score += Fuzzy.match(needle, app.description);
 	}
-	// XXX: reading keywords seems to introduce memory corruption
-	// foreach (k; app.getKeywords()) {
-	// 	if (Fuzzy.hasMatch(needle, k)) {
-	// 		score += Fuzzy.match(needle, k);
-	// 	}
-	// }
+	foreach (k; app.keywords) {
+		if (Fuzzy.hasMatch(needle, k)) {
+			score += Fuzzy.match(needle, k);
+		}
+	}
 	return score;
 }
 
@@ -69,7 +81,7 @@ extern (C) int launcherFilterFunc(GtkTreeModel* model, GtkTreeIter* iter, void* 
 	auto it = new TreeIter(iter);
 	it.setModel(model);
 	auto needle = launcher.searchbar.getText();
-	return isMatched(needle, launcher.apps[it.getValueString(0)]);
+	return isMatched(needle, SimpleAppInfo(launcher.apps[it.getValueString(0)]));
 }
 
 extern (C) int launcherSortFunc(GtkTreeModel* model, GtkTreeIter* a, GtkTreeIter* b, void* data) {
@@ -79,11 +91,12 @@ extern (C) int launcherSortFunc(GtkTreeModel* model, GtkTreeIter* a, GtkTreeIter
 	itA.setModel(model);
 	itB.setModel(model);
 	auto needle = launcher.searchbar.getText();
+	auto appA = SimpleAppInfo(launcher.apps[itA.getValueString(0)]);
+	auto appB = SimpleAppInfo(launcher.apps[itB.getValueString(0)]);
 	// import std.stdio : writeln;
-	// writeln("A: ", itA.getValueString(0), " - ", memMatchScore(needle, launcher.apps[itA.getValueString(0)]));
-	// writeln("B: ", itB.getValueString(0), " - ", memMatchScore(needle, launcher.apps[itB.getValueString(0)]));
-	auto scoreDiff = memMatchScore(needle, launcher.apps[itA.getValueString(0)]) - memMatchScore(needle,
-			launcher.apps[itB.getValueString(0)]);
+	// writeln("A: ", itA.getValueString(0), " - ", memMatchScore(needle, appA);
+	// writeln("B: ", itB.getValueString(0), " - ", memMatchScore(needle, appB);
+	auto scoreDiff = memMatchScore(needle, appA) - memMatchScore(needle, appB);
 	if (scoreDiff == 0) {
 		return 0;
 	}
