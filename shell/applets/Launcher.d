@@ -189,19 +189,21 @@ final class Launcher : Applet {
 				key.keyval == GdkKeysyms.GDK_ISO_Left_Tab) {
 				return true;
 			}
-			void scrollTo(void delegate(ref TreeIter it) manip) {
+			void scrollTo(bool delegate(ref TreeIter it) manip) {
 				TreeIter it = resultview.getSelection().getSelected();
-				manip(it);
+				if (!manip(it)) {
+					return;
+				}
 				resultview.getSelection().selectIter(it);
 				resultview.scrollToCell(resultview.getModel().getPath(it), null, false, 0.0, 0.0);
 			}
 
 			if (key.keyval == GdkKeysyms.GDK_Up || key.keyval == GdkKeysyms.GDK_KP_Up) {
-				scrollTo((ref TreeIter it) { resultview.getModel().iterPrevious(it); });
+				scrollTo((ref TreeIter it) { return resultview.getModel().iterPrevious(it); });
 				return true;
 			}
 			if (key.keyval == GdkKeysyms.GDK_Down || key.keyval == GdkKeysyms.GDK_KP_Down) {
-				scrollTo((ref TreeIter it) { resultview.getModel().iterNext(it); });
+				scrollTo((ref TreeIter it) { return resultview.getModel().iterNext(it); });
 				return true;
 			}
 			if (key.keyval == GdkKeysyms.GDK_Return || key.keyval == GdkKeysyms.GDK_KP_Enter) {
