@@ -9,6 +9,7 @@ int main(string[] args) {
 	app.addOnActivate((GioApplication a) {
 		notifSrv = new NotificationServer();
 		panelMgr = new PanelManager();
+		wallpaper = new Wallpaper();
 	});
 	app.hold();
 	return app.run(args);

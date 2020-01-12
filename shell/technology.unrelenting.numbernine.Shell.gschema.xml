@@ -6,6 +6,10 @@
 			<default>[]</default>
 			<summary>List of panels</summary>
 		</key>
+		<key name="wallpaper" type="s">
+			<default>"/dev/null"</default>
+			<summary>Path to use for the background image</summary>
+		</key>
 	</schema>
 
 	<schema id="technology.unrelenting.numbernine.Shell.panel">

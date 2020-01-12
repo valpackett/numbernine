@@ -24,6 +24,7 @@ focused on a good balance between friendliness/discoverability and customization
 - [`libqalculate`](https://github.com/Qalculate/libqalculate)
 - [`polkit`](https://gitlab.freedesktop.org/polkit/polkit)
 - [`upower-glib`](https://gitlab.freedesktop.org/upower/upower)
+- [`libepoxy`](https://github.com/anholt/libepoxy)
 
 Install with Meson (into the same prefix as Wayfire), configure Wayfire like this (substitute `$PREFIX` with where you install it, e.g. `/usr/local` or `$HOME/.local`):
 
