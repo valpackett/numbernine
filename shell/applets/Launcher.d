@@ -37,8 +37,9 @@ import Glade;
 
 bool isMatched(string needle, DesktopAppInfo app) {
 	return Fuzzy.hasMatch(needle, app.getDisplayName()) || Fuzzy.hasMatch(needle,
-			app.getGenericName()) || Fuzzy.hasMatch(needle, app.getDescription()) || app.getKeywords().
-		any!(k => Fuzzy.hasMatch(needle, k));
+			app.getGenericName()) || Fuzzy.hasMatch(needle, app.getDescription());
+	// || app.getKeywords().
+	// any!(k => Fuzzy.hasMatch(needle, k));
 }
 
 double matchScore(string needle, DesktopAppInfo app) {
@@ -52,11 +53,12 @@ double matchScore(string needle, DesktopAppInfo app) {
 	if (Fuzzy.hasMatch(needle, app.getDescription())) {
 		score += Fuzzy.match(needle, app.getDescription());
 	}
-	foreach (k; app.getKeywords()) {
-		if (Fuzzy.hasMatch(needle, k)) {
-			score += Fuzzy.match(needle, k);
-		}
-	}
+	// XXX: reading keywords seems to introduce memory corruption
+	// foreach (k; app.getKeywords()) {
+	// 	if (Fuzzy.hasMatch(needle, k)) {
+	// 		score += Fuzzy.match(needle, k);
+	// 	}
+	// }
 	return score;
 }
 

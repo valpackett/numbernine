@@ -83,11 +83,11 @@ final class AppletHolder {
 }
 
 final class Panel {
+	Settings settings;
 	Window toplevel;
 	Box appletbox;
 	AppletHolder[string] applets;
 	PanelPopover activePopover;
-	Settings settings; // XXX: don't put as first field - panel does not appear?!
 
 	mixin Css!("/technology/unrelenting/numbernine/Shell/style.css", toplevel);
 
