@@ -29,6 +29,8 @@ import gio.AppInfoIF;
 import gobject.Value;
 import gobject.ObjectG;
 import applets.Applet;
+import launcher_plugins.Plugin;
+import launcher_plugins.Calculator;
 import Fuzzy;
 import PanelPopover;
 import Panel;
@@ -127,6 +129,9 @@ final class Launcher : Applet {
 				assert((a in apps) != null);
 	}
 
+	Plugin[] plugins;
+	Plugin currentPlugin;
+
 	Widget rootWidget() {
 		return root;
 	}
@@ -143,6 +148,7 @@ final class Launcher : Applet {
 		root.setAlwaysShowImage(true);
 		popover = new PanelPopover(root, panel);
 		setupGlade();
+		plugins ~= new Calculator();
 		popover.popover.add(toplevel);
 		toplevel.showAll();
 		root.show();
@@ -150,18 +156,33 @@ final class Launcher : Applet {
 		setAppResults(apps.values);
 		resultfilter.setVisibleFunc(&launcherFilterFunc, cast(void*) this, null);
 		resultsort.setDefaultSortFunc(&launcherSortFunc, cast(void*) this, null);
-		resultview.addOnRowActivated((TreePath p, TreeViewColumn _, TreeView v) {
+		resultview.addOnRowActivated((TreePath p, TreeViewColumn c, TreeView v) {
 			popover.popover.popdown();
-			TreeIter it = new TreeIter(resultsort, p);
-			apps[it.getValueString(0)].launch(null, null);
+			if (resultview.getModel() == resultsort) {
+				TreeIter it = new TreeIter(resultsort, p);
+				apps[it.getValueString(0)].launch(null, null);
+			} else if (currentPlugin) {
+				currentPlugin.activateRow(p, c, v);
+			}
 		});
 		searchbar.addOnSearchChanged((SearchEntry bar) {
-			// TODO: plugin mode
-			resultfilter.refilter();
+			TreeModelIF model = resultsort;
+			foreach (p; plugins) {
+				if (p.matchesSearch(bar.getText())) {
+					p.updateResults(bar.getText());
+					model = p.getResultModel();
+					currentPlugin = p;
+				}
+			}
+			if (model == resultsort) {
+				currentPlugin = null;
+				resultfilter.refilter();
+			}
+			resultview.setModel(model);
 			TreeIter it;
-			resultsort.getIterFirst(it);
+			model.getIterFirst(it);
 			resultview.getSelection().selectIter(it);
-			resultview.scrollToCell(resultsort.getPath(it), null, false, 0.0, 0.0);
+			resultview.scrollToCell(model.getPath(it), null, false, 0.0, 0.0);
 		});
 		searchbar.addOnKeyPress((GdkEventKey* key, Widget _) {
 			if (key.keyval == GdkKeysyms.GDK_Tab || key.keyval == GdkKeysyms.GDK_KP_Tab ||
@@ -172,15 +193,15 @@ final class Launcher : Applet {
 				TreeIter it = resultview.getSelection().getSelected();
 				manip(it);
 				resultview.getSelection().selectIter(it);
-				resultview.scrollToCell(resultsort.getPath(it), null, false, 0.0, 0.0);
+				resultview.scrollToCell(resultview.getModel().getPath(it), null, false, 0.0, 0.0);
 			}
 
 			if (key.keyval == GdkKeysyms.GDK_Up || key.keyval == GdkKeysyms.GDK_KP_Up) {
-				scrollTo((ref TreeIter it) { resultsort.iterPrevious(it); });
+				scrollTo((ref TreeIter it) { resultview.getModel().iterPrevious(it); });
 				return true;
 			}
 			if (key.keyval == GdkKeysyms.GDK_Down || key.keyval == GdkKeysyms.GDK_KP_Down) {
-				scrollTo((ref TreeIter it) { resultsort.iterNext(it); });
+				scrollTo((ref TreeIter it) { resultview.getModel().iterNext(it); });
 				return true;
 			}
 			if (key.keyval == GdkKeysyms.GDK_Return || key.keyval == GdkKeysyms.GDK_KP_Enter) {

@@ -18,6 +18,7 @@ xkbcommon = dependency('xkbcommon')
 wayland_client = dependency('wayland-client')
 wlroots = dependency('wlroots', fallback: ['wlroots', 'wlroots'])
 wayfire = dependency('wayfire')
+qalculate = dependency('libqalculate')
 
 gnome = import('gnome')
 
