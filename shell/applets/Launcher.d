@@ -197,10 +197,10 @@ final class Launcher : Applet {
 				// XXX: couldn't get GIcon column to work
 				resultstore.setValue(it, 1, appIcon.toString());
 			}
-			resultstore.setValue(it, 2, "<b>" ~ app.getDisplayName() ~ "</b>" ~ (app.getGenericName().
-					length == 0 ? "" : " <span size=\"small\" weight=\"light\">(" ~ app.getGenericName() ~ ")</span>") ~
-					"\n" ~ app.getDescription() ~ " " ~ app.getKeywords().
-					map!(k => "<span size=\"small\" weight=\"light\">#" ~ k ~ "</span>").join(" "));
+			resultstore.setValue(it, 2, "<b>" ~ app.getDisplayName() ~ "</b>" ~ (app.getGenericName()
+					.length == 0 ? "" : " <span size=\"small\" weight=\"light\">(" ~ app.getGenericName() ~ ")</span>") ~ "\n" ~ app
+					.getDescription() ~ " " ~ app.getKeywords()
+					.map!(k => "<span size=\"small\" weight=\"light\">#" ~ k ~ "</span>").join(" "));
 		}
 	}
 
