@@ -132,6 +132,8 @@ final class Launcher : Applet {
 	}
 
 	this(string name, Panel panel) {
+		GC.addRoot(cast(void*) this);
+		GC.setAttr(cast(void*) this, GC.BlkAttr.NO_MOVE);
 		settings = new Settings("technology.unrelenting.numbernine.Shell.applet.launcher",
 				"/technology/unrelenting/numbernine/Shell/applet/" ~ name ~ "/launcher/");
 		root = new ToggleButton("");
@@ -146,7 +148,6 @@ final class Launcher : Applet {
 		root.show();
 		refreshLists();
 		setAppResults(apps.values);
-		GC.setAttr(cast(void*) this, GC.BlkAttr.NO_MOVE);
 		resultfilter.setVisibleFunc(&launcherFilterFunc, cast(void*) this, null);
 		resultsort.setDefaultSortFunc(&launcherSortFunc, cast(void*) this, null);
 		resultview.addOnRowActivated((TreePath p, TreeViewColumn _, TreeView v) {
