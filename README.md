@@ -18,6 +18,8 @@ focused on a good balance between friendliness/discoverability and customization
 - [`Wayfire`](https://github.com/WayfireWM/wayfire) (git master)
 - [`wf-gsettings`](https://github.com/myfreeweb/wf-gsettings)
 - [`ldc`](https://github.com/ldc-developers/ldc) (maybe `dmd` or `gdc`, but you might need to tweak stuff in that case)
+- [`dub`](https://github.com/dlang/dub)
+- [`wayland-d`](https://github.com/rtbo/wayland-d), installed via `dub`
 - [`GtkD`](https://github.com/gtkd-developers/GtkD) (installed as shared libraries)
 - [`gtk-layer-shell`](https://github.com/wmww/gtk-layer-shell)
 - [`libhandy`](https://source.puri.sm/Librem5/libhandy)
@@ -25,6 +27,13 @@ focused on a good balance between friendliness/discoverability and customization
 - [`polkit`](https://gitlab.freedesktop.org/polkit/polkit)
 - [`upower-glib`](https://gitlab.freedesktop.org/upower/upower)
 - [`libepoxy`](https://github.com/anholt/libepoxy)
+
+Get `wayland-d`:
+
+```shell
+dub fetch wayland
+dub build wayland:client -b release
+```
 
 Install with Meson (into the same prefix as Wayfire), configure Wayfire like this (substitute `$PREFIX` with where you install it, e.g. `/usr/local` or `$HOME/.local`):
 

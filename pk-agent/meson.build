@@ -5,7 +5,9 @@ pk_agent_dialog_res = gnome.compile_resources(
 
 pk_agent_dialog = executable('n9-pk-agent-dialog',
 	'dialog.d', pk_agent_dialog_res,
-	dependencies: [gtkd, lshd, polkitagentd, util, wl_protos],
+	input_inhibitor_code_d,
+	dependencies: [gtkd, lshd, polkitagentd, util, wl_gtk_d],
+	d_module_versions: ['WlStatic'],
 	d_args: ['-relocation-model=pic'],
 	install_dir: get_option('libexecdir'),
 	install: true)

@@ -1,29 +1,18 @@
-dep_protos = dependency('wayland-protocols')
-system_protos_dir = dep_protos.get_pkgconfig_variable('pkgdatadir')
-
-dep_scanner = dependency('wayland-scanner', native: true)
-prog_scanner = find_program(dep_scanner.get_pkgconfig_variable('wayland_scanner'))
-
-gen_client_header = generator(prog_scanner,
-	output: ['@BASENAME@-client.h'],
-	arguments: ['-c', 'client-header', '@INPUT@', '@BUILD_DIR@/@BASENAME@-client.h'])
-
-gen_code = generator(prog_scanner,
-	output: ['@BASENAME@.c'],
-	arguments: ['-c', 'public-code', '@INPUT@', '@BUILD_DIR@/@BASENAME@.c'])
-
-
-input_inhibitor_header_c = gen_client_header.process('wlr-input-inhibitor-unstable-v1.xml')
-input_inhibitor_code_c = gen_code.process('wlr-input-inhibitor-unstable-v1.xml')
-
-
-wl_protos_lib = static_library('wl_protos',
-	input_inhibitor_header_c, input_inhibitor_code_c,
-	'wl_protos_helper.c',
-	'wl_protos.d',
-	dependencies: [gtkd, gdk_wayland, wayland_client],
+wl_gtk_d_code = static_library('wl_gtk_d',
+	'WaylandGtkD.d',
+	dependencies: [gtkd, gdk_wayland, wayland_client, wayland_client_d],
+	d_module_versions: ['WlStatic'],
 	pic: true)
 
-wl_protos = declare_dependency(
-	link_with: [wl_protos_lib],
+wl_gtk_d = declare_dependency(
+	link_with: [wl_gtk_d_code],
+	dependencies: [gtkd, gdk_wayland, wayland_client, wayland_client_d],
 	include_directories: ['.'])
+
+prog_dub = find_program('dub')
+gen_wayland_d = generator(prog_dub,
+	output: ['@BASENAME@.d'],
+	arguments: ['run', 'wayland:scanner', '--',
+		'-i', '@INPUT@', '-o', '@OUTPUT@', '-m', '@BASENAME@'])
+
+input_inhibitor_code_d = gen_wayland_d.process('wlr_input_inhibitor_unstable_v1.xml')

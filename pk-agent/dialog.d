@@ -14,7 +14,8 @@ import glib.Child;
 import lsh.LayerShell;
 import polkit.UnixUser;
 import polkitagent.Session;
-import wl_protos;
+import WaylandGtkD;
+import wlr_input_inhibitor_unstable_v1;
 import Glade;
 import Vals;
 import std.process : environment;
@@ -80,7 +81,9 @@ class DialogApp {
 
 	mixin Css!("/technology/unrelenting/numbernine/pk-agent/style.css", window);
 
-	zwlr_input_inhibitor_v1 *inhibitor = null;
+	WlDisplay display = null;
+	ZwlrInputInhibitManagerV1 inhibitmgr = null;
+	ZwlrInputInhibitorV1 inhibitor = null;
 
 	void connect() {
 		import core.sys.posix.unistd : getuid;
@@ -92,8 +95,8 @@ class DialogApp {
 			// TODO: nicer exit?
 			import core.sys.posix.stdlib : exit;
 
-			if (inhibitor != null) {
-				zwlr_input_inhibitor_v1_destroy(inhibitor);
+			if (inhibitor !is null) {
+				inhibitor.destroy();
 				inhibitor = null;
 			}
 			exit(0);
@@ -101,13 +104,22 @@ class DialogApp {
 		session.addOnRequest(delegate void(string req, bool, Session) {
 			prompt.setText(req);
 			window.showAll();
-			if (!wl_protos_get_for_gdk(Display.getDefault().getDisplayStruct())) {
-				writeln("WARN: could not get wayland protocols");
-				return;
-			}
-			inhibitor = zwlr_input_inhibit_manager_v1_get_inhibitor(wl_protos_input_inhibit_manager);
-			if (inhibitor == null)
+			display = new WlDisplayGdk(Display.getDefault().getDisplayStruct()).unwrap();
+			if (display is null)
+				writeln("ERROR: could not get wayland display");
+			auto reg = display.getRegistry();
+			scope (exit)
+				reg.destroy();
+			reg.onGlobal = (WlRegistry reg, uint name, string iface, uint ver) {
+				if (iface == ZwlrInputInhibitManagerV1.iface.name) {
+					inhibitmgr = cast(ZwlrInputInhibitManagerV1) reg.bind(name, ZwlrInputInhibitManagerV1.iface, ver);
+				}
+			};
+			display.roundtrip();
+			inhibitor = inhibitmgr.getInhibitor();
+			if (inhibitor is null) {
 				writeln("WARN: could not inhibit input");
+			}
 		});
 		// TODO: show these on the dialog?
 		session.addOnShowError(delegate void(string err, Session) { writeln("err: ", err); });
