@@ -29,7 +29,9 @@ struct SimpleAppInfo {
 
 	this(DesktopAppInfo app) {
 		this.id = app.getId();
-		this.icon = app.getIcon().toString();
+		if (app.getIcon() !is null) {
+			this.icon = app.getIcon().toString();
+		}
 		this.displayName = app.getDisplayName();
 		this.genericName = app.getGenericName();
 		this.description = app.getDescription();
