@@ -55,14 +55,14 @@ public class ComboRow : ActionRow
 	 */
 	public this()
 	{
-		auto p = hdy_combo_row_new();
+		auto __p = hdy_combo_row_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyComboRow*) p);
+		this(cast(HdyComboRow*) __p);
 	}
 
 	/**
@@ -128,14 +128,14 @@ public class ComboRow : ActionRow
 	 */
 	public ListModelIF getModel()
 	{
-		auto p = hdy_combo_row_get_model(hdyComboRow);
+		auto __p = hdy_combo_row_get_model(hdyComboRow);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(ListModelIF)(cast(GListModel*) p);
+		return ObjectG.getDObject!(ListModelIF)(cast(GListModel*) __p);
 	}
 
 	/**

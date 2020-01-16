@@ -65,14 +65,14 @@ public class DialerButton : Button
 	 */
 	public this(string symbols)
 	{
-		auto p = hdy_dialer_button_new(Str.toStringz(symbols));
+		auto __p = hdy_dialer_button_new(Str.toStringz(symbols));
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyDialerButton*) p);
+		this(cast(HdyDialerButton*) __p);
 	}
 
 	/**

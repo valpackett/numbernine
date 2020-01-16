@@ -59,14 +59,14 @@ public class ViewSwitcher : Box
 	 */
 	public this()
 	{
-		auto p = hdy_view_switcher_new();
+		auto __p = hdy_view_switcher_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyViewSwitcher*) p);
+		this(cast(HdyViewSwitcher*) __p);
 	}
 
 	/**
@@ -119,14 +119,14 @@ public class ViewSwitcher : Box
 	 */
 	public Stack getStack()
 	{
-		auto p = hdy_view_switcher_get_stack(hdyViewSwitcher);
+		auto __p = hdy_view_switcher_get_stack(hdyViewSwitcher);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Stack)(cast(GtkStack*) p);
+		return ObjectG.getDObject!(Stack)(cast(GtkStack*) __p);
 	}
 
 	/**

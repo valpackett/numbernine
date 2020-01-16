@@ -58,14 +58,14 @@ public class HeaderBar : Container
 	 */
 	public this()
 	{
-		auto p = hdy_header_bar_new();
+		auto __p = hdy_header_bar_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyHeaderBar*) p);
+		this(cast(HdyHeaderBar*) __p);
 	}
 
 	/**
@@ -91,14 +91,14 @@ public class HeaderBar : Container
 	 */
 	public Widget getCustomTitle()
 	{
-		auto p = hdy_header_bar_get_custom_title(hdyHeaderBar);
+		auto __p = hdy_header_bar_get_custom_title(hdyHeaderBar);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) p);
+		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) __p);
 	}
 
 	/**

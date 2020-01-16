@@ -4,7 +4,7 @@ private import glib.ConstructionException;
 private import gobject.ObjectG;
 private import gtk.BuildableIF;
 private import gtk.BuildableT;
-private import gtk.Dialog : GtkDialog = Dialog;
+private import gtk.Dialog : DGtkDialog = Dialog;
 private import gtk.Widget;
 private import gtk.Window;
 private import handy.c.functions;
@@ -12,7 +12,7 @@ public  import handy.c.types;
 
 
 /** */
-public class Dialog : GtkDialog
+public class Dialog : DGtkDialog
 {
 	/** the main Gtk struct */
 	protected HdyDialog* hdyDialog;
@@ -74,13 +74,13 @@ public class Dialog : GtkDialog
 	 */
 	public this(Window parent)
 	{
-		auto p = hdy_dialog_new((parent is null) ? null : parent.getWindowStruct());
+		auto __p = hdy_dialog_new((parent is null) ? null : parent.getWindowStruct());
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyDialog*) p);
+		this(cast(HdyDialog*) __p);
 	}
 }

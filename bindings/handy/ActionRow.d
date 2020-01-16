@@ -56,14 +56,14 @@ public class ActionRow : PreferencesRow
 	 */
 	public this()
 	{
-		auto p = hdy_action_row_new();
+		auto __p = hdy_action_row_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyActionRow*) p);
+		this(cast(HdyActionRow*) __p);
 	}
 
 	/** */
@@ -108,14 +108,14 @@ public class ActionRow : PreferencesRow
 	 */
 	public Widget getActivatableWidget()
 	{
-		auto p = hdy_action_row_get_activatable_widget(hdyActionRow);
+		auto __p = hdy_action_row_get_activatable_widget(hdyActionRow);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) p);
+		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) __p);
 	}
 
 	/**

@@ -58,14 +58,14 @@ public class Dialer : Bin
 	 */
 	public this()
 	{
-		auto p = hdy_dialer_new();
+		auto __p = hdy_dialer_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyDialer*) p);
+		this(cast(HdyDialer*) __p);
 	}
 
 	/**

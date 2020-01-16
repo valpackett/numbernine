@@ -58,14 +58,14 @@ public class ValueObject : ObjectG
 	 */
 	public this(Value value)
 	{
-		auto p = hdy_value_object_new((value is null) ? null : value.getValueStruct());
+		auto __p = hdy_value_object_new((value is null) ? null : value.getValueStruct());
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyValueObject*) p, true);
+		this(cast(HdyValueObject*) __p, true);
 	}
 
 	/**
@@ -83,14 +83,14 @@ public class ValueObject : ObjectG
 	 */
 	public this(string string_)
 	{
-		auto p = hdy_value_object_new_string(Str.toStringz(string_));
+		auto __p = hdy_value_object_new_string(Str.toStringz(string_));
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new_string");
 		}
 
-		this(cast(HdyValueObject*) p, true);
+		this(cast(HdyValueObject*) __p, true);
 	}
 
 	/**
@@ -108,14 +108,14 @@ public class ValueObject : ObjectG
 	 */
 	public this(string string_)
 	{
-		auto p = hdy_value_object_new_take_string(Str.toStringz(string_));
+		auto __p = hdy_value_object_new_take_string(Str.toStringz(string_));
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new_take_string");
 		}
 
-		this(cast(HdyValueObject*) p, true);
+		this(cast(HdyValueObject*) __p, true);
 	}
 
 	/**
@@ -168,13 +168,13 @@ public class ValueObject : ObjectG
 	 */
 	public Value getValue()
 	{
-		auto p = hdy_value_object_get_value(hdyValueObject);
+		auto __p = hdy_value_object_get_value(hdyValueObject);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Value)(cast(GValue*) p);
+		return ObjectG.getDObject!(Value)(cast(GValue*) __p);
 	}
 }

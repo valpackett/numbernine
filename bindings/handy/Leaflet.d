@@ -55,14 +55,14 @@ public class Leaflet : Container, OrientableIF
 	/** */
 	public this()
 	{
-		auto p = hdy_leaflet_new();
+		auto __p = hdy_leaflet_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyLeaflet*) p);
+		this(cast(HdyLeaflet*) __p);
 	}
 
 	/**
@@ -163,14 +163,14 @@ public class Leaflet : Container, OrientableIF
 	 */
 	public Widget getVisibleChild()
 	{
-		auto p = hdy_leaflet_get_visible_child(hdyLeaflet);
+		auto __p = hdy_leaflet_get_visible_child(hdyLeaflet);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) p);
+		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) __p);
 	}
 
 	/** */

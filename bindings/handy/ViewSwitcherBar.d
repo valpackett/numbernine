@@ -57,14 +57,14 @@ public class ViewSwitcherBar : Bin
 	 */
 	public this()
 	{
-		auto p = hdy_view_switcher_bar_new();
+		auto __p = hdy_view_switcher_bar_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyViewSwitcherBar*) p);
+		this(cast(HdyViewSwitcherBar*) __p);
 	}
 
 	/**
@@ -112,14 +112,14 @@ public class ViewSwitcherBar : Bin
 	 */
 	public Stack getStack()
 	{
-		auto p = hdy_view_switcher_bar_get_stack(hdyViewSwitcherBar);
+		auto __p = hdy_view_switcher_bar_get_stack(hdyViewSwitcherBar);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Stack)(cast(GtkStack*) p);
+		return ObjectG.getDObject!(Stack)(cast(GtkStack*) __p);
 	}
 
 	/**

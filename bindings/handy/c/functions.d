@@ -281,4 +281,8 @@ __gshared extern(C)
 	void hdy_view_switcher_bar_set_policy(HdyViewSwitcherBar* self, HdyViewSwitcherPolicy policy);
 	void hdy_view_switcher_bar_set_reveal(HdyViewSwitcherBar* self, int reveal);
 	void hdy_view_switcher_bar_set_stack(HdyViewSwitcherBar* self, GtkStack* stack);
+
+	// handy.Handy
+
+	int hdy_init(int* argc, char*** argv);
 }

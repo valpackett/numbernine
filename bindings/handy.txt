@@ -1,2 +1,4 @@
 wrap: handy
 file: Handy-0.0.gir
+
+move: init Handy

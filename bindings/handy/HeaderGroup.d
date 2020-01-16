@@ -52,14 +52,14 @@ public class HeaderGroup : ObjectG, BuildableIF
 	/** */
 	public this()
 	{
-		auto p = hdy_header_group_new();
+		auto __p = hdy_header_group_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyHeaderGroup*) p, true);
+		this(cast(HdyHeaderGroup*) __p, true);
 	}
 
 	/**
@@ -86,14 +86,14 @@ public class HeaderGroup : ObjectG, BuildableIF
 	 */
 	public HeaderBar getFocus()
 	{
-		auto p = hdy_header_group_get_focus(hdyHeaderGroup);
+		auto __p = hdy_header_group_get_focus(hdyHeaderGroup);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(HeaderBar)(cast(GtkHeaderBar*) p);
+		return ObjectG.getDObject!(HeaderBar)(cast(GtkHeaderBar*) __p);
 	}
 
 	/**
@@ -104,14 +104,14 @@ public class HeaderGroup : ObjectG, BuildableIF
 	 */
 	public ListSG getHeaderBars()
 	{
-		auto p = hdy_header_group_get_header_bars(hdyHeaderGroup);
+		auto __p = hdy_header_group_get_header_bars(hdyHeaderGroup);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return new ListSG(cast(GSList*) p);
+		return new ListSG(cast(GSList*) __p);
 	}
 
 	/**

@@ -54,14 +54,14 @@ public class ExpanderRow : ActionRow
 	 */
 	public this()
 	{
-		auto p = hdy_expander_row_new();
+		auto __p = hdy_expander_row_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyExpanderRow*) p);
+		this(cast(HdyExpanderRow*) __p);
 	}
 
 	/**

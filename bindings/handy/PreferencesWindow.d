@@ -56,13 +56,13 @@ public class PreferencesWindow : Window
 	 */
 	public this()
 	{
-		auto p = hdy_preferences_window_new();
+		auto __p = hdy_preferences_window_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyPreferencesWindow*) p);
+		this(cast(HdyPreferencesWindow*) __p);
 	}
 }

@@ -60,14 +60,14 @@ public class Squeezer : Container, OrientableIF
 	 */
 	public this()
 	{
-		auto p = hdy_squeezer_new();
+		auto __p = hdy_squeezer_new();
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdySqueezer*) p);
+		this(cast(HdySqueezer*) __p);
 	}
 
 	/**
@@ -153,14 +153,14 @@ public class Squeezer : Container, OrientableIF
 	 */
 	public Widget getVisibleChild()
 	{
-		auto p = hdy_squeezer_get_visible_child(hdySqueezer);
+		auto __p = hdy_squeezer_get_visible_child(hdySqueezer);
 
-		if(p is null)
+		if(__p is null)
 		{
 			return null;
 		}
 
-		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) p);
+		return ObjectG.getDObject!(Widget)(cast(GtkWidget*) __p);
 	}
 
 	/**

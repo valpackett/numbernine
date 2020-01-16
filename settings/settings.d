@@ -18,6 +18,7 @@ import gtk.TreeView;
 import gtk.ListStore;
 import gtk.TreeIter;
 import gobject.Signals;
+import handy.Handy;
 import handy.Leaflet;
 import KeyboardLayout;
 import Glade;
@@ -210,10 +211,10 @@ class SettingsApp {
 }
 
 //__gshared extern(C) string[] rt_options = [ "trapExceptions=0" ];
-__gshared extern (C) bool hdy_init(int* argc, char*** argv);
 
 shared static this() {
-	hdy_init(null, null);
+	string[] argv;
+	Handy.init(argv);
 }
 
 int main(string[] args) {

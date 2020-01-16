@@ -46,14 +46,14 @@ public class EnumValueObject : ObjectG
 	/** */
 	public this(GEnumValue* enumValue)
 	{
-		auto p = hdy_enum_value_object_new(enumValue);
+		auto __p = hdy_enum_value_object_new(enumValue);
 
-		if(p is null)
+		if(__p is null)
 		{
 			throw new ConstructionException("null returned by new");
 		}
 
-		this(cast(HdyEnumValueObject*) p, true);
+		this(cast(HdyEnumValueObject*) __p, true);
 	}
 
 	/** */

@@ -6,6 +6,7 @@ handyd_lib = static_library('handyd',
 	'handy/c/types.d',
 	'handy/c/functions.d',
 	# only build what we use
+	'handy/Handy.d',
 	'handy/TitleBar.d',
 	'handy/Leaflet.d',
 	'handy/Column.d',
