@@ -8,8 +8,8 @@ int main(string[] args) {
 	auto app = scoped!Application("technology.unrelenting.numbernine.Shell", GApplicationFlags.FLAGS_NONE);
 	app.addOnActivate((GioApplication a) {
 		notifSrv = new NotificationServer();
-		panelMgr = new PanelManager();
-		wallpaper = new Wallpaper();
+		panelMgr = new MultiMonitorRunner!PanelManager();
+		wallpaper = new MultiMonitorRunner!Wallpaper();
 	});
 	app.hold();
 	return app.run(args);

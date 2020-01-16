@@ -3,6 +3,7 @@ util_lib = static_library('util',
 	# (seemingly template-only modules can be compiled..)
 	'DBus.d',
 	'Vals.d',
+	'MultiMonitor.d',
 	dependencies: [polkit_agent, polkitd, gtkd],
 	pic: true)
 

@@ -1,12 +1,15 @@
 module PanelManager;
+import gdk.MonitorG;
 import gio.Settings;
 import Panel;
 
 final class PanelManager {
 	Settings settings;
 	Panel[string] panels;
+	MonitorG monitor;
 
-	this() {
+	this(MonitorG mon) {
+		monitor = mon;
 		settings = new Settings("technology.unrelenting.numbernine.Shell");
 		settings.addOnChanged((string key, Settings _) {
 			if (key == "panels")
@@ -25,7 +28,7 @@ final class PanelManager {
 		}
 		foreach (name; panelNames) {
 			if ((name in panels) is null) {
-				panels[name] = new Panel(name);
+				panels[name] = new Panel(name, monitor);
 				panels[name].toplevel.show();
 			}
 		}

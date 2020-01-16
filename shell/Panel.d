@@ -1,6 +1,7 @@
 module Panel;
 import std.stdio : writeln;
 import gdk.Event;
+import gdk.MonitorG;
 import gtk.Window;
 import gtk.Widget;
 import gtk.Box;
@@ -91,7 +92,7 @@ final class Panel {
 
 	mixin Css!("/technology/unrelenting/numbernine/Shell/style.css", toplevel);
 
-	this(string name) {
+	this(string name, MonitorG monitor) {
 		settings = new Settings("technology.unrelenting.numbernine.Shell.panel",
 				"/technology/unrelenting/numbernine/Shell/panel/" ~ name ~ "/");
 
@@ -100,6 +101,7 @@ final class Panel {
 
 		toplevel = new Window("Panel");
 		LayerShell.initForWindow(toplevel);
+		LayerShell.setMonitor(toplevel, monitor);
 		LayerShell.setLayer(toplevel, GtkLayerShellLayer.TOP);
 		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.RIGHT, true);
 		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.BOTTOM, true);

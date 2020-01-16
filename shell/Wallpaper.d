@@ -5,6 +5,7 @@ import lsh.LayerShell;
 import gio.Settings;
 import glib.GException;
 import gdk.GLContext;
+import gdk.MonitorG;
 import gdkpixbuf.Pixbuf;
 import gtk.Window;
 import gtk.Widget;
@@ -24,11 +25,12 @@ final class Wallpaper {
 	GLArea area;
 	string filePath;
 
-	this() {
+	this(MonitorG monitor) {
 		settings = new Settings("technology.unrelenting.numbernine.Shell");
 
 		toplevel = new Window("Wallpaper");
 		LayerShell.initForWindow(toplevel);
+		LayerShell.setMonitor(toplevel, monitor);
 		LayerShell.setLayer(toplevel, GtkLayerShellLayer.BACKGROUND);
 		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.TOP, true);
 		LayerShell.setAnchor(toplevel, GtkLayerShellEdge.RIGHT, true);
