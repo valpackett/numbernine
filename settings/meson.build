@@ -4,7 +4,9 @@ settings_res = gnome.compile_resources(
 	c_name: 'as')
 
 settings_app = executable('n9-settings',
-	'settings.d', settings_res,
+	'settings.d',
+	'KeyboardLayout.d',
+	settings_res,
 	dependencies: [gtkd, handyd, util],
 	d_args: ['-relocation-model=pic'],
 	install: true)
