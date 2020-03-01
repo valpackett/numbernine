@@ -19,7 +19,7 @@ focused on a good balance between friendliness/discoverability and customization
 - [`wf-gsettings`](https://github.com/myfreeweb/wf-gsettings)
 - [`ldc`](https://github.com/ldc-developers/ldc) (maybe `dmd` or `gdc`, but you might need to tweak stuff in that case)
 - [`dub`](https://github.com/dlang/dub)
-- [`wayland-d`](https://github.com/rtbo/wayland-d), installed via `dub`
+- [`wayland-d` fork](https://github.com/myfreeweb/wayland-d)
 - [`GtkD`](https://github.com/gtkd-developers/GtkD) (installed as shared libraries)
 - [`gtk-layer-shell`](https://github.com/wmww/gtk-layer-shell)
 - [`libhandy`](https://source.puri.sm/Librem5/libhandy)
@@ -28,11 +28,14 @@ focused on a good balance between friendliness/discoverability and customization
 - [`upower-glib`](https://gitlab.freedesktop.org/upower/upower)
 - [`libepoxy`](https://github.com/anholt/libepoxy)
 
-Get `wayland-d`:
+Get `wayland-d` fork (TODO: will be converted to meson hopefully soon), register, and build the client lib in matching mode (release/debug) to meson:
 
 ```shell
-dub fetch wayland
+git clone https://github.com/myfreeweb/wayland-d
+cd wayland-d
+dub build wayland:scanner -b release
 dub build wayland:client -b release
+dub add-local $PWD
 ```
 
 Install with Meson (into the same prefix as Wayfire), configure Wayfire like this (substitute `$PREFIX` with where you install it, e.g. `/usr/local` or `$HOME/.local`):

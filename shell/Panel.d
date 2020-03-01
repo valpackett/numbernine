@@ -10,6 +10,7 @@ import lsh.LayerShell;
 import Glade;
 import applets.Applet;
 import applets.Clock;
+import applets.Dock;
 import applets.Launcher;
 import applets.Notifier;
 import applets.Power;
@@ -65,6 +66,8 @@ final class AppletHolder {
 		remove();
 		if (curType == "clock")
 			applet = new Clock(name);
+		else if (curType == "dock")
+			applet = new Dock(name);
 		else if (curType == "spacer")
 			applet = new Spacer(name);
 		else if (curType == "launcher")
@@ -151,7 +154,7 @@ final class Panel {
 	}
 
 	void initWithDefaultWidgets() {
-		settings.setStrv("applets", ["clock-0", "power-0", "notifier-0", "spacer-0", "launcher-0"]);
+		settings.setStrv("applets", ["clock-0", "power-0", "notifier-0", "spacer-0", "dock-0", "launcher-0"]);
 		settings.setBoolean("initialized", true);
 	}
 }

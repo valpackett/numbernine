@@ -16,3 +16,4 @@ gen_wayland_d = generator(prog_dub,
 		'-i', '@INPUT@', '-o', '@OUTPUT@', '-m', '@BASENAME@'])
 
 input_inhibitor_code_d = gen_wayland_d.process('wlr_input_inhibitor_unstable_v1.xml')
+foreign_toplevel_code_d = gen_wayland_d.process('wlr_foreign_toplevel_management_unstable_v1.xml')

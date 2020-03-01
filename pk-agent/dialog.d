@@ -104,7 +104,7 @@ class DialogApp {
 		session.addOnRequest(delegate void(string req, bool, Session) {
 			prompt.setText(req);
 			window.showAll();
-			display = new WlDisplayGdk(Display.getDefault().getDisplayStruct()).unwrap();
+			display = wlGdkGetDisplay();
 			if (display is null)
 				writeln("ERROR: could not get wayland display");
 			auto reg = display.getRegistry();

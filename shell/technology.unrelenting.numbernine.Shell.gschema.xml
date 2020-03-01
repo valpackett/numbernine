@@ -49,6 +49,9 @@
 		</key>
 	</schema>
 
+	<schema id="technology.unrelenting.numbernine.Shell.applet.dock">
+	</schema>
+
 	<schema id="technology.unrelenting.numbernine.Shell.applet.launcher">
 	</schema>
 
